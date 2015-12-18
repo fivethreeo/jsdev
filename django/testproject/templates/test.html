@@ -9,11 +9,11 @@
         <form method="POST" class="form-horizontal">
             
 	    	<div class="col-md-6">
-			    {% ifequal view.testtype "baat" %}{% placeholder "overskrift-baat" %}{% endifequal %} 
+			    {% ifequal view.testtype "baat" %}{% static_placeholder "overskrift-baat" %}{% endifequal %} 
 
-			    {% ifequal view.testtype "kort" %}{% placeholder "overskrift-kort" %}{% endifequal %} 
+			    {% ifequal view.testtype "kort" %}{% static_placeholder "overskrift-kort" %}{% endifequal %} 
 
-			    {% ifequal view.testtype "sol" %}{% placeholder "overskrift-sol" %}{% endifequal %} 
+			    {% ifequal view.testtype "sol" %}{% static_placeholder "overskrift-sol" %}{% endifequal %} 
                 
 			    {% csrf_token %}
 			    {% load widget_tweaks %}
@@ -41,9 +41,9 @@
 		        {% endfor %}
 	    	</div>
 	    	<div class="col-md-6">
-	        	{% ifequal view.testtype "baat" %}{% placeholder "innhold-baat" %}{% endifequal %} 
-	        	{% ifequal view.testtype "kort" %}{% placeholder "innhold-kort" %}{% endifequal %} 
-	        	{% ifequal view.testtype "sol" %}{% placeholder "innhold-sol" %}{% endifequal %} 
+	        	{% ifequal view.testtype "baat" %}{% static_placeholder "innhold-baat" %}{% endifequal %} 
+	        	{% ifequal view.testtype "kort" %}{% static_placeholder "innhold-kort" %}{% endifequal %} 
+	        	{% ifequal view.testtype "sol" %}{% static_placeholder "innhold-sol" %}{% endifequal %} 
 	        	{% for field in form %}
     			{% ifequal field.name "vilkaar" %}
 				<div class="form-group{% if field.errors %} error{% endif %}">
@@ -76,7 +76,7 @@
 	    	</div>
 	    </form>
 	    {% else %}
-	    <div class="col-md-12">{% placeholder "innhold-front" %}</div>
+	    <div class="col-md-12">{% static_placeholder "innhold-front" %}</div>
 		{% endif %}
     </div>
     
