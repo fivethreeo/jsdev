@@ -48,9 +48,6 @@ def send_email_reject(instance):
     mmsg.encoding = 'iso-8859-1'
     mmsg.send()
 
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
-
 class TestCreateView(CreateView):
     form_class = DeltagerForm
     template_name = 'test.html'
@@ -60,7 +57,6 @@ class TestCreateView(CreateView):
         #send_email(self.object)
         return response
 
-    @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
         self.testtype = kwargs.get('testtype', False)
         return super(TestCreateView, self).dispatch(*args, **kwargs)
