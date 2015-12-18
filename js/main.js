@@ -24,13 +24,15 @@ require.config({
 		'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
 		'text': 'bower_components/text/text',
 		'datetimepicker': 'bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
-		'moment': 'bower_components/moment/moment'
+		'moment': 'bower_components/moment/moment',
+		'moment-nb': 'bower_components/moment/locale/nb'
+
 	}
 });
 require([
-    "jquery", "underscore", "bootstrap", "datetimepicker"
+    "jquery", "underscore", "bootstrap", "moment-nb", "datetimepicker"
 ],
-function($, _, B$, D$) {
+function($, _) {
 $(window).scroll(function() {
 if ($(this).scrollTop() > 1){  
     $('.navbar').addClass("white");
