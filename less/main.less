@@ -1,4 +1,5 @@
 @import "mixins/base.less";
+@import "eonasdan-bootstrap-datetimepicker/src/less/_bootstrap-datetimepicker.less";
 
 html, body {
     height: 100%;
@@ -57,9 +58,6 @@ ul.rot li:nth-child(3n+3) {-moz-transform: rotate(3deg);-webkit-transform: rotat
   }
 }
 
-body {
-  background: black;
-}
 
 .arrow {
   width: 100%;
@@ -102,9 +100,6 @@ footer h2 {
 footer p {
   color: lighten(@gray-light, 40%);
 }
-body {
-  background: #000000;
-}
 .navbar-brand img { height: 116px; width: auto; position: relative; margin-top: -15px; transition: all 2s ease-in;}
 
 @media (min-width: @screen-xs-max) {
@@ -132,6 +127,7 @@ body {
 
 #hjem { position: relative; }
 #hjem, #referanser { background:  radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(217,237,242,1) 41%, rgba(153,205,219,1) 100%); }
+body { background:  radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(217,237,242,1) 41%, rgba(153,205,219,1) 100%); }
 
 
 @media (max-width: @screen-xs-max) {

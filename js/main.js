@@ -22,13 +22,15 @@ require.config({
 		'underscore': 'bower_components/underscore/underscore',
 		'backbone': 'bower_components/backbone/backbone',
 		'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
-		'text': 'bower_components/text/text'
+		'text': 'bower_components/text/text',
+		'datetimepicker': 'bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
+		'moment': 'bower_components/moment/moment'
 	}
 });
 require([
-    "jquery", "underscore", "bootstrap"
+    "jquery", "underscore", "bootstrap", "datetimepicker"
 ],
-function($, _, B$) {
+function($, _, B$, D$) {
 $(window).scroll(function() {
 if ($(this).scrollTop() > 1){  
     $('.navbar').addClass("white");
@@ -52,4 +54,10 @@ $("a[href^='#']").on('click', function(event) {
     return window.history.pushState(null, null, target);
   });
 });
+$(document).ready(function() {
+	$('#id_dato').datetimepicker({
+		daysOfWeekDisabled: [0, 1, 2, 3, 4, 6],
+		format: 'YYYY-MM-DD'
+       });
+    })
 });

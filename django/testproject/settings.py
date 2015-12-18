@@ -71,7 +71,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 STATIC_ROOT = os.path.join(DATA_DIR, 'static')
-
+print STATIC_ROOT
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'testproject', 'static'),
 )
@@ -80,29 +80,29 @@ SITE_ID = 1
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'testproject', 'templates'),],
-        'OPTIONS': {
-            'context_processors': [
-                'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.request',
-    'django.core.context_processors.media',
-    'django.core.context_processors.csrf',
-    'django.core.context_processors.tz',
-    'sekizai.context_processors.sekizai',
-    'django.core.context_processors.static',
-    'cms.context_processors.cms_settings'
-            ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    'django.template.loaders.eggs.Loader'
-            ],
-        },
-    },
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [os.path.join(BASE_DIR, 'testproject', 'templates')],
+    'OPTIONS': {
+        'context_processors': [
+            'django.contrib.auth.context_processors.auth',
+            'django.contrib.messages.context_processors.messages',
+            'django.core.context_processors.i18n',
+            'django.core.context_processors.debug',
+            'django.core.context_processors.request',
+            'django.core.context_processors.media',
+            'django.core.context_processors.csrf',
+            'django.core.context_processors.tz',
+            'sekizai.context_processors.sekizai',
+            'django.core.context_processors.static',
+            'cms.context_processors.cms_settings'
+        ],
+        'loaders': [
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+            'django.template.loaders.eggs.Loader'
+        ]
+        }
+    }
 ]
 
 
@@ -150,8 +150,8 @@ INSTALLED_APPS = (
     'djangocms_googlemap',
     'djangocms_inherit',
     'djangocms_link',
-    'reversion',
-    'testproject'
+    'testproject',
+    'widget_tweaks'
 )
 
 LANGUAGES = (
@@ -180,23 +180,32 @@ CMS_LANGUAGES = {
 CMS_TEMPLATES = (
     ## Customize this
     ('page.html', 'Page'),
-    ('feature.html', 'Page with Feature')
+    ('feature.html', 'Page with Feature'),
+    ('test.html', 'Test app page')
 )
 
 CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {}
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'localhost',
-        'NAME': 'test_order',
-        'PASSWORD': 'rds81ro',
-        'PORT': '5432',
-        'USER': 'learnit24'
+if os.environ.get('DJANGO_DEV', False):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(DATA_DIR, 'django.db'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': 'localhost',
+            'NAME': 'test_order',
+            'PASSWORD': 'rds81ro',
+            'PORT': '5432',
+            'USER': 'learnit24'
+        }
+    }
 
 MIGRATION_MODULES = {
     'cmsplugin_filer_image': 'cmsplugin_filer_image.migrations_django',

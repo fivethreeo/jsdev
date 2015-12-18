@@ -59,9 +59,9 @@ if "%command%" EQU "9" goto checkoutindex
   )
   set /p userequirements="Use requirements (y/n default: y):"
   if "!userequirements!" NEQ "n" (
-    set /p requirements="Requirements file (default: requirements.txt):"
+    set /p requirements="Requirements file (default: requirements-dev.txt):"
     if "!requirements!" EQU "" (
-      set requirements=requirements.txt
+      set requirements=requirements-dev.txt
     )
     set requirementssargs=-r !requirements!
   )
@@ -79,13 +79,11 @@ if "%command%" EQU "9" goto checkoutindex
   goto :EOF
   
 :build
-  call rjs.bat
-  call gulp copy
-  call gulp less
-  call gulp jade
+  call gulp build
   goto :EOF
 
 :manage
+  set DJANGO_DEV=1
   set /p envname="Environment name (default: env):"
   if "!envname!" EQU "" (
     set envname=env

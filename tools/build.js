@@ -1,11 +1,10 @@
 {
     appDir: '../js',
     mainConfigFile: '../js/main.js',
-    dir: '../dist/js',
+    dir: '../django/testproject/static/js',
     baseUrl: '..',
     allowSourceOverwrites: true,
     paths: { requireLib: 'bower_components/requirejs/require'},
-    
     modules: [
         //First set up the common build layer.
         {

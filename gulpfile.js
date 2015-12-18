@@ -4,6 +4,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var ghPages = require('gulp-gh-pages');
 var jade = require('gulp-jade');
 var path = require('path');
+var spawn = require('win-spawn');
 
 gulp.task('less', function () {
   var LessPluginCleanCSS = require("less-plugin-clean-css"),
@@ -19,29 +20,38 @@ gulp.task('less', function () {
       paths: [ path.join(__dirname, 'bower_components') ],
       plugins: [autoprefix, cleancss]
      }))
-    .pipe(sourcemaps.write('./django/static/css/maps'))
-    .pipe(gulp.dest('./django/static/css'));
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest('./django/testproject/static/css'));
 
 });
 
 gulp.task('copy', function() {
-  gulp.src(['./CNAME', './static/**/*' ])
-    .pipe(gulp.dest('./django/static/img/'))
-  gulp.src([path.join(__dirname, 'bower_components', 'video.js') + '/**/*' ])
-    .pipe(gulp.dest('./django/static/video.js'))
+  gulp.src(['./static/**/*' ])
+    .pipe(gulp.dest('./django/testproject/static/'))
+
+  gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
+    .pipe(gulp.dest('./django/testproject/static/fonts')) 
+  //gulp.src([path.join(__dirname, 'bower_components', 'video.js') + '/**/*' ])
+  //  .pipe(gulp.dest('./django/testproject/static/video.js'))
 });
  
 
 var python = /^win/.test(process.platform) ? './env/Scripts/python.exe' :  './env/bin/python';
 var sep = /^win/.test(process.platform) ? '/' :  '\\';
 gulp.task('connectdjango', function () {
+    var env = process.env,
+        varName,
+        envCopy = {DJANGO_DEV:1};
 
+    // Copy process.env into envCopy
+    for (varName in env) {
+      envCopy[varName] = env[varName];
+    }
     return spawn(python, [
       'django' + sep + 'manage.py',
       'runserver',
-      'localhost:9000',
-      '--insecure'
-    ], {stdio: 'inherit'})
+      'localhost:9000'
+    ], {stdio: 'inherit', env: envCopy})
 
 });
 gulp.task('js', function () {
@@ -61,6 +71,6 @@ gulp.task('serve', ['connectdjango'], function () {
 });
 
 
-gulp.task('build', ['js', 'less'], function () {
+gulp.task('build', ['js', 'less', 'copy'], function () {
    
 });
