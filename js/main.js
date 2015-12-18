@@ -59,7 +59,8 @@ $("a[href^='#']").on('click', function(event) {
 $(document).ready(function() {
 	$('#id_dato').datetimepicker({
 		daysOfWeekDisabled: [0, 1, 2, 3, 4, 6],
-		format: 'YYYY-MM-DD'
+		format: 'YYYY-MM-DD',
+		minDate: new Date()
        });
     })
 });
