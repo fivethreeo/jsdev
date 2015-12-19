@@ -11,7 +11,7 @@
 	    	<div class="col-md-6">
 			    {% ifequal view.testtype "baat" %}{% static_placeholder "overskrift-baat" %}{% endifequal %} 
 
-			    {% ifequal view.testtype "kort" %}{% static_placeholder "overskrift-kort" %}{% endifequal %} 
+			    {% ifequal view.testtype "datakort" %}{% static_placeholder "overskrift-kort" %}{% endifequal %} 
 
 			    {% ifequal view.testtype "sol" %}{% static_placeholder "overskrift-sol" %}{% endifequal %} 
                 
@@ -42,7 +42,7 @@
 	    	</div>
 	    	<div class="col-md-6">
 	        	{% ifequal view.testtype "baat" %}{% static_placeholder "innhold-baat" %}{% endifequal %} 
-	        	{% ifequal view.testtype "kort" %}{% static_placeholder "innhold-kort" %}{% endifequal %} 
+	        	{% ifequal view.testtype "datakort" %}{% static_placeholder "innhold-kort" %}{% endifequal %} 
 	        	{% ifequal view.testtype "sol" %}{% static_placeholder "innhold-sol" %}{% endifequal %} 
 	        	{% for field in form %}
     			{% ifequal field.name "vilkaar" %}
