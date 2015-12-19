@@ -71,7 +71,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 STATIC_ROOT = os.path.join(DATA_DIR, 'static')
-print STATIC_ROOT
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'testproject', 'static'),
 )
@@ -152,7 +152,8 @@ INSTALLED_APPS = (
     'djangocms_link',
     'testproject',
     'widget_tweaks',
-    'post_office'
+    'post_office',
+    'smuggler'
 )
 
 LANGUAGES = (
