@@ -19,3 +19,5 @@ html5lib
 Pillow>=2.3
 django-sekizai>=0.7
 six
+django-post_office==2.0.2
+django-smuggler

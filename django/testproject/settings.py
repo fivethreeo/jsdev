@@ -151,7 +151,8 @@ INSTALLED_APPS = (
     'djangocms_inherit',
     'djangocms_link',
     'testproject',
-    'widget_tweaks'
+    'widget_tweaks',
+    'post_office'
 )
 
 LANGUAGES = (
@@ -221,3 +222,10 @@ THUMBNAIL_PROCESSORS = (
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters'
 )
+
+
+SERVER_EMAIL = 'learnit24@learnit24.no'
+EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.learnit24.no'
+EMAIL_HOST_USER = 'learnit24@learnit24.no'
+EMAIL_HOST_PASSWORD = '4Yxwb9x0'

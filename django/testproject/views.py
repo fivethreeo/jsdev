@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.views.generic import CreateView
 from testproject.forms import DeltagerForm
-
+'''
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
@@ -47,14 +48,33 @@ def send_email_reject(instance):
     mmsg = EmailMessage(subject, body, instance.epost, ['mail@3kanten.it'] )
     mmsg.encoding = 'iso-8859-1'
     mmsg.send()
+'''
+from post_office import mail
 
 class TestCreateView(CreateView):
     form_class = DeltagerForm
     template_name = 'test.html'
 
+    def get_success_url(self):
+        return '/nb/%s/' % self.testtype
+
     def form_valid(self, form):
         response = super(TestCreateView, self).form_valid(form)
-        #send_email(self.object)
+        mail.send(
+            ['oyvind.saltvik@gmail.com'],
+            settings.SERVER_EMAIL,
+            template=self.testtype,
+            context={'deltager': self.object},
+            priority='now'
+        )
+        mail.send(
+            ['oyvind.saltvik@gmail.com'],
+            #[settings.SERVER_EMAIL],
+            settings.SERVER_EMAIL,
+            template='%s_notify' % self.testtype,
+            context={'deltager': self.object},
+            priority='now'
+        )
         return response
 
     def dispatch(self, *args, **kwargs):
