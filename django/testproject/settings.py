@@ -28,7 +28,7 @@ SECRET_KEY = '+zqs41e&00r0he-fucf+x(@4@4^&ig7_dmv182i4ui3ntxn2h6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DJANGO_DEV' in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['test.learnit24.no']
 
 
 # Application definition
