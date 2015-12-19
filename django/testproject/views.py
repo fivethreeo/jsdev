@@ -61,15 +61,14 @@ class TestCreateView(CreateView):
     def form_valid(self, form):
         response = super(TestCreateView, self).form_valid(form)
         mail.send(
-            ['oyvind.saltvik@gmail.com'],
+            [self.object.epost],
             settings.SERVER_EMAIL,
             template=self.testtype,
             context={'deltager': self.object},
             priority='now'
         )
         mail.send(
-            ['oyvind.saltvik@gmail.com'],
-            #[settings.SERVER_EMAIL],
+            [settings.TEST_NOTIFY_EMAIL],
             settings.SERVER_EMAIL,
             template='%s_notify' % self.testtype,
             context={'deltager': self.object},

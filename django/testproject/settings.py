@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '+zqs41e&00r0he-fucf+x(@4@4^&ig7_dmv182i4ui3ntxn2h6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'DJANGO_DEV' in os.environ
 
 ALLOWED_HOSTS = []
 
@@ -190,7 +190,7 @@ CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {}
 
-if os.environ.get('DJANGO_DEV', False):
+if 'DJANGO_DEV' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -224,9 +224,18 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.filters'
 )
 
-
 SERVER_EMAIL = 'learnit24@learnit24.no'
+
+if 'DJANGO_DEV' in os.environ:
+    TEST_NOTIFY_EMAIL = 'oyvind.saltvik@gmail.com'
+else:
+    TEST_NOTIFY_EMAIL = SERVER_EMAIL
+
 EMAIL_PORT = 587
 EMAIL_HOST = 'smtp.learnit24.no'
 EMAIL_HOST_USER = 'learnit24@learnit24.no'
 EMAIL_HOST_PASSWORD = '4Yxwb9x0'
+
+ADMINS = (
+    ('Oyvind Saltvik', 'oyvind.saltvik@gmail.com'),
+)
