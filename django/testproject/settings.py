@@ -77,8 +77,9 @@ if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
     STATICFILES_LOCATION = 'static'
-    STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
     MEDIAFILES_LOCATION = 'media'
+
+    STATICFILES_STORAGE = 'testproject.custom_storages.StaticStorage'
     DEFAULT_FILE_STORAGE = 'testproject.custom_storages.MediaStorage'
 
     STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
