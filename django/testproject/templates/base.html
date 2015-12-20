@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <title>{% block title %}This is my new project home page{% endblock title %}</title>
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <link rel="stylesheet" href="/static/css/main.css">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
         {% render_block "css" %}
     </head>
     <body>
@@ -30,6 +30,6 @@
         </div>-->
         {% block content %}{% endblock content %}
         {% render_block "js" %}
-        <script src="/static/js/main.js"></script>
+        <script src="{% static 'js/main.js' %}"></script>
     </body>
 </html>

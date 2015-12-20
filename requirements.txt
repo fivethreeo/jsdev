@@ -21,3 +21,5 @@ django-sekizai>=0.7
 six
 django-post_office==2.0.3
 django-smuggler==0.1.6
+django-storages
+boto

@@ -33,12 +33,7 @@ ALLOWED_HOSTS = ['test.learnit24.no', '.elasticbeanstalk.com']
 
 # Application definition
 
-
-
-
-
 ROOT_URLCONF = 'testproject.urls'
-
 
 
 WSGI_APPLICATION = 'testproject.wsgi.application'
@@ -67,8 +62,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 STATIC_ROOT = os.path.join(DATA_DIR, 'static')
 
@@ -77,6 +70,22 @@ STATICFILES_DIRS = (
 )
 SITE_ID = 1
 
+if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+    STATICFILES_LOCATION = 'static'
+    STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
+    MEDIAFILES_LOCATION = 'media'
+    DEFAULT_FILE_STORAGE = 'testproject.custom_storages.MediaStorage'
+
+    STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
+    MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
+else:
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
 
 TEMPLATES = [
     {
@@ -151,6 +160,7 @@ INSTALLED_APPS = (
     'djangocms_inherit',
     'djangocms_link',
     'testproject',
+    'storages',
     'widget_tweaks',
     'post_office',
     'smuggler'

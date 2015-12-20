@@ -12,7 +12,6 @@ class Deltager(models.Model):
     
     dato = models.DateField()
     annet = models.TextField(blank=True)
-    
             
     def __unicode__(self):
         return u'%s %s' % (self.fornavn, self.etternavn)
