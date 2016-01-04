@@ -31,7 +31,7 @@
       "Type": "String"
     },
     "KeyName": {
-      "Type": "String"
+      "Type": "AWS::EC2::KeyPair::KeyName"
     },
     "InstanceType": {
       "Type": "String",
@@ -121,17 +121,6 @@
   },
 
   "Resources": {
-
-    "NATIPAddress": {
-      "Type": "AWS::EC2::EIP",
-      "DependsOn": "GatewayToInternet",
-      "Properties": {
-        "Domain": "vpc",
-        "InstanceId": {
-          "Ref": "NATDevice"
-        }
-      }
-    },
 
     "Application": {
       "Type": "AWS::ElasticBeanstalk::Application",

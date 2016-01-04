@@ -20,12 +20,8 @@
       "Default": "public/vpc/django-elasticbeanstalk.cfn.json"
     },
     "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the Elastic Beanstalk and Bastion hosts",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "255",
-      "AllowedPattern": "[\\x20-\\x7E]*",
-      "ConstraintDescription": "can contain only ASCII characters."
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the Elastic Beanstalk host",
+      "Type": "AWS::EC2::KeyPair::KeyName"
     },
     "SSHFrom": {
       "Description": "Lockdown SSH access to the bastion host (default can be accessed from anywhere)",
