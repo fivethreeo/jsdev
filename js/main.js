@@ -23,7 +23,7 @@ require.config({
 		'backbone': 'bower_components/backbone/backbone',
 		'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
 		'text': 'bower_components/text/text',
-		'datetimepicker': 'bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
+		'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
 		'moment': 'bower_components/moment/moment',
 		'moment-nb': 'bower_components/moment/locale/nb'
 
@@ -58,8 +58,12 @@ $("a[href^='#']").on('click', function(event) {
 });
 $(document).ready(function() {
 	$('#id_dato').datetimepicker({
-		daysOfWeekDisabled: [0, 1, 2, 3, 4, 6],
+		calendarWeeks: true,
 		format: 'YYYY-MM-DD',
+		isValidCallback: function (theMoment) {
+		    var isMoment = theMoment.clone().startOf('M').startOf('w').startOf('d').add(2, 'days');
+		    return isMoment.format('YYYY-MM-DD') === theMoment.format('YYYY-MM-DD');
+		},
 		minDate: new Date(new Date().setHours(0,0,0,0))
 
        });

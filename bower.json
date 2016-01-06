@@ -12,7 +12,7 @@
     "parsleyjs": "~2.1.2",
     "text": "~2.0.14",
     "video.js": "~5.0.2",
-    "eonasdan-bootstrap-datetimepicker": "~4.17.37"
+    "bootstrap-datetimepicker": "https://github.com/fivethreeo/bootstrap-datetimepicker.git"
   },
   "devDependencies": {}
 }
