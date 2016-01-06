@@ -151,7 +151,7 @@
           {
             "Namespace": "aws:ec2:vpc",
             "OptionName": "Subnets",
-            "Value": { "Fn::Join": ["", [{ "Ref" : "PrivateSubnet1" }, { "Ref" : "PrivateSubnet2" }]]}
+            "Value": { "Fn::Join": ["", [{ "Ref" : "PublicSubnet1" }, { "Ref" : "PublicSubnet2" }]]}
           },
           {
             "Namespace": "aws:ec2:vpc",
