@@ -30,7 +30,7 @@ require.config({
 	}
 });
 require([
-    "jquery", "underscore", "bootstrap", "moment-nb", "datetimepicker"
+    "jquery", "underscore", "bootstrap", "moment", "moment-nb", "datetimepicker"
 ],
 function($, _, _, moment) {
 $(window).scroll(function() {
