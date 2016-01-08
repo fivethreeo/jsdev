@@ -5,6 +5,8 @@
     baseUrl: '..',
     allowSourceOverwrites: true,
     paths: { requireLib: 'bower_components/requirejs/require'},
+    optimize: "none",
+
     modules: [
         //First set up the common build layer.
         {
