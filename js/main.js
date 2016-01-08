@@ -63,6 +63,7 @@ $(document).ready(function() {
 		calendarWeeks: true,
 		format: 'YYYY-MM-DD',
 		defaultDate: dMoment,
+		viewDate: dMoment,
 		isValidCallback: function (theMoment) {
 		    var isMoment = theMoment.clone().startOf('M').day(5);
 		    console.log(isMoment.format('YYYY-MM-DD'), theMoment.format('YYYY-MM-DD'))
