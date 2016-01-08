@@ -32,7 +32,7 @@ require.config({
 require([
     "jquery", "underscore", "bootstrap", "moment-nb", "datetimepicker"
 ],
-function($, _) {
+function($, _, _, moment) {
 $(window).scroll(function() {
 if ($(this).scrollTop() > 1){  
     $('.navbar').addClass("white");
