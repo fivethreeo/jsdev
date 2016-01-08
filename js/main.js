@@ -61,7 +61,7 @@ $(document).ready(function() {
 		calendarWeeks: true,
 		format: 'YYYY-MM-DD',
 		isValidCallback: function (theMoment) {
-		    var isMoment = theMoment.clone().startOf('M').startOf('w').startOf('d').add(2, 'days');
+		    var isMoment = theMoment.clone().startOf('M').day(6);
 		    console.log(isMoment.format('YYYY-MM-DD'), theMoment.format('YYYY-MM-DD'))
 		    return isMoment.format('YYYY-MM-DD') === theMoment.format('YYYY-MM-DD');
 		},
