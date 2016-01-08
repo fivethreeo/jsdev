@@ -24,6 +24,14 @@
       "NoEcho": "true",
       "Type": "String"
     },
+    "DatabaseHost": {
+      "NoEcho": "true",
+      "Type": "String"
+    },
+    "DatabasePort": {
+      "NoEcho": "true",
+      "Type": "String"
+    },
     "AssetsBucketPrefix": {
       "Type": "String"
     },
@@ -132,7 +140,7 @@
         "ConfigurationTemplates": [{
           "TemplateName": "DefaultConfiguration",
           "Description": "Default Configuration Version 1.0 - with SSH access",
-          "SolutionStackName": "64bit Amazon Linux running Python 2.7",
+          "SolutionStackName": "64bit Amazon Linux 2015.09 v2.0.4 running Python 2.7",
           "OptionSettings": [{
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "AWS_REGION",
@@ -208,21 +216,33 @@
           }
         }, {
           "Namespace": "aws:elasticbeanstalk:application:environment",
-          "OptionName": "RDS_DATABASE",
+          "OptionName": "RDS_DB_NAME",
           "Value": {
             "Ref": "DatabaseName"
           }
         }, {
           "Namespace": "aws:elasticbeanstalk:application:environment",
-          "OptionName": "RDS_USERNAME",
+          "OptionName": "RDS_DB_USERNAME",
           "Value": {
             "Ref": "DatabaseUser"
           }
         }, {
           "Namespace": "aws:elasticbeanstalk:application:environment",
-          "OptionName": "RDS_PASSWORD",
+          "OptionName": "RDS_DB_PASSWORD",
           "Value": {
             "Ref": "DatabasePassword"
+          }
+        }, {
+          "Namespace": "aws:elasticbeanstalk:application:environment",
+          "OptionName": "RDS_DB_HOST",
+          "Value": {
+            "Ref": "DatabaseHost"
+          }
+        }, {
+          "Namespace": "aws:elasticbeanstalk:application:environment",
+          "OptionName": "RDS_DB_PORT",
+          "Value": {
+            "Ref": "DatabasePort"
           }
         }, {
           "Namespace": "aws:elasticbeanstalk:application:environment",

@@ -218,6 +218,8 @@
           "DatabaseName"     : { "Ref" : "DatabaseName"},
           "DatabaseUser"     : { "Ref" : "DatabaseUser"},
           "DatabasePassword" : { "Ref" : "DatabasePassword" },
+          "DatabaseHost"     : { "Fn::GetAtt" : [ "AppResources", "Outputs.DatabaseHost" ]},
+          "DatabasePort" : { "Fn::GetAtt" : [ "AppResources", "Outputs.DatabasePort" ]},
           "AssetsBucketPrefix"  : { "Ref" : "AssetsBucketPrefix" },
           "AppZIPFile"           : { "Ref" : "AppZIPFile"},
           "KeyName"          : { "Ref" : "KeyName" },

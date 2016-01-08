@@ -236,11 +236,17 @@
     "AppBucket": {
       "Value": { "Ref" : "AppBucket"}
     },
-    "DatabaseUser":{
+    "":{
       "Value": { "Ref" : "DatabaseUser"}
     },
     "DatabasePassword": {
       "Value": { "Ref" : "DatabasePassword" }
+    },
+    "DatabaseHost" : {
+        "Value" : { "Fn::GetAtt" : ["Database", "Endpoint.Address"] }
+    },
+    "DatabasePort" : {
+        "Value" : { "Fn::GetAtt" : ["Database", "Endpoint.Port"] }
     },
     "InstanceSecurityGroup": {
       "Value": { "Ref" : "InstanceSecurityGroup" }
