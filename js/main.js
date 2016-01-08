@@ -64,10 +64,13 @@ $(document).ready(function() {
 		format: 'YYYY-MM-DD',
 		defaultDate: dMoment,
 		viewDate: dMoment,
-		isValidCallback: function (theMoment) {
-		    var isMoment = theMoment.clone().startOf('M').day(5);
-		    console.log(isMoment.format('YYYY-MM-DD'), theMoment.format('YYYY-MM-DD'))
-		    return isMoment.format('YYYY-MM-DD') == theMoment.format('YYYY-MM-DD');
+		isValidCallback: function (theMoment, granularity) {
+			if (granularity == 'd') {
+		        var isMoment = theMoment.clone().startOf('M').day(5);
+		        console.log(isMoment.format('YYYY-MM-DD'), theMoment.format('YYYY-MM-DD'))
+		        return isMoment.format('YYYY-MM-DD') == theMoment.format('YYYY-MM-DD');
+		    }
+		    return true
 		},
 		minDate: new Date(new Date().setHours(0,0,0,0))
 
