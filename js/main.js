@@ -56,12 +56,15 @@ $("a[href^='#']").on('click', function(event) {
     return window.history.pushState(null, null, target);
   });
 });
+var dMoment = moment().startOf('M').day(5);
+dMoment = dMoment.isBefore(moment(), 'd') ? dMoment.add(1, 'month').startOf('M').day(5) : dMoment
 $(document).ready(function() {
 	$('#id_dato').datetimepicker({
 		calendarWeeks: true,
 		format: 'YYYY-MM-DD',
+		defaultDate: dMoment,
 		isValidCallback: function (theMoment) {
-		    var isMoment = theMoment.clone().startOf('M').day(6);
+		    var isMoment = theMoment.clone().startOf('M').day(5);
 		    console.log(isMoment.format('YYYY-MM-DD'), theMoment.format('YYYY-MM-DD'))
 		    return isMoment.format('YYYY-MM-DD') === theMoment.format('YYYY-MM-DD');
 		},
