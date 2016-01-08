@@ -66,7 +66,7 @@ $(document).ready(function() {
 		isValidCallback: function (theMoment) {
 		    var isMoment = theMoment.clone().startOf('M').day(5);
 		    console.log(isMoment.format('YYYY-MM-DD'), theMoment.format('YYYY-MM-DD'))
-		    return isMoment.format('YYYY-MM-DD') === theMoment.format('YYYY-MM-DD');
+		    return isMoment.format('YYYY-MM-DD') == theMoment.format('YYYY-MM-DD');
 		},
 		minDate: new Date(new Date().setHours(0,0,0,0))
 
