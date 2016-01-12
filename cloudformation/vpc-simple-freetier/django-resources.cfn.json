@@ -105,9 +105,9 @@
         "Properties" : {
             "Description" : "Cache Subnet Group",
             "SubnetIds": [{
-              "Ref": "PrivateSubnet1"
+              "Ref": "PublicSubnet1"
             }, {
-              "Ref": "PrivateSubnet2"
+              "Ref": "PublicSubnet2"
             }]
         }
     },
@@ -123,40 +123,40 @@
           }
         },
 
-        "CacheSecurityGroup" : {
-          "Type" : "AWS::EC2::SecurityGroup",
-          "Properties" : {
-            "GroupDescription" : "Allow access to the cache from the Web Server",
-            "VpcId" : { "Ref" : "VPCId" },
-            "SecurityGroupIngress": [{
-              "IpProtocol": "tcp",
-              "FromPort": "0",
-              "ToPort": "65535",
-              "SourceSecurityGroupId": {
-                "Ref": "InstanceSecurityGroup"
-              }
-            }],
-            "SecurityGroupEgress": [{
-              "IpProtocol": "tcp",
-              "FromPort": "0",
-              "ToPort": "65535",
-              "SourceSecurityGroupId": {
-                "Ref": "InstanceSecurityGroup"
-              }
-            }]
-          }      
-        },  
-
-        "CacheCluster" : {
-          "Type": "AWS::ElastiCache::CacheCluster",
-          "Properties": {
-            "CacheSubnetGroupName" : { "Ref" : "CacheSubnetGroup" },
-            "CacheNodeType"        : { "Ref" : "CacheInstanceType" },
-            "VpcSecurityGroupIds"  : [ { "Ref" : "CacheSecurityGroup" } ],
-            "Engine"               : "memcached",
-            "NumCacheNodes"        : "2"
+    "CacheSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Allow access to the cache from the Web Server",
+        "VpcId" : { "Ref" : "VPCId" },
+        "SecurityGroupIngress": [{
+          "IpProtocol": "tcp",
+          "FromPort": "0",
+          "ToPort": "65535",
+          "SourceSecurityGroupId": {
+            "Ref": "InstanceSecurityGroup"
           }
-        },
+        }],
+        "SecurityGroupEgress": [{
+          "IpProtocol": "tcp",
+          "FromPort": "0",
+          "ToPort": "65535",
+          "SourceSecurityGroupId": {
+            "Ref": "InstanceSecurityGroup"
+          }
+        }]
+      }      
+    },  
+
+    "CacheCluster" : {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "CacheSubnetGroupName" : { "Ref" : "CacheSubnetGroup" },
+        "CacheNodeType"        : { "Ref" : "CacheInstanceType" },
+        "VpcSecurityGroupIds"  : [ { "Ref" : "CacheSecurityGroup" } ],
+        "Engine"               : "memcached",
+        "NumCacheNodes"        : "2"
+      }
+    },
 
     "DBSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
@@ -167,16 +167,16 @@
         },
         "SecurityGroupIngress": [{
           "IpProtocol": "tcp",
-          "FromPort": "3306",
-          "ToPort": "3306",
+          "FromPort": "5432,",
+          "ToPort": "5432",
           "SourceSecurityGroupId": {
             "Ref": "InstanceSecurityGroup"
           }
         }],
         "SecurityGroupEgress": [{
           "IpProtocol": "tcp",
-          "FromPort": "3306",
-          "ToPort": "3306",
+          "FromPort": "5432",
+          "ToPort": "5432",
           "CidrIp": "0.0.0.0/0"
         }]
       }
@@ -187,9 +187,9 @@
       "Properties": {
         "DBSubnetGroupDescription": "RDS DB Subnet group",
         "SubnetIds": [{
-          "Ref": "PrivateSubnet1"
+          "Ref": "PublicSubnet1"
         }, {
-          "Ref": "PrivateSubnet2"
+          "Ref": "PublicSubnet2"
         }]
       }
     },
