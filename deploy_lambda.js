@@ -144,7 +144,7 @@ function handle_roles(error, stdout, stderr) {
 function handle_regions(err, error, stdout, stderr) {
   console.log('Beginning deploy of Lambdas to Regions: ' + regions.join(' '));
 
-  async.eachSeries(regions, handle_region, function () { // region_callback
+  async.each(regions, handle_region, function () { // region_callback
     console.log('~~~~ All done! Lambdas are deployed globally and ready for use by CloudFormation. ~~~~');
     console.log('~~~~                They are accessible to your CloudFormation at:                ~~~~');
     console.log(format('aws:arn:<region>:{ACCOUNT_NUMBER}:function:{FULL_NAME}', command_vars));
@@ -175,7 +175,7 @@ function handle_region(region, region_callback) {
       }
     ],
     function (err, error, stdout, stderr) {
-      console.log('Upserted lambda');
+      console.log(format('Upserted lambda on {}', region));
       region_callback();
     }
   );
