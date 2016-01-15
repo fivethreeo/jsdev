@@ -4,7 +4,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var ghPages = require('gulp-gh-pages');
 var jade = require('gulp-jade');
 var path = require('path');
-var spawn = require('win-spawn');
+var wspawn = require('win-spawn');
 
 gulp.task('less', function () {
   var LessPluginCleanCSS = require("less-plugin-clean-css"),
@@ -47,7 +47,7 @@ gulp.task('connectdjango', function () {
     for (varName in env) {
       envCopy[varName] = env[varName];
     }
-    return spawn(python, [
+    return wspawn(python, [
       'django' + sep + 'manage.py',
       'runserver',
       'localhost:9000'
@@ -55,7 +55,7 @@ gulp.task('connectdjango', function () {
 
 });
 gulp.task('js', function () {
-    return spawn('node', [
+    return wspawn('node', [
       'tools' + sep + 'r.js',
       '-o',
       'tools' + sep + 'build.js'
