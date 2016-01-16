@@ -236,20 +236,20 @@
             line-height: 54px;
             width: 54px;
 
-            &.day {
-                height: 20px;
-                line-height: 20px;
-                width: 20px;
-                background: green;
-                color: white;
-            }
-
             &.cw {
                 font-size: .8em;
                 height: 20px;
                 line-height: 20px;
                 color: @bs-datetimepicker-alternate-color;
                 background: none;
+            }
+
+            &.day {
+                height: 20px;
+                line-height: 20px;
+                width: 20px;
+                background: green;
+                color: white;
             }
 
             &.day:hover,
@@ -263,6 +263,7 @@
             &.old,
             &.new {
                 color: @bs-datetimepicker-alternate-color;
+                background: none;
             }
 
             &.today {
