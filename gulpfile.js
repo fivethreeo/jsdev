@@ -1,10 +1,8 @@
 var gulp = require('gulp');
 var less = require('gulp-less');
 var sourcemaps = require('gulp-sourcemaps');
-var ghPages = require('gulp-gh-pages');
-var jade = require('gulp-jade');
 var path = require('path');
-var wspawn = require('win-spawn');
+var spawn = require('cross-spawn-async');
 
 gulp.task('less', function () {
   var LessPluginCleanCSS = require("less-plugin-clean-css"),
@@ -12,7 +10,6 @@ gulp.task('less', function () {
   
   var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
       autoprefix= new LessPluginAutoPrefix({browsers: ["last 3 versions"]});
-  
   
   gulp.src('./less/*.less')
     .pipe(sourcemaps.init())
@@ -27,17 +24,14 @@ gulp.task('less', function () {
 
 gulp.task('copy', function() {
   gulp.src(['./static/**/*' ])
-    .pipe(gulp.dest('./django/testproject/static/'))
+    .pipe(gulp.dest('./django/testproject/static/'));
 
   gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
-    .pipe(gulp.dest('./django/testproject/static/fonts')) 
-  //gulp.src([path.join(__dirname, 'bower_components', 'video.js') + '/**/*' ])
-  //  .pipe(gulp.dest('./django/testproject/static/video.js'))
+    .pipe(gulp.dest('./django/testproject/static/fonts'));
 });
- 
 
 var python = /^win/.test(process.platform) ? './env/Scripts/python.exe' :  './env/bin/python';
-var sep = /^win/.test(process.platform) ? '/' :  '\\';
+
 gulp.task('connectdjango', function () {
     var env = process.env,
         varName,
@@ -47,21 +41,18 @@ gulp.task('connectdjango', function () {
     for (varName in env) {
       envCopy[varName] = env[varName];
     }
-    return wspawn(python, [
-      'django' + sep + 'manage.py',
-      'runserver',
-      'localhost:9000'
-    ], {stdio: 'inherit', env: envCopy})
+    return spawn(python, [
+      path.join('django', 'manage.py'), 'runserver', 'localhost:9000'
+    ], {stdio: 'inherit', env: envCopy});
 
 });
+
 gulp.task('js', function () {
-    return wspawn('node', [
-      'tools' + sep + 'r.js',
-      '-o',
-      'tools' + sep + 'build.js'
-    ], {stdio: 'inherit'})
-
+    return spawn('node', [
+      path.join('tools', 'r.js'), '-o', path.join('tools', 'build.js')
+    ], {stdio: 'inherit'});
 });
+
 gulp.task('serve', ['connectdjango'], function () {
    
     require('opn')('http://localhost:9000');
