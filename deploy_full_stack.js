@@ -146,6 +146,10 @@ async.waterfall([
 			  {
 			    "ParameterKey": "VPCAvailabilityZone2",
 			    "ParameterValue": zonedata.AvailabilityZones[1].ZoneName
+			  },
+			  {
+			    "ParameterKey": "ElasticsearchDomainName",
+			    "ParameterValue": 'djangosearch'
 			  }
 		  ],
 		  TemplateURL: ["http://", assetsbucket, ".s3.amazonaws.com/", "public/vpc/django-master.cfn.json"].join('')
