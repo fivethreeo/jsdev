@@ -11,8 +11,9 @@ var archiver = require('archiver');
 var region = 'eu-west-1';
 var keyname = 'my-ec2-keypair-name';
 var keyname = 'common';
-var stackname = 'aws-django2';
-var assetsbucketprefix = 'aws-django-';
+var applicationname = 'aws-django-testproject';
+var stackname = applicationname;
+var assetsbucketprefix = applicationname + '-';
 var assetsbucket = assetsbucketprefix + region;
 
 var AWS = require('aws-sdk');
@@ -35,7 +36,6 @@ var templates = function(input){
 ]);
 
 var s3 = new AWS.S3();
-
 
 async.waterfall([
     function(callback) {
@@ -128,6 +128,14 @@ async.waterfall([
 		  OnFailure: 'ROLLBACK',
 		  Parameters: [
 			  {
+			    "ParameterKey": "ApplicationName",
+			    "ParameterValue": applicationname
+			  },
+			  {
+			    "ParameterKey": "AssetsBucketPrefix",
+			    "ParameterValue": assetsbucketprefix
+			  },
+			  {
 			    "ParameterKey": "KeyName",
 			    "ParameterValue": keyname
 			  },
@@ -138,10 +146,6 @@ async.waterfall([
 			  {
 			    "ParameterKey": "VPCAvailabilityZone2",
 			    "ParameterValue": zonedata.AvailabilityZones[1].ZoneName
-			  },
-			  {
-			    "ParameterKey": "AssetsBucketPrefix",
-			    "ParameterValue": assetsbucketprefix
 			  }
 		  ],
 		  TemplateURL: ["http://", assetsbucket, ".s3.amazonaws.com/", "public/vpc/django-master.cfn.json"].join('')

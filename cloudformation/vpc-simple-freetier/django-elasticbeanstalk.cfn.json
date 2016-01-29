@@ -142,11 +142,15 @@
         "ConfigurationTemplates": [{
           "TemplateName": "DefaultConfiguration",
           "Description": "Default Configuration Version 1.0 - with SSH access",
-          "SolutionStackName": "64bit Amazon Linux 2015.09 v2.0.4 running Python 2.7",
+          "SolutionStackName": "64bit Amazon Linux 2015.09 v2.0.6 running Python 2.7",
           "OptionSettings": [{
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "AWS_REGION",
             "Value": { "Ref": "AWS::Region" }
+          }, {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "SingleInstance"
           }, {
             "Namespace": "aws:autoscaling:launchconfiguration",
             "OptionName": "EC2KeyName",
@@ -206,6 +210,11 @@
         "VersionLabel": "Initial Version",
         "TemplateName": "DefaultConfiguration",
         "OptionSettings": [{
+          "Namespace": "aws:ec2:vpc",
+          "OptionName": "AssociatePublicIpAddress",
+          "Value": true
+        },
+        {
           "Namespace": "aws:elasticbeanstalk:application:environment",
           "OptionName": "RDS_INSTANCEID",
           "Value": {
