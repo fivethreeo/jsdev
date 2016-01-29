@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Provisions two substacks: a VPC with bastion and NAT instances, and the django-resources stack, which launches the testprojec Beanstalk app and its dependencies into the VPC.",
+  "Description": "Provisions two substacks: a VPC and the django-resources stack, which launches the testproject Beanstalk app and its dependencies into the VPC.",
 
   "Parameters": {
     "VPCTemplateKey": {
@@ -41,7 +41,7 @@
       "Type": "AWS::EC2::AvailabilityZone::Name"
     },
     "DatabaseUser": {
-      "Default": "admin",
+      "Default": "dbadmin",
       "NoEcho": "true",
       "Type": "String",
       "Description": "Database admin account name",
@@ -163,6 +163,43 @@
       "Description": "The name of the Elastic Beanstalk Application",
       "Type": "String",
       "Default": "django-VPC"
+    },
+    "ElasticsearchDomainCustomResourceLambdaName": {
+      "Type": "String",
+      "Default": "cfn-elasticsearch-domain-0-1-1",
+      "Description": "The name of the ElasticseachDomain Lambda you deployed to test this stack."
+    },
+    "ElasticsearchDomainName": {
+      "Type": "String",
+      "Default": "djangosearch2",
+      "Description": "The name of the Elasticsearch Domain you will launch",
+      "AllowedPattern": "[a-z][a-z0-9\\-]+"
+    },
+    "ElasticsearchDomainClusterNodeCount": {
+      "Type": "Number",
+      "Default": "1",
+      "Description": "Number of nodes to build into the Elasticsearch Domain Cluster."
+    },
+    "ElasticsearchDomainClusterNodeSize": {
+      "Type": "String",
+      "Description": "Size of nodes to build into the Elasticsearch Domain Cluster.",
+      "Default": "t2.micro.elasticsearch",
+      "AllowedValues": [
+        "m3.medium.elasticsearch",
+        "m3.large.elasticsearch",
+        "m3.xlarge.elasticsearch",
+        "m3.2xlarge.elasticsearch",
+        "t2.micro.elasticsearch",
+        "t2.small.elasticsearch",
+        "t2.medium.elasticsearch",
+        "r3.large.elasticsearch",
+        "r3.xlarge.elasticsearch",
+        "r3.2xlarge.elasticsearch",
+        "r3.4xlarge.elasticsearch",
+        "r3.8xlarge.elasticsearch",
+        "i2.xlarge.elasticsearch",
+        "i2.2xlarge.elasticsearch"
+      ]
     }
   },
 
@@ -190,6 +227,10 @@
           "DatabaseInstanceType": { "Ref" : "DatabaseInstanceType" },      
           "CacheInstanceType": { "Ref" : "CacheInstanceType" },                  
           "InstanceSecurityGroup" : { "Fn::GetAtt" : ["VPCScaffold", "Outputs.InstanceSecurityGroup"] },
+          "ElasticsearchDomainCustomResourceLambdaName": { "Ref" : "ElasticsearchDomainCustomResourceLambdaName" },
+          "ElasticsearchDomainName": { "Ref" : "ElasticsearchDomainName" },
+          "ElasticsearchDomainClusterNodeCount": { "Ref" : "ElasticsearchDomainClusterNodeCount" },
+          "ElasticsearchDomainClusterNodeSize": { "Ref" : "ElasticsearchDomainClusterNodeSize" },
           "VPCId" : { "Fn::GetAtt" : ["VPCScaffold", "Outputs.VPCId"] },
           "PrivateSubnet1" : {
             "Fn::GetAtt" : ["VPCScaffold", "Outputs.PrivateSubnet1"]
@@ -212,8 +253,10 @@
         "TemplateURL" : { "Fn::Join" : ["", [ "http://", { "Ref" : "AssetsBucketPrefix" }, { "Ref" : "AWS::Region" }, ".s3.amazonaws.com/", { "Ref" : "AppTemplateKey" }]]},
         "Parameters" : {
           "RdsDbId"                : { "Fn::GetAtt" : [ "AppResources", "Outputs.RdsDbId" ]},
-          "CacheEndpoint"          : { "Fn::GetAtt" : [ "AppResources", "Outputs.CacheEndpoint" ]},
-          "CachePort"              : { "Fn::GetAtt" : [ "AppResources", "Outputs.CachePort" ]},
+          "MemCacheEndpoint"          : { "Fn::GetAtt" : [ "AppResources", "Outputs.MemCacheEndpoint" ]},
+          "MemCachePort"              : { "Fn::GetAtt" : [ "AppResources", "Outputs.MemCachePort" ]},
+          "RedisCacheId"          : { "Fn::GetAtt" : [ "AppResources", "Outputs.RedisCacheId" ]},
+          "ElasticsearchDomainEndpoint" : { "Fn::GetAtt" : [ "AppResources", "Outputs.ElasticsearchDomainEndpoint" ]},
           "AppBucket"              : { "Fn::GetAtt" : [ "AppResources", "Outputs.AppBucket" ]},
           "DatabaseName"     : { "Ref" : "DatabaseName"},
           "DatabaseUser"     : { "Ref" : "DatabaseUser"},

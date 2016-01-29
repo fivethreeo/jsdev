@@ -6,7 +6,7 @@
   "Parameters": {
 
     "DatabaseUser": {
-      "Default": "admin",
+      "Default": "dbadmin",
       "NoEcho": "true",
       "Type": "String",
       "Description": "Database admin account name",
@@ -28,7 +28,7 @@
     "DatabaseName": {
       "Description": "The name of the database",
       "Type": "String",
-      "Default": " amediamanager"
+      "Default": " django"
     },
     "DatabaseInstanceType" : {
       "Description" : "RDS DB instance type",
@@ -51,7 +51,7 @@
       ]
     },
     "CacheInstanceType" : {
-      "Description" : "RDS DB instance type",
+      "Description" : "Memcached instance type",
       "Default": "cache.t2.micro",
       "Type" : "String",
       "AllowedValues" : [
@@ -67,6 +67,43 @@
         "cache.r3.2xlarge",
         "cache.r3.4xlarge",
         "cache.r3.8xlarge"
+      ]
+    },
+    "ElasticsearchDomainCustomResourceLambdaName": {
+      "Type": "String",
+      "Default": "cfn-elasticsearch-domain-0-1-1",
+      "Description": "The name of the ElasticseachDomain Lambda you deployed to test this stack."
+    },
+    "ElasticsearchDomainName": {
+      "Type": "String",
+      "Default": "mysearchdomain",
+      "Description": "The name of the Elasticsearch Domain you will launch",
+      "AllowedPattern": "[a-z][a-z0-9\\-]+"
+    },
+    "ElasticsearchDomainClusterNodeCount": {
+      "Type": "Number",
+      "Default": "1",
+      "Description": "Number of nodes to build into the Elasticsearch Domain Cluster."
+    },
+    "ElasticsearchDomainClusterNodeSize": {
+      "Type": "String",
+      "Description": "Size of nodes to build into the Elasticsearch Domain Cluster.",
+      "Default": "t2.micro.elasticsearch",
+      "AllowedValues": [
+        "m3.medium.elasticsearch",
+        "m3.large.elasticsearch",
+        "m3.xlarge.elasticsearch",
+        "m3.2xlarge.elasticsearch",
+        "t2.micro.elasticsearch",
+        "t2.small.elasticsearch",
+        "t2.medium.elasticsearch",
+        "r3.large.elasticsearch",
+        "r3.xlarge.elasticsearch",
+        "r3.2xlarge.elasticsearch",
+        "r3.4xlarge.elasticsearch",
+        "r3.8xlarge.elasticsearch",
+        "i2.xlarge.elasticsearch",
+        "i2.2xlarge.elasticsearch"
       ]
     },
     "InstanceSecurityGroup" : {
@@ -112,7 +149,7 @@
         }
     },
 
-    "CacheParameters" : {
+    "MemCacheParameters" : {
           "Type" : "AWS::ElastiCache::ParameterGroup",
           "Properties" : {
             "CacheParameterGroupFamily" : "memcached1.4",
@@ -147,7 +184,7 @@
       }      
     },  
 
-    "CacheCluster" : {
+    "MemCacheCluster" : {
       "Type": "AWS::ElastiCache::CacheCluster",
       "Properties": {
         "CacheSubnetGroupName" : { "Ref" : "CacheSubnetGroup" },
@@ -155,6 +192,78 @@
         "VpcSecurityGroupIds"  : [ { "Ref" : "CacheSecurityGroup" } ],
         "Engine"               : "memcached",
         "NumCacheNodes"        : "2"
+      }
+    },
+
+    "RedisCacheCluster" : {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "CacheSubnetGroupName" : { "Ref" : "CacheSubnetGroup" },
+        "CacheNodeType"        : { "Ref" : "CacheInstanceType" },
+        "VpcSecurityGroupIds"  : [ { "Ref" : "CacheSecurityGroup" } ],
+        "Engine"               : "redis",
+        "NumCacheNodes"        : "1"
+      }
+    },
+    "MyElasticsearchDomain": {
+      "Type": "Custom::ElasticsearchDomain",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::Join": [
+            ":",
+            [
+              "arn",
+              "aws",
+              "lambda",
+              {
+                "Ref": "AWS::Region"
+              },
+              {
+                "Ref": "AWS::AccountId"
+              },
+              "function",
+              {
+                "Ref": "ElasticsearchDomainCustomResourceLambdaName"
+              }
+            ]
+          ]
+        },
+        "DomainName": {
+          "Ref": "ElasticsearchDomainName"
+        },
+        "AccessPolicies": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Action\":[\"es:*\"],\"Resource\":\"arn:aws:es:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":domain/",
+              {
+                "Ref": "ElasticsearchDomainName"
+              },
+              "/*\"}]}"
+            ]
+          ]
+        },
+        "ElasticsearchClusterConfig": {
+          "InstanceCount": {
+            "Ref": "ElasticsearchDomainClusterNodeCount"
+          },
+          "InstanceType": {
+            "Ref": "ElasticsearchDomainClusterNodeSize"
+          }
+        },
+        "EBSOptions": {
+          "EBSEnabled": true,
+          "VolumeSize": 10,
+          "VolumeType": "standard"
+        }
       }
     },
 
@@ -167,7 +276,7 @@
         },
         "SecurityGroupIngress": [{
           "IpProtocol": "tcp",
-          "FromPort": "5432,",
+          "FromPort": "5432",
           "ToPort": "5432",
           "SourceSecurityGroupId": {
             "Ref": "InstanceSecurityGroup"
@@ -197,7 +306,7 @@
     "Database": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
-        "Engine": "Postgresql",
+        "Engine": "postgres",
         "DBName": {
           "Ref": "DatabaseName"
         },
@@ -227,16 +336,22 @@
     "RdsDbId": {
        "Value" : { "Ref" : "Database" }
     },
-    "CacheEndpoint": { 
-      "Value": { "Fn::GetAtt" : [ "CacheCluster", "ConfigurationEndpoint.Address" ]}
+    "MemCacheEndpoint": { 
+      "Value": { "Fn::GetAtt" : [ "MemCacheCluster", "ConfigurationEndpoint.Address" ]}
     },
-    "CachePort": { 
-      "Value" : {"Fn::GetAtt" : [ "CacheCluster", "ConfigurationEndpoint.Port" ]}
+    "MemCachePort": { 
+      "Value" : {"Fn::GetAtt" : [ "MemCacheCluster", "ConfigurationEndpoint.Port" ]}
+    },
+    "RedisCacheId": { 
+      "Value": { "Ref" : "RedisCacheCluster"}
+    },
+    "ElasticsearchDomainEndpoint": {
+      "Value": { "Fn::GetAtt": [ "MyElasticsearchDomain", "Endpoint" ] }
     },
     "AppBucket": {
       "Value": { "Ref" : "AppBucket"}
     },
-    "":{
+    "DatabaseUser":{
       "Value": { "Ref" : "DatabaseUser"}
     },
     "DatabasePassword": {

@@ -10,10 +10,16 @@
     "AppBucket": {
       "Type": "String"
     },
-    "CacheEndpoint": {
+    "MemCacheEndpoint": {
       "Type": "String"
     },
-    "CachePort": {
+    "MemCachePort": {
+      "Type": "String"
+    },
+    "RedisCacheId": {
+      "Type": "String"
+    },
+    "ElasticsearchDomainEndpoint": {
       "Type": "String"
     },
     "DatabaseUser": {
@@ -105,10 +111,6 @@
     "VPCId" : {
       "Type" : "String",
       "Description" : "The VPC ID to launch the application into."
-    },
-    "GatewayToInternet" : {
-      "Type" : "String",
-      "Description" : "The VPC Gateway to Internet."
     },
     "PrivateSubnet1" : {
       "Description" : "A private VPC subnet ID.",
@@ -241,15 +243,27 @@
           }
         }, {
           "Namespace": "aws:elasticbeanstalk:application:environment",
-          "OptionName": "CACHE_ENDPOINT",
+          "OptionName": "MEMCACHE_ENDPOINT",
           "Value": {
-            "Ref": "CacheEndpoint"
+            "Ref": "MemCacheEndpoint"
           }
-        },{
+        }, {
           "Namespace": "aws:elasticbeanstalk:application:environment",
-          "OptionName": "CACHE_PORT",
+          "OptionName": "MEMCACHE_PORT",
           "Value": {
-            "Ref": "CachePort"
+            "Ref": "MemCachePort"
+          }
+        }, {
+          "Namespace": "aws:elasticbeanstalk:application:environment",
+          "OptionName": "ELASTICSEARCH_ENDPOINT",
+          "Value": {
+            "Ref": "ElasticsearchDomainEndpoint"
+          }
+        }, {
+          "Namespace": "aws:elasticbeanstalk:application:environment",
+          "OptionName": "REDIS_ID",
+          "Value": {
+            "Ref": "RedisCacheId"
           }
         }]
       }
