@@ -27,7 +27,7 @@ var main = function (opts, main_callback) {
 		for (var i=0;i<input.length;i++) {
 			output.push({
 				key: 'public/vpc/' + input[i],
-				buffer: fs.readFileSync(path.join(__dirname, 'cloudformation', 'vpc-simple-freetier', input[i]))
+				buffer: fs.readFileSync(path.join(path.dirname(__dirname), 'cloudformation', 'vpc-simple-freetier', input[i]))
 			});
 		}
 		return output;
@@ -101,7 +101,7 @@ var main = function (opts, main_callback) {
 
 			console.log('Zipping django deployment to buffer...');
 
-			archive.directory(path.join(__dirname, 'django'), '');
+			archive.directory(path.join(path.dirname(__dirname), 'django'), '');
 
 			archive.pipe(converter);
 

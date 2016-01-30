@@ -71,18 +71,16 @@ gulp.task('build', ['js', 'less', 'copy'], function () {
 
 gulp.task('deploy_lambda_resource', function () {
 
+    var config = require('./config.json');
     var format = require('string-format');
     var deploy = require(path.join(
       __dirname,
-      'node_modules',
-      'cfn-elasticsearch-domain',
-      'node_modules',
-      'cfn-lambda',
+      'tools',
       'deploy'));
 
     return deploy(
-      'eu-west-1', ['eu-west-1'], function (res) {
-          console.log(format(res, 'eu-west-1'));
+      config.region, [config.region], function (res) {
+          console.log(format(res, config.region));
       }
     );
 });
@@ -118,7 +116,7 @@ gulp.task('configure', function (callback) {
 gulp.task('deploy_full_stack', function (callback) {
 
     var config = require('./config.json');
-    var full_deploy = require('./deploy_full_stack');
+    var full_deploy = require(path.join(__dirname, 'tools', 'deploy_full_stack'));
     full_deploy(config, function () {
       return callback();
     });
