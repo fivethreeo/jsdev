@@ -11,9 +11,12 @@ var archiver = require('archiver');
 var region = 'eu-west-1';
 var keyname = 'my-ec2-keypair-name';
 var keyname = 'common';
-var applicationname = 'aws-django-testproject';
-var stackname = applicationname;
-var assetsbucketprefix = applicationname + '-';
+var unique = '9';
+var projectname = 'aws-django-testproject' + unique;
+var applicationname = 'django-app' + unique;
+var environmentname = applicationname + '-env';
+var stackname = projectname;
+var assetsbucketprefix = projectname + '-';
 var assetsbucket = assetsbucketprefix + region;
 
 var AWS = require('aws-sdk');
@@ -132,6 +135,10 @@ async.waterfall([
 			    "ParameterValue": applicationname
 			  },
 			  {
+			    "ParameterKey": "EnvironmentName",
+			    "ParameterValue": environmentname
+			  },
+			  {
 			    "ParameterKey": "AssetsBucketPrefix",
 			    "ParameterValue": assetsbucketprefix
 			  },
@@ -149,7 +156,7 @@ async.waterfall([
 			  },
 			  {
 			    "ParameterKey": "ElasticsearchDomainName",
-			    "ParameterValue": 'djangosearch'
+			    "ParameterValue": applicationname
 			  }
 		  ],
 		  TemplateURL: ["http://", assetsbucket, ".s3.amazonaws.com/", "public/vpc/django-master.cfn.json"].join('')

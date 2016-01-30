@@ -71,15 +71,16 @@ STATICFILES_DIRS = (
 SITE_ID = 1
 
 if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
+
     AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-    AWS_S3_HOST = os.environ['AWS_S3_HOST']
+    AWS_S3_HOST = 's3-%s.amazonaws.com' % os.environ['AWS_REGION']
+
+    #AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    #AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
     STATICFILES_LOCATION = 'static'
     MEDIAFILES_LOCATION = 'media'
-
 
     STATICFILES_STORAGE = 'testproject.custom_storages.StaticStorage'
     DEFAULT_FILE_STORAGE = 'testproject.custom_storages.MediaStorage'
@@ -215,10 +216,10 @@ elif 'RDS_DB_NAME' in os.environ:
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
+            'USER': os.environ['RDS_DB_USERNAME'],
+            'PASSWORD': os.environ['RDS_DB_PASSWORD'],
+            'HOST': os.environ['RDS_DB_HOST'],
+            'PORT': os.environ['RDS_DB_PORT'],
         }
     }
 else:

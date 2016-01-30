@@ -7,9 +7,6 @@
     "RdsDbId": {
       "Type": "String"
     },
-    "AppBucket": {
-      "Type": "String"
-    },
     "MemCacheEndpoint": {
       "Type": "String"
     },
@@ -36,6 +33,9 @@
     },
     "DatabasePort": {
       "NoEcho": "true",
+      "Type": "String"
+    },
+    "MediaBucket": {
       "Type": "String"
     },
     "AssetsBucketPrefix": {
@@ -138,7 +138,7 @@
         "Description": {
           "Ref": "ApplicationName"
         },
-        "ApplicationName" : { "Fn::Join" : ["-", [{ "Ref": "ApplicationName" }, {"Ref": "DeveloperName"}]] },
+        "ApplicationName" : { "Ref": "ApplicationName" },
         "ConfigurationTemplates": [{
           "TemplateName": "DefaultConfiguration",
           "Description": "Default Configuration Version 1.0 - with SSH access",
@@ -205,7 +205,7 @@
       "Type": "AWS::ElasticBeanstalk::Environment",
       "Properties": {
         "ApplicationName": { "Ref": "Application"},
-        "EnvironmentName" : { "Fn::Join" : ["-", [ { "Ref": "EnvironmentName" }, {"Ref": "DeveloperName"}]] },
+        "EnvironmentName" : { "Ref": "EnvironmentName" },
         "Description": "Default Environment",
         "VersionLabel": "Initial Version",
         "TemplateName": "DefaultConfiguration",
@@ -213,6 +213,13 @@
           "Namespace": "aws:ec2:vpc",
           "OptionName": "AssociatePublicIpAddress",
           "Value": true
+        },
+        {
+          "Namespace": "aws:elasticbeanstalk:application:environment",
+          "OptionName": "AWS_STORAGE_BUCKET_NAME",
+          "Value": {
+            "Ref": "MediaBucket"
+          }
         },
         {
           "Namespace": "aws:elasticbeanstalk:application:environment",

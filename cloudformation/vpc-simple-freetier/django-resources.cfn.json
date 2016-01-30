@@ -133,7 +133,7 @@
   },
 
   "Resources": {
-    "AppBucket": {
+    "MediaBucket": {
       "Type": "AWS::S3::Bucket"
     },
 
@@ -348,8 +348,8 @@
     "ElasticsearchDomainEndpoint": {
       "Value": { "Fn::GetAtt": [ "MyElasticsearchDomain", "Endpoint" ] }
     },
-    "AppBucket": {
-      "Value": { "Ref" : "AppBucket"}
+    "MediaBucket": {
+      "Value": { "Ref" : "MediaBucket"}
     },
     "DatabaseUser":{
       "Value": { "Ref" : "DatabaseUser"}
