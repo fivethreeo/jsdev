@@ -1,5 +1,8 @@
 
-To deploy existing app in ``django/``: ::
+To deploy existing app in ``django/
+===================================
+
+::
 
   npm install
   cd node_modules/cfn-elasticsearch-domain
