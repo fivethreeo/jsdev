@@ -6,7 +6,7 @@ Install `nodejs`_ or `io.js`_ and `Python`_.
 
 ::
 
-  pip instal awscli
+  pip install awscli
   npm install
   aws configure
   gulp configure
