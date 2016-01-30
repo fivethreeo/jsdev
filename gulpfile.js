@@ -1,8 +1,11 @@
+
+var fs = require('fs');
+var path = require('path');
 var gulp = require('gulp');
 var less = require('gulp-less');
 var sourcemaps = require('gulp-sourcemaps');
-var path = require('path');
 var spawn = require('cross-spawn-async');
+var prompt = require('prompt');
 
 gulp.task('less', function () {
   var LessPluginCleanCSS = require("less-plugin-clean-css"),
@@ -66,7 +69,7 @@ gulp.task('build', ['js', 'less', 'copy'], function () {
    
 });
 
-gulp.task('deploy_resource', function () {
+gulp.task('deploy_lambda_resource', function () {
 
     var format = require('string-format');
     var deploy = require(path.join(
@@ -82,4 +85,41 @@ gulp.task('deploy_resource', function () {
           console.log(format(res, 'eu-west-1'));
       }
     );
+});
+
+gulp.task('configure', function (callback) {
+  
+  prompt.start();
+  prompt.get([{
+    name: 'project_name',
+    description: 'Project name',
+    type: 'string',
+    required: true
+  }, {
+    name: 'region',
+    description: 'Deploy to region',
+    type: 'string',
+    required: true
+  }, {
+    name: 'keyname',
+    description: 'EC2 keypair for instance',
+    type: 'string',
+    required: true
+  }], function(err, result) {
+    fs.writeFile('./config.json', JSON.stringify(result), function(err) {
+      if (err) throw err;
+      console.log('config.json saved!');
+      return callback();
+    });
+  });
+
+});
+
+gulp.task('deploy_full_stack', function (callback) {
+
+    var config = require('./config.json');
+    var full_deploy = require('./deploy_full_stack');
+    full_deploy(config, function () {
+      return callback();
+    });
 });

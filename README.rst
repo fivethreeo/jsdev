@@ -2,16 +2,16 @@
 To deploy existing app in django/
 =================================
 
+Install `nodejs`_ or `io.js`_ and `Python`_.
+
 ::
 
+  pip instal awscli
   npm install
-  # gulp deploy_resource
-  cd node_modules
-  cd cfn-elasticsearch-domain
-  npm run cfn-lambda-deploy
-  cd ..
-  cd ..
-  node deploy_full_stack.js
+  aws configure
+  gulp configure
+  gulp deploy_lambda_resource
+  gulp deploy_full_stack
 
 To build css/javascript
 =======================
@@ -37,7 +37,7 @@ Pasteable commands: ::
 To run project locally
 ======================
 
-Install `nodejs`_ or `io.js`_. and `Python`_.
+Install `nodejs`_ or `io.js`_ and `Python`_.
 
 Install node modules needed: ::
 
