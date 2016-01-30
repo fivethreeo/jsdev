@@ -65,3 +65,19 @@ gulp.task('serve', ['connectdjango'], function () {
 gulp.task('build', ['js', 'less', 'copy'], function () {
    
 });
+
+gulp.task('deploy_resource', function () {
+
+    var format = require('string-format');
+    var deploy = require(path.join(
+      __dirname,
+      'node_modules',
+      'cfn-elasticsearch-domain',
+      'node_modules',
+      'cfn-lambda',
+      'deploy'));
+
+    return deploy(
+      'eu-west-1', ['eu-west-1'], function (res) { console.log(format(res, 'eu-west-1')); }
+    )
+});

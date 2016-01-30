@@ -1,15 +1,17 @@
 
+To deploy existing app in ``django/``: ::
 
-Installation
-============
+  npm install
+  cd node_modules/cfn-elasticsearch-domain
+  npm run cfn-lambda-deploy
+  cd ..
+  cd ..
+  node deploy_full_stack.js
+
+To build css/javascript
+=======================
 
 Install `nodejs`_ or `io.js`_.
-
-Install `Python`_.
-
-Install virtualenv: ::
-  
-  pip install virtualenv
 
 Install node modules: ::
 
@@ -20,13 +22,33 @@ Install bower assets: ::
 
   bower install
 
+Pasteable commands: ::
+
+  npm install
+  npm install -g bower
+  bower install
+  gulp build 
+  
+To run project locally
+======================
+
+Install `nodejs`_ or `io.js`_. and `Python`_.
+
+Install node modules needed: ::
+
+  npm install
+
+Install virtualenv: ::
+  
+  pip install virtualenv
+
 Create virtualenv: ::
 
   virtualenv env
 
 Install python modules: ::
 
-  env/bin/pip install -r requirements.txt
+  env/bin/pip install -r requirements-dev.txt
 
 Sync django database: ::
 
@@ -34,36 +56,22 @@ Sync django database: ::
 
 Pasteable commands (linux): ::
 
-  npm install
-  npm install -g bower
-  bower install
-  gulp less 
-
   pip install virtualenv
 
   virtualenv env
-  env/bin/pip install -r requirements.txt
+  env/bin/pip install -r requirements-dev.txt
   env/bin/python django/manage.py syncdb
-  env/bin/python django/manage.py runserver
+  gulp serve
 
 Pasteable commands (win): ::
-
-  npm install
-  npm install -g bower
-  bower install
-  gulp less
   
   pip install virtualenv
 
   virtualenv env
-  env\Scripts\pip.exe install -r requirements.txt
+  env\Scripts\pip.exe install -r requirements-dev.txt
   env\Scripts\python.exe django\manage.py syncdb
-  env\Scripts\python.exe django\manage.py runserver
+  gulp serve
   
-Notes
-=====
-
-Signup not implemented.
 
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/
