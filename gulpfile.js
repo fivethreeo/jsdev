@@ -78,6 +78,8 @@ gulp.task('deploy_resource', function () {
       'deploy'));
 
     return deploy(
-      'eu-west-1', ['eu-west-1'], function (res) { console.log(format(res, 'eu-west-1')); }
-    )
+      'eu-west-1', ['eu-west-1'], function (res) {
+          console.log(format(res, 'eu-west-1'));
+      }
+    );
 });

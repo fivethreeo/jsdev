@@ -1,11 +1,13 @@
 
-To deploy existing app in ``django/
-===================================
+To deploy existing app in django/
+=================================
 
 ::
 
   npm install
-  cd node_modules/cfn-elasticsearch-domain
+  # gulp deploy_resource
+  cd node_modules
+  cd cfn-elasticsearch-domain
   npm run cfn-lambda-deploy
   cd ..
   cd ..
