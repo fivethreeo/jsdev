@@ -134,7 +134,30 @@
 
   "Resources": {
     "MediaBucket": {
-      "Type": "AWS::S3::Bucket"
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "PublicRead",
+        "CorsConfiguration": {
+          "CorsRules": [
+            {
+              "AllowedHeaders": [
+                "*"
+              ],
+              "AllowedMethods": [
+                "GET"
+              ],
+              "AllowedOrigins": [
+                "*"
+              ],
+              "ExposedHeaders": [
+                "Date"
+              ],
+              "Id": "myCORSRuleId1",
+              "MaxAge": "3600"
+            }
+          ]
+        }
+      }
     },
 
     "CacheSubnetGroup" : {
