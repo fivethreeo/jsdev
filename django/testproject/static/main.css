@@ -6708,4 +6708,198 @@ ul.rot li:nth-child(3n+3) {
   color: white;
   font-size: 1.5em; }
 
+.navbar-transparent .navbar-nav:hover a {
+  opacity: 0.8; }
+
+.navbar-transparent .navbar-nav:hover a:hover {
+  opacity: 1; }
+
+.navbar-transparent {
+  background-color: transparent;
+  border-color: transparent;
+  transition: all 2s ease-in; }
+  .navbar-transparent .navbar-brand {
+    color: #fff; }
+    .navbar-transparent .navbar-brand:hover, .navbar-transparent .navbar-brand:focus {
+      color: #fff;
+      background-color: transparent; }
+  .navbar-transparent .navbar-text {
+    color: transparent; }
+  .navbar-transparent .navbar-nav > li > a {
+    color: #000;
+    transition: all 0.5s ease-in; }
+    .navbar-transparent .navbar-nav > li > a:hover, .navbar-transparent .navbar-nav > li > a:focus {
+      color: #eeee;
+      background-color: transparent; }
+  .navbar-transparent .navbar-nav > .active > a, .navbar-transparent .navbar-nav > .active > a:hover, .navbar-transparent .navbar-nav > .active > a:focus {
+    color: orange;
+    background-color: transparent; }
+  .navbar-transparent .navbar-nav > .disabled > a, .navbar-transparent .navbar-nav > .disabled > a:hover, .navbar-transparent .navbar-nav > .disabled > a:focus {
+    color: #fff;
+    background-color: transparent; }
+  .navbar-transparent .navbar-toggle {
+    border-color: #fff; }
+    .navbar-transparent .navbar-toggle:hover, .navbar-transparent .navbar-toggle:focus {
+      background-color: transparent; }
+    .navbar-transparent .navbar-toggle .icon-bar {
+      background-color: #fff; }
+  .navbar-transparent .navbar-collapse,
+  .navbar-transparent .navbar-form {
+    border-color: transparent; }
+  .navbar-transparent .navbar-nav > .open > a, .navbar-transparent .navbar-nav > .open > a:hover, .navbar-transparent .navbar-nav > .open > a:focus {
+    background-color: transparent;
+    color: orange; }
+  .navbar-transparent .navbar-nav > .dropdown > a:hover .caret {
+    border-top-color: #eeee;
+    border-bottom-color: #eeee; }
+  .navbar-transparent .navbar-nav > .dropdown > a .caret {
+    border-top-color: #000;
+    border-bottom-color: #000; }
+  .navbar-transparent .navbar-nav > .open > a .caret, .navbar-transparent .navbar-nav > .open > a:hover .caret, .navbar-transparent .navbar-nav > .open > a:focus .caret {
+    border-top-color: orange;
+    border-bottom-color: orange; }
+  @media (max-width: 767px) {
+    .navbar-transparent .navbar-nav .open .dropdown-menu > .dropdown-header {
+      border-color: transparent; }
+    .navbar-transparent .navbar-nav .open .dropdown-menu > li > a {
+      color: #000; }
+      .navbar-transparent .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-transparent .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #eeee;
+        background-color: transparent; }
+    .navbar-transparent .navbar-nav .open .dropdown-menu > .active > a, .navbar-transparent .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-transparent .navbar-nav .open .dropdown-menu > .active > a:focus {
+      color: orange;
+      background-color: transparent; }
+    .navbar-transparent .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-transparent .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-transparent .navbar-nav .open .dropdown-menu > .disabled > a:focus {
+      color: #fff;
+      background-color: transparent; } }
+  .navbar-transparent .navbar-link {
+    color: #000; }
+    .navbar-transparent .navbar-link:hover {
+      color: #eeee; }
+
+@media (max-width: 767px) {
+  .navbar-transparent {
+    background-color: #fff;
+    border-color: transparent; }
+    .navbar-transparent .navbar-brand {
+      color: #333; }
+      .navbar-transparent .navbar-brand:hover, .navbar-transparent .navbar-brand:focus {
+        color: #333;
+        background-color: transparent; }
+    .navbar-transparent .navbar-text {
+      color: #333; }
+    .navbar-transparent .navbar-nav > li > a {
+      color: #333; }
+      .navbar-transparent .navbar-nav > li > a:hover, .navbar-transparent .navbar-nav > li > a:focus {
+        color: orange;
+        background-color: transparent; }
+    .navbar-transparent .navbar-nav > .active > a, .navbar-transparent .navbar-nav > .active > a:hover, .navbar-transparent .navbar-nav > .active > a:focus {
+      color: #333;
+      background-color: transparent; }
+    .navbar-transparent .navbar-nav > .disabled > a, .navbar-transparent .navbar-nav > .disabled > a:hover, .navbar-transparent .navbar-nav > .disabled > a:focus {
+      color: #333;
+      background-color: transparent; }
+    .navbar-transparent .navbar-toggle {
+      border-color: #ccc; }
+      .navbar-transparent .navbar-toggle:hover, .navbar-transparent .navbar-toggle:focus {
+        background-color: transparent; }
+      .navbar-transparent .navbar-toggle .icon-bar {
+        background-color: #ccc; }
+    .navbar-transparent .navbar-collapse,
+    .navbar-transparent .navbar-form {
+      border-color: #ededed; }
+    .navbar-transparent .navbar-nav > .open > a, .navbar-transparent .navbar-nav > .open > a:hover, .navbar-transparent .navbar-nav > .open > a:focus {
+      background-color: transparent;
+      color: #333; }
+    .navbar-transparent .navbar-nav > .dropdown > a:hover .caret {
+      border-top-color: orange;
+      border-bottom-color: orange; }
+    .navbar-transparent .navbar-nav > .dropdown > a .caret {
+      border-top-color: #333;
+      border-bottom-color: #333; }
+    .navbar-transparent .navbar-nav > .open > a .caret, .navbar-transparent .navbar-nav > .open > a:hover .caret, .navbar-transparent .navbar-nav > .open > a:focus .caret {
+      border-top-color: #333;
+      border-bottom-color: #333; } }
+  @media (max-width: 767px) and (max-width: 767px) {
+    .navbar-transparent .navbar-nav .open .dropdown-menu > .dropdown-header {
+      border-color: transparent; }
+    .navbar-transparent .navbar-nav .open .dropdown-menu > li > a {
+      color: #333; }
+      .navbar-transparent .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-transparent .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: orange;
+        background-color: transparent; }
+    .navbar-transparent .navbar-nav .open .dropdown-menu > .active > a, .navbar-transparent .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-transparent .navbar-nav .open .dropdown-menu > .active > a:focus {
+      color: #333;
+      background-color: transparent; }
+    .navbar-transparent .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-transparent .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-transparent .navbar-nav .open .dropdown-menu > .disabled > a:focus {
+      color: #333;
+      background-color: transparent; } }
+
+@media (max-width: 767px) {
+    .navbar-transparent .navbar-link {
+      color: #333; }
+      .navbar-transparent .navbar-link:hover {
+        color: orange; } }
+
+.navbar-transparent.white {
+  background-color: #fff;
+  border-color: transparent; }
+  .navbar-transparent.white .navbar-brand {
+    color: #333; }
+    .navbar-transparent.white .navbar-brand:hover, .navbar-transparent.white .navbar-brand:focus {
+      color: #333;
+      background-color: transparent; }
+  .navbar-transparent.white .navbar-text {
+    color: #333; }
+  .navbar-transparent.white .navbar-nav > li > a {
+    color: #333; }
+    .navbar-transparent.white .navbar-nav > li > a:hover, .navbar-transparent.white .navbar-nav > li > a:focus {
+      color: orange;
+      background-color: transparent; }
+  .navbar-transparent.white .navbar-nav > .active > a, .navbar-transparent.white .navbar-nav > .active > a:hover, .navbar-transparent.white .navbar-nav > .active > a:focus {
+    color: #333;
+    background-color: transparent; }
+  .navbar-transparent.white .navbar-nav > .disabled > a, .navbar-transparent.white .navbar-nav > .disabled > a:hover, .navbar-transparent.white .navbar-nav > .disabled > a:focus {
+    color: #333;
+    background-color: transparent; }
+  .navbar-transparent.white .navbar-toggle {
+    border-color: #ccc; }
+    .navbar-transparent.white .navbar-toggle:hover, .navbar-transparent.white .navbar-toggle:focus {
+      background-color: transparent; }
+    .navbar-transparent.white .navbar-toggle .icon-bar {
+      background-color: #ccc; }
+  .navbar-transparent.white .navbar-collapse,
+  .navbar-transparent.white .navbar-form {
+    border-color: #ededed; }
+  .navbar-transparent.white .navbar-nav > .open > a, .navbar-transparent.white .navbar-nav > .open > a:hover, .navbar-transparent.white .navbar-nav > .open > a:focus {
+    background-color: transparent;
+    color: #333; }
+  .navbar-transparent.white .navbar-nav > .dropdown > a:hover .caret {
+    border-top-color: orange;
+    border-bottom-color: orange; }
+  .navbar-transparent.white .navbar-nav > .dropdown > a .caret {
+    border-top-color: #333;
+    border-bottom-color: #333; }
+  .navbar-transparent.white .navbar-nav > .open > a .caret, .navbar-transparent.white .navbar-nav > .open > a:hover .caret, .navbar-transparent.white .navbar-nav > .open > a:focus .caret {
+    border-top-color: #333;
+    border-bottom-color: #333; }
+  @media (max-width: 767px) {
+    .navbar-transparent.white .navbar-nav .open .dropdown-menu > .dropdown-header {
+      border-color: transparent; }
+    .navbar-transparent.white .navbar-nav .open .dropdown-menu > li > a {
+      color: #333; }
+      .navbar-transparent.white .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-transparent.white .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: orange;
+        background-color: transparent; }
+    .navbar-transparent.white .navbar-nav .open .dropdown-menu > .active > a, .navbar-transparent.white .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-transparent.white .navbar-nav .open .dropdown-menu > .active > a:focus {
+      color: #333;
+      background-color: transparent; }
+    .navbar-transparent.white .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-transparent.white .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-transparent.white .navbar-nav .open .dropdown-menu > .disabled > a:focus {
+      color: #333;
+      background-color: transparent; } }
+  .navbar-transparent.white .navbar-link {
+    color: #333; }
+    .navbar-transparent.white .navbar-link:hover {
+      color: orange; }
+
 /*# sourceMappingURL=maps/main.css.map */
