@@ -2,35 +2,38 @@
 var fs = require('fs');
 var path = require('path');
 var gulp = require('gulp');
-var less = require('gulp-less');
+var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var spawn = require('cross-spawn-async');
 var prompt = require('prompt');
 
-gulp.task('less', function () {
-  var LessPluginCleanCSS = require("less-plugin-clean-css"),
-      cleancss = new LessPluginCleanCSS({advanced: true});
-  
-  var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-      autoprefix= new LessPluginAutoPrefix({browsers: ["last 3 versions"]});
-  
-  gulp.src('./less/*.less')
+gulp.task('sass', function () {
+
+  gulp.src('static/sass/*.scss')
     .pipe(sourcemaps.init())
-    .pipe(less({
-      paths: [ path.join(__dirname, 'bower_components') ],
-      plugins: [autoprefix, cleancss]
-     }))
+    .pipe(sass({
+      style: 'compressed',
+      includePaths: [ 
+      path.join(__dirname, 'bower_components', 'bootstrap-sass', 'assets', 'stylesheets'),
+      path.join(__dirname, 'bower_components'),
+      path.join(__dirname, 'static', 'sass')
+    ]}).on('error', sass.logError))
+    .pipe(autoprefixer({
+      browsers: ['last 3 versions'],
+      cascade: false
+    }))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./django/testproject/static/css'));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'testproject', 'static')));
 
 });
 
 gulp.task('copy', function() {
-  gulp.src(['./static/**/*' ])
-    .pipe(gulp.dest('./django/testproject/static/'));
+  gulp.src(['static/**/*' ])
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'testproject', 'static')));
 
   gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
-    .pipe(gulp.dest('./django/testproject/static/fonts'));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'testproject', 'static', 'fonts')));
 });
 
 var python = /^win/.test(process.platform) ? './env/Scripts/python.exe' :  './env/bin/python';
