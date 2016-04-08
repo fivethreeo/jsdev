@@ -1,15 +1,12 @@
 NAME="levangersundet"
-
+INHOME="levangersundet"
 PORT="8544"
 
-PROJECT_DIR="$HOME/levangersundet/django"
-
-VIRTUALENV="$HOME/levangersundet/env"
 # Do not change anything below unless you know what you do
-
+PROJECT_DIR="$HOME/$INHOME/django"
+VIRTUALENV="$HOME/$INHOME/env"
 PIDFILE="$PROJECT_DIR/$NAME.pid"
 DAEMON="$VIRTUALENV/bin/gunicorn"
-
  
 OPTS="levangersundet.wsgi -w 4 -b 127.0.0.1:$PORT --error-logfile $PROJECT_DIR/gunicorn.log -D --pid=$PIDFILE"
 
