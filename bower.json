@@ -9,6 +9,7 @@
     "bootstrap-sass": "~3.3.6",
     "jquery-timing": "https://github.com/creativecouple/jquery-timing.git",
     "underscore": "~1.8.3",
+    "select2": "~4.0.1",
     "requirejs": "~2.1.18",
     "parsleyjs": "~2.1.2",
     "text": "~2.0.14",

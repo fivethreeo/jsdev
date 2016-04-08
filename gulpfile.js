@@ -10,14 +10,14 @@ var prompt = require('prompt');
 
 gulp.task('sass', function () {
 
-  gulp.src('static/sass/*.scss')
+  gulp.src('sass/*.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({
       style: 'compressed',
       includePaths: [ 
       path.join(__dirname, 'bower_components', 'bootstrap-sass', 'assets', 'stylesheets'),
       path.join(__dirname, 'bower_components'),
-      path.join(__dirname, 'static', 'sass')
+      path.join(__dirname, 'sass')
     ]}).on('error', sass.logError))
     .pipe(autoprefixer({
       browsers: ['last 3 versions'],
