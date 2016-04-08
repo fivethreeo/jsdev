@@ -1,7 +1,7 @@
 NAME="test"
-PROJECT_DIR="$HOME/test/django"
+PROJECT_DIR="$HOME/levangersundet/django"
 
-VIRTUALENV="$HOME/test/env"
+VIRTUALENV="$HOME/levangersundet/env"
 # Do not change anything below unless you know what you do
 
 PIDFILE="$PROJECT_DIR/$NAME.pid"
