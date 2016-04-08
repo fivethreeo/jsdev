@@ -1,4 +1,7 @@
 NAME="levangersundet"
+
+PORT="8544"
+
 PROJECT_DIR="$HOME/levangersundet/django"
 
 VIRTUALENV="$HOME/levangersundet/env"
@@ -8,7 +11,7 @@ PIDFILE="$PROJECT_DIR/$NAME.pid"
 DAEMON="$VIRTUALENV/bin/gunicorn"
 
  
-OPTS="levangersundet.wsgi -w 4 -b 127.0.0.1:9999 --error-logfile $PROJECT_DIR/gunicorn.log -D --pid=$PIDFILE"
+OPTS="levangersundet.wsgi -w 4 -b 127.0.0.1:$PROJECT_DIR/ --error-logfile $PROJECT_DIR/gunicorn.log -D --pid=$PIDFILE"
 
 fail () {
     echo "failed!"
