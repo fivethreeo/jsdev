@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load cms_tags %}
+
+{% block title %}{% page_attribute "page_title" %}{% endblock title %}
+
+{% block content %}
+    <div class="container pad-150px">
+        {% if view.testtype %}
+        <form method="POST" class="form-horizontal">
+            
+	    	<div class="col-md-6">
+			    {% ifequal view.testtype "baat" %}{% static_placeholder "overskrift-baat" %}{% endifequal %} 
+
+			    {% ifequal view.testtype "datakort" %}{% static_placeholder "overskrift-kort" %}{% endifequal %} 
+
+			    {% ifequal view.testtype "sol" %}{% static_placeholder "overskrift-sol" %}{% endifequal %} 
+                
+			    {% csrf_token %}
+			    {% load widget_tweaks %}
+
+			    {% for field in form %}
+			    {% ifnotequal field.name "vilkaar" %}
+			    <div class="form-group{% if field.errors %} error{% endif %}">
+			        <label class="control-label col-md-3" for="id_{{ field.html_name }}">{{ field.label }}</label>
+			        <div class="col-md-7">
+			            <div class="input-group">
+			            {% if field.field.required %}<span class="input-group-addon">*</span>{% endif %}    
+			            {{ field|add_class:"form-control" }}{% ifequal field.name "dato" %}<span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>{% endifequal %}
+                        </span>
+			            </div>
+			            {% if field.errors %}
+			            <span class="help-inline">{% for error in field.errors %}{{ error }}{% if not forloop.last %},{% endif %}{% endfor %}</span>
+			            {% endif %}
+			            {% ifequal field.name "dato" %}
+			            <span class="help-block">Testgjennomføring utvalgte fredager kl 14.00.<br/> Alle påmeldinger må skje senest 48 timer før gjennomføring.</span>
+			            {% endifequal %}            
+			        </div>
+			    </div>
+		        {% endifnotequal %}
+		        {% endfor %}
+	    	</div>
+	    	<div class="col-md-6">
+	        	{% ifequal view.testtype "baat" %}{% static_placeholder "innhold-baat" %}{% endifequal %} 
+	        	{% ifequal view.testtype "datakort" %}{% static_placeholder "innhold-kort" %}{% endifequal %} 
+	        	{% ifequal view.testtype "sol" %}{% static_placeholder "innhold-sol" %}{% endifequal %} 
+	        	{% for field in form %}
+    			{% ifequal field.name "vilkaar" %}
+				<div class="form-group{% if field.errors %} error{% endif %}">
+        			<div class="checkbox">
+        			<label class="control-label" for="id_{{ field.html_name }}">{{ field }} {{ field.label }}</label>
+            	    </div>
+			        {% if field.errors %}
+			        <span class="help-inline">{% for error in field.errors %}{{ error }}{% if not forloop.last %},{% endif %}{% endfor %}</span>
+			        {% endif %}
+			    </div>
+			    {% endifequal %}
+			    {% endfor %}
+			    
+			    <div class="control-group">
+
+			        <div class="controls">
+			        <span class="help-block">Alle felter med (*) er påkrevd</span>
+			        </div>
+			    </div>
+			    
+			    <div class="control-group">
+			        <div class="controls"><input type="submit" value="Send" class="btn btn-primary"> <input type="reset" class="btn">
+			        </div>
+			    </div>
+
+	    	</div>
+	    </form>
+	    {% else %}
+	    <div class="col-md-12">{% static_placeholder "innhold-front" %}</div>
+		{% endif %}
+    </div>
+    
+{% endblock content %}
