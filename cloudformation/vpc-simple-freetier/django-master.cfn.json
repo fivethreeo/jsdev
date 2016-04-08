@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Provisions two substacks: a VPC and the django-resources stack, which launches the testproject Beanstalk app and its dependencies into the VPC.",
+  "Description": "Provisions two substacks: a VPC and the django-resources stack, which launches the levangersundet Beanstalk app and its dependencies into the VPC.",
 
   "Parameters": {
     "VPCTemplateKey": {

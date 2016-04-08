@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import *  # NOQA
-from testproject.views import TestCreateView
+from levangersundet.views import TestCreateView
 
 urlpatterns = patterns('',
     url(r'^$', TestCreateView.as_view()),

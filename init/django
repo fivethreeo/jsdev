@@ -8,7 +8,7 @@ PIDFILE="$PROJECT_DIR/$NAME.pid"
 DAEMON="$VIRTUALENV/bin/gunicorn"
 
  
-OPTS="testproject.wsgi -w 4 -b 127.0.0.1:9999 --error-logfile $PROJECT_DIR/gunicorn.log -D --pid=$PIDFILE"
+OPTS="levangersundet.wsgi -w 4 -b 127.0.0.1:9999 --error-logfile $PROJECT_DIR/gunicorn.log -D --pid=$PIDFILE"
 
 fail () {
     echo "failed!"

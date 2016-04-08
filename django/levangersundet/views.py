@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.views.generic import CreateView
-from testproject.forms import DeltagerForm
+from levangersundet.forms import DeltagerForm
 
 from post_office import mail
 

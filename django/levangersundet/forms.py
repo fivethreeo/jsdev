@@ -2,7 +2,7 @@
 
 from django import forms
 from django.forms.models import ModelForm
-from testproject.models import Deltager
+from levangersundet.models import Deltager
 
 from dateutil.relativedelta import *
 from dateutil.rrule import *

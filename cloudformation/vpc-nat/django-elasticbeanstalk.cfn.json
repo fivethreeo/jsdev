@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Deploy the testproject application to Elastic Beanstalk. This template is designed to be executed by the parent django-resources stack.",
+  "Description": "Deploy the levangersundet application to Elastic Beanstalk. This template is designed to be executed by the parent django-resources stack.",
 
   "Parameters": {
     "RdsDbId": {

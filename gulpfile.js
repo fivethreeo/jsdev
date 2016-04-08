@@ -24,16 +24,16 @@ gulp.task('sass', function () {
       cascade: false
     }))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'testproject', 'static')));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static')));
 
 });
 
 gulp.task('copy', function() {
   gulp.src(['static/**/*' ])
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'testproject', 'static')));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static')));
 
   gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'testproject', 'static', 'fonts')));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static', 'fonts')));
 });
 
 var python = /^win/.test(process.platform) ? './env/Scripts/python.exe' :  './env/bin/python';
@@ -72,7 +72,7 @@ gulp.task('js', function (callback) {
         //'backbone-filter'
       ],
       optimize: "uglify",
-      out: path.join(__dirname, 'django',  'testproject', 'static', 'main.js'),
+      out: path.join(__dirname, 'django',  'levangersundet', 'static', 'main.js'),
       // The shim config allows us to configure dependencies for
       // scripts that do not call define() to register a module
       'shim': {

@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Provision resource dependencies for the testproject app (e.g., RDS, S3, DynamoDB, etc..), then app on AWS Elastic Beanstalk via the django-eb-app substack.",
+  "Description": "Provision resource dependencies for the levangersundet app (e.g., RDS, S3, DynamoDB, etc..), then app on AWS Elastic Beanstalk via the django-eb-app substack.",
 
   "Parameters": {
 
