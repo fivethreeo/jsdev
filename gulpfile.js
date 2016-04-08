@@ -53,12 +53,62 @@ gulp.task('connectdjango', function () {
 
 });
 
-gulp.task('js', function () {
-    return spawn('node', [
-      path.join('tools', 'r.js'), '-o', path.join('tools', 'build.js')
-    ], {stdio: 'inherit'});
-});
+gulp.task('js', function (callback) {
 
+  var requirejs = require('requirejs');
+
+  var config = {
+      baseUrl: '',
+      name: 'js/main',
+      include: [
+        'requireLib',
+        'text',
+        'jquery',
+        'underscore',
+        'bootstrap',
+        //'backbone',
+        'select2'
+        //,
+        //'backbone-filter'
+      ],
+      optimize: "uglify",
+      out: path.join(__dirname, 'django',  'testproject', 'static', 'main.js'),
+      // The shim config allows us to configure dependencies for
+      // scripts that do not call define() to register a module
+      'shim': {
+          'underscore': {
+              'exports': '_'
+          },
+          'backbone': {
+              'deps': [
+                  'underscore',
+                  'jquery'
+              ],
+              'exports': 'Backbone'
+          }
+      },
+      'paths': {
+          'jquery': 'bower_components/jquery/dist/jquery',
+          'underscore': 'bower_components/underscore/underscore',
+          'backbone': 'bower_components/backbone/backbone',
+          'backbone-filter': 'bower_components/backbone-filtered-collection/backbone-filtered-collection',
+          'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
+          'text': 'bower_components/text/text',
+          'select2': 'bower_components/select2/dist/js/select2',
+          'requireLib': 'bower_components/requirejs/require',
+          'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
+          'moment': 'bower_components/moment/moment',
+          'moment-nb': 'bower_components/moment/locale/nb'
+      }
+  };
+
+  return requirejs.optimize(config, function (res) {
+    callback();
+  }, function(err) {
+    console.log(err);
+  });
+
+});
 gulp.task('serve', ['connectdjango'], function () {
    
     require('opn')('http://localhost:9000');
