@@ -54,8 +54,16 @@ gulp.task('connectdjango', function () {
 
 });
 
-gulp.task('manage', function () {
-    var env = process.env,
+gulp.task('manage', function (callback) {
+  prompt.start();
+  prompt.get([{
+    name: 'command',
+    description: 'Command',
+    type: 'string',
+    required: true
+  }], function(err, result) {
+    
+  var env = process.env,
         varName,
         envCopy = {DJANGO_DEV:1};
 
@@ -64,8 +72,10 @@ gulp.task('manage', function () {
       envCopy[varName] = env[varName];
     }
     return spawn(python,
-       [manage].concat(process.argv.slice(3))
+       [manage].concat(result['command'].split(' '))
     , {stdio: 'inherit', env: envCopy});
+    callback();
+  });
 
 });
 
