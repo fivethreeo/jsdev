@@ -36,7 +36,8 @@ gulp.task('copy', function() {
     .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static', 'fonts')));
 });
 
-var python = /^win/.test(process.platform) ? './env/Scripts/python.exe' :  './env/bin/python';
+var python = /^win/.test(process.platform) ? path.join(__dirname, 'env', 'Scripts', 'python.exe') : path.join(__dirname, 'env', 'bin', 'python');
+var manage = path.join(__dirname, 'django', 'manage.py');
 
 gulp.task('connectdjango', function () {
     var env = process.env,
@@ -48,7 +49,22 @@ gulp.task('connectdjango', function () {
       envCopy[varName] = env[varName];
     }
     return spawn(python, [
-      path.join('django', 'manage.py'), 'runserver', 'localhost:9000'
+       manage, 'runserver', 'localhost:9000'
+    ], {stdio: 'inherit', env: envCopy});
+
+});
+
+gulp.task('migrate', function () {
+    var env = process.env,
+        varName,
+        envCopy = {DJANGO_DEV:1};
+
+    // Copy process.env into envCopy
+    for (varName in env) {
+      envCopy[varName] = env[varName];
+    }
+    return spawn(python, [
+       manage, 'migrate'
     ], {stdio: 'inherit', env: envCopy});
 
 });
