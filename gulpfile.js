@@ -54,7 +54,7 @@ gulp.task('connectdjango', function () {
 
 });
 
-gulp.task('migrate', function () {
+gulp.task('manage', function () {
     var env = process.env,
         varName,
         envCopy = {DJANGO_DEV:1};
@@ -63,9 +63,9 @@ gulp.task('migrate', function () {
     for (varName in env) {
       envCopy[varName] = env[varName];
     }
-    return spawn(python, [
-       manage, 'migrate'
-    ], {stdio: 'inherit', env: envCopy});
+    return spawn(python,
+       [manage].concat(process.argv.slice(3))
+    , {stdio: 'inherit', env: envCopy});
 
 });
 
