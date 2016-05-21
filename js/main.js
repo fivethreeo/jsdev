@@ -25,7 +25,7 @@ $("a[href^='#']").on('click', function(event) {
 
   return $('html, body').animate({
     scrollTop: $(this.hash).offset().top - navOffset
-  }, 300, function() {
+  }, 400, function() {
     return window.history.pushState(null, null, target);
   });
 });

@@ -13,18 +13,18 @@ gulp.task('sass', function () {
   gulp.src('sass/*.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({
-      style: 'compressed',
-      includePaths: [ 
+      //style: 'compressed',
+      includePaths: [
+      path.join(__dirname, 'sass'),
       path.join(__dirname, 'bower_components', 'bootstrap-sass', 'assets', 'stylesheets'),
-      path.join(__dirname, 'bower_components'),
-      path.join(__dirname, 'sass')
+      path.join(__dirname, 'bower_components')
     ]}).on('error', sass.logError))
     .pipe(autoprefixer({
       browsers: ['last 3 versions'],
       cascade: false
     }))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static')));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static', 'css')));
 
 });
 
@@ -49,7 +49,7 @@ gulp.task('connectdjango', function () {
       envCopy[varName] = env[varName];
     }
     return spawn(python, [
-       manage, 'runserver', 'localhost:9000'
+       manage, 'runserver', '0.0.0.0:9000'
     ], {stdio: 'inherit', env: envCopy});
 
 });
@@ -98,7 +98,7 @@ gulp.task('js', function (callback) {
         //'backbone-filter'
       ],
       optimize: "uglify",
-      out: path.join(__dirname, 'django',  'levangersundet', 'static', 'main.js'),
+      out: path.join(__dirname, 'django',  'levangersundet', 'static', 'js', 'main.js'),
       // The shim config allows us to configure dependencies for
       // scripts that do not call define() to register a module
       'shim': {
@@ -140,11 +140,11 @@ gulp.task('serve', ['connectdjango'], function () {
     require('opn')('http://localhost:9000');
     
     gulp.watch(['./js/**/*'], ['js']);
-    gulp.watch(['./less/**/*'], ['less']);
+    gulp.watch(['./sass/**/*'], ['sass']);
 });
 
 
-gulp.task('build', ['js', 'less', 'copy'], function () {
+gulp.task('build', ['js', 'sass', 'copy'], function () {
    
 });
 

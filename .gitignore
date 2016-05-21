@@ -8,3 +8,5 @@ env
 .publish
 build
 *.db
+# uploaded media
+django/media

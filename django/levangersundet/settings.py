@@ -1,5 +1,7 @@
 import os
 gettext = lambda s: s
+_ = lambda s: s
+
 DATA_DIR = os.path.dirname(os.path.dirname(__file__))
 """
 Django settings for levangersundet project.
@@ -149,8 +151,8 @@ INSTALLED_APPS = (
     'sekizai',
     'treebeard',
     'djangocms_text_ckeditor',
-    'djangocms_style',
-    'djangocms_column',
+    'aldryn_bootstrap3',
+    'aldryn_style',
     'filer',
     'easy_thumbnails',
     'cmsplugin_filer_image',
@@ -203,6 +205,10 @@ CMS_TEMPLATES = (
 CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {}
+
+CMS_PLUGIN_PROCESSORS = (
+    'levangersundet.cms_plugin_processors.h1_spans',
+)
 
 if 'DJANGO_DEV' in os.environ:
     DATABASES = {
@@ -263,4 +269,11 @@ EMAIL_HOST_PASSWORD = '4Yxwb9x0'
 
 ADMINS = (
     ('Oyvind Saltvik', 'oyvind.saltvik@gmail.com'),
+)
+
+ALDRYN_STYLE_CLASS_NAMES = (
+    ('container', _('container')),
+    ('content', _('content')),
+    ('teaser', _('teaser')),
+    ('page', _('page'))
 )

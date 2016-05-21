@@ -1,6 +1,11 @@
+
+$icon-font-path: "../fonts/";
+
 @import "_bootstrap";
 @import "select2/dist/css/select2";
 @import "bootstrap-datetimepicker/build/css/bootstrap-datetimepicker";
+
+@import url(https://fonts.googleapis.com/css?family=Changa+One);
 
 html, body {
     height: 100%;
@@ -8,9 +13,162 @@ html, body {
     /* Remove any browser-default margins. */
     margin: 0;
 }
-
+/*
 body { background:  radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(217,237,242,1) 41%, rgba(153,205,219,1) 100%); }
+*/
+#hjem { height: 100vh; width: 100%; background: url('../header_wide.jpg') top center; }
+#kontakt { background: linear-gradient(to bottom, rgb(5,171,224) 0%,rgb(83,203,241) 60%,rgb(135,224,253) 100%); padding: 15px 0px; margin-top: 30px; }
+#kontakt h2 { 
+    font-family: 'Changa One', cursive;}
+#kontakt h2, #kontakt p { color: white;}
 
+div.page {min-height: 100vh;}
+
+div.h1header {
+  height: 180px;
+  
+  h1 {
+    display: block;
+    float: right;
+    right: 50%;
+    position: relative;
+    font-family: 'Changa One', cursive;
+    font-size: 3.5em;
+    height: 150px;
+      
+    span.wrap {
+      display: block;
+      float: right;
+      right: -50%;
+      position: relative;
+      
+      span.text {
+        display: block;
+        background: url('../h1bg.jpg') top left;
+        clear: both;
+        animation: animationFrames linear 7s;
+        animation-iteration-count: infinite;
+        transform-origin: 0% 0%;
+        margin: 20px 20px;
+        padding: 30px 30px;
+      }
+
+      span.cover {
+        display: block;
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0;
+
+        span.start {
+          display: block;
+          position: absolute;
+          background: url('../porthole.png') top left;
+          background-size: auto 150px;
+          background-repeat: no-repeat;
+          height: 150px;
+          width: 50px;
+          left: 0px;
+          top: 0px;
+        }
+        span.middle {
+          display: block;
+          position: absolute;
+          background: url('../porthole.png') top center;
+          background-size: auto 150px;
+          background-repeat: no-repeat;
+          height: 150px;
+          left: 50px;
+          right: 50px;
+          top: 0px;
+        }
+        span.end {
+          display: block;
+          position: absolute;
+          background: url('../porthole.png') top right;
+          background-size: auto 150px;
+          background-repeat: no-repeat;
+          height: 150px;
+          width: 50px;
+          right: 0px;
+          top: 0px;
+        }
+      }
+    }
+  }
+}
+
+@keyframes animationFrames{
+  0% {
+    transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+  50% {
+    transform:  translate(0px,2px)  rotate(-3deg) ;
+  }
+  100% {
+    transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+@-webkit-keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+
+.arrow {
+  width: 100%;
+  position: absolute;
+  bottom: 30px;
+}
+@media (max-height: 667) {
+  .arrow { display: none; }
+}
+.glyphicon-chevron-down {
+  color: white;
+  font-size: 80px;
+  display:block;
+  text-align:center;
+}
+
+.glyphicon-chevron-down:active,
+.glyphicon-chevron-down:focus {
+  color: white;
+  text-decoration: none;
+}
+.glyphicon-chevron-down:hover {
+  text-decoration: none;
+}
+.bounce {
+  animation: bounce 2s infinite;
+}
 ul.rot li {
     /*background: url(polaroid.svg);*/
     -moz-background-size: 100% 100%;
@@ -56,6 +214,21 @@ ul.rot li:nth-child(3n+3) {-moz-transform: rotate(3deg);-webkit-transform: rotat
     vertical-align: middle;
     color: white;
     font-size: 1.5em;
+}
+
+.navbar-brand { margin-top: 0px; transition: all 2s ease-in;}
+
+.navbar-brand img { height: 116px; width: auto; position: relative; margin-top: 0px; transition: all 2s ease-in;}
+
+@media (min-width: $screen-xs-max) {
+    .white .navbar-brand img { height: 50px; width: auto; }
+    .white .navbar-brand { margin-top: 0px; }
+}
+
+@media (max-width: $screen-sm-max) {
+  .navbar-header { height: 70px; transition: all 2s ease-in;}
+  .navbar-brand img { height: 50px; width: auto; }
+  .navbar-brand { margin-top: 0px; }
 }
 
 // Transparent navbar
@@ -125,6 +298,7 @@ $navbar-transparent-toggle-border-color:        #fff;
 
   .navbar-nav {
     > li > a {
+      font-weight: bold;
       color: $navbar-transparent-link-color;
       transition: all 0.5s ease-in;
 
@@ -251,7 +425,7 @@ $navbar-white-border:                     transparent;
 $navbar-white-link-color:                 #333;
 $navbar-white-link-hover-color:           orange;
 $navbar-white-link-hover-bg:              transparent;
-$navbar-white-link-active-color:          #333;
+$navbar-white-link-active-color:          $navbar-transparent-link-active-color;
 $navbar-white-link-active-bg:             transparent;
 $navbar-white-link-disabled-color:        #333;
 $navbar-white-link-disabled-bg:           transparent;
@@ -543,4 +717,22 @@ $navbar-white-toggle-border-color:        #ccc;
       color: $navbar-white-link-hover-color;
     }
   }
+}
+
+
+.navbar-fixed-top {
+    min-height: 80px;
+}
+
+.navbar-nav > li > a {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    line-height: 80px;
+}
+
+@media (max-width: 767px) {
+    .navbar-nav > li > a {
+    line-height: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;}
 }

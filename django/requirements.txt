@@ -6,8 +6,8 @@ https://github.com/divio/djangocms-flash/archive/master.zip?1450269951.83
 https://github.com/divio/djangocms-googlemap/archive/master.zip?1450269951.83
 https://github.com/divio/djangocms-inherit/archive/master.zip?1450269951.83
 https://github.com/divio/djangocms-link/archive/master.zip?1450269951.83
-https://github.com/divio/djangocms-style/archive/master.zip?1450269951.83
-easy_thumbnails
+aldryn-style
+aldryn-bootstrap3
 django-filer>=0.9.12
 cmsplugin-filer>=0.10.2
 djangocms-admin-style>=1.0.6
