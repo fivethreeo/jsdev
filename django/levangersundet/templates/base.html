@@ -1,6 +1,6 @@
 {% load cms_tags staticfiles sekizai_tags menu_tags %}
 <!doctype html>
-<html>
+<html class="no-js">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
@@ -11,8 +11,8 @@
     {% render_block "css" %}
 </head>
 <body>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
     {% cms_toolbar %}
-    <div id="hjem">
         <div class="navbar navbar-transparent navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -31,49 +31,17 @@
                         <li><a href="#marinaen"><span>Marinaen</span></a></li>
                         <li><a href="#gjestehavn"><span>Gjestehavn</span></a></li>
                         <li><a href="#bilder"><span>Bilder</span></a></li>
-                        <li><a href="#medlemsnytt"><span>Medlemsnytt</span></a></li>
-                        <li><a href="#kontakt"><span>Kontaktinfo</span></a></li>
+                        <li><a href="#nyheter"><span>Nyheter</span></a></li>
+                        <li><a href="#kontaktinfo"><span>Kontaktinfo</span></a></li>
+                        <li><a href="#linker"><span>Linker</span></a></li>
                     </ul>
                 </div>
             </div>
         </div>
+    <div id="hjem" class="page">
     </div>
+    
     {% block content %}{% endblock content %}
-    <div id="kontakt" class="container-fluid">
-        <div class="col-md-10">
-                    
-            <h2>Kontaktinformasjon</h2>
-                    
-            <div class="row">
-                <div class="col-md-5">
-                    <p>Levangersundet Marina SA<br />
-                    Sj&oslash;gata 19<br />
-                    7600 Levanger</p>
-                </div>
-                <div class="col-md-5"><p>Lasse Austad, styreleder<br />
-                    Geir Tore Salater, kasserer<br />
-                    Arnfinn Falstad, sekret&aelig;r<br />
-                    Ivar Johnsen, styremedlem<br />
-                    Tore S&oslash;rli, styremedlem</p>
-                </div>
-
-                <div class="col-md-2">
-                    <p>tel: 990 05 569<br />
-                       tel: 911 33 836<br />
-                       tel: 901 85650<br />
-                       tel: 901 36 353<br />
-                       tel: 928 55 218</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-2"><h2>Aktuelle lenker</h2>
-            <p><a href="http://eknesmabathavn.no">Ekne Sm&aring;b&aring;thavn</a><br />
-            <a href="http://holsand.no">Skogn Maritime Forening</a><br />
-            <a href="http://verdalbaateierforening.no">Verdal B&aring;teierforening</a><br />
-            <a href="http://gjestehavner.batmagasinet.no">Gjestehavner i Norge</a></p>
-        </div>
-    </div>
     {% render_block "js" %}
     <script src="{% static 'js/main.js' %}"></script>
 </body>

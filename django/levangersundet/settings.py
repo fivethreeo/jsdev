@@ -155,12 +155,6 @@ INSTALLED_APPS = (
     'aldryn_style',
     'filer',
     'easy_thumbnails',
-    'cmsplugin_filer_image',
-    'cmsplugin_filer_file',
-    'cmsplugin_filer_folder',
-    'cmsplugin_filer_teaser',
-    'cmsplugin_filer_utils',
-    'cmsplugin_filer_video',
     'djangocms_flash',
     'djangocms_googlemap',
     'djangocms_inherit',
@@ -208,6 +202,7 @@ CMS_PLACEHOLDER_CONF = {}
 
 CMS_PLUGIN_PROCESSORS = (
     'levangersundet.cms_plugin_processors.h1_spans',
+    'levangersundet.cms_plugin_processors.container'
 )
 
 if 'DJANGO_DEV' in os.environ:
@@ -226,6 +221,17 @@ elif 'RDS_DB_NAME' in os.environ:
             'PASSWORD': os.environ['RDS_DB_PASSWORD'],
             'HOST': os.environ['RDS_DB_HOST'],
             'PORT': os.environ['RDS_DB_PORT'],
+        }
+    }
+elif 'PAW_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ['PAW_DB_ENGINE'], # 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['PAW_DB_NAME'],
+            'USER': os.environ['PAW_DB_USERNAME'],
+            'PASSWORD': os.environ['PAW_DB_PASSWORD'],
+            'HOST': os.environ['PAW_DB_HOST'],
+            'PORT': os.environ['PAW_DB_PORT']
         }
     }
 else:
@@ -275,5 +281,6 @@ ALDRYN_STYLE_CLASS_NAMES = (
     ('container', _('container')),
     ('content', _('content')),
     ('teaser', _('teaser')),
-    ('page', _('page'))
+    ('page', _('page')),
+    ('page bilder', _('bilder'))
 )

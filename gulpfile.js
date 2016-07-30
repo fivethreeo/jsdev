@@ -97,7 +97,8 @@ gulp.task('js', function (callback) {
         //,
         //'backbone-filter'
       ],
-      optimize: "uglify",
+ //     optimize: "uglify",
+      optimize: "none",
       out: path.join(__dirname, 'django',  'levangersundet', 'static', 'js', 'main.js'),
       // The shim config allows us to configure dependencies for
       // scripts that do not call define() to register a module

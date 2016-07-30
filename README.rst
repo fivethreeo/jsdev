@@ -77,6 +77,30 @@ Pasteable commands (win): ::
   env\Scripts\python.exe django\manage.py syncdb
   gulp serve
   
+  
+To run project on pythonanywhere
+================================
+
+Create virtualenv: ::
+
+  project=levangersundet
+  mkvirtualenv ${project}env  --python=/usr/bin/python3.5
+
+
+Install python modules: ::
+
+  ${project}env/bin/pip install -r requirements.txt
+
+Sync django database: ::
+
+  env/bin/python django/manage.py syncdb
+
+Pasteable commands: ::
+
+  project=levangersundet
+  mkvirtualenv ${project}env  --python=/usr/bin/python3.5
+  ${project}env/bin/pip install -r requirements.txt
+  ${project}env/bin/python django/manage.py syncdb
 
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/

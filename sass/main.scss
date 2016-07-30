@@ -1,6 +1,8 @@
 
 $icon-font-path: "../fonts/";
 
+$grid-float-breakpoint: 992px;
+
 @import "_bootstrap";
 @import "select2/dist/css/select2";
 @import "bootstrap-datetimepicker/build/css/bootstrap-datetimepicker";
@@ -11,18 +13,81 @@ html, body {
     height: 100%;
     width: 100%;
     /* Remove any browser-default margins. */
-    margin: 0;
+    margin: 0; overflow-x: hidden;        overflow-y: scroll;
+
 }
-/*
-body { background:  radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(217,237,242,1) 41%, rgba(153,205,219,1) 100%); }
-*/
-#hjem { height: 100vh; width: 100%; background: url('../header_wide.jpg') top center; }
-#kontakt { background: linear-gradient(to bottom, rgb(5,171,224) 0%,rgb(83,203,241) 60%,rgb(135,224,253) 100%); padding: 15px 0px; margin-top: 30px; }
-#kontakt h2 { 
-    font-family: 'Changa One', cursive;}
+
+
+#hjem {
+  transition: all 4s ease-in;
+  height: 100vh;
+  width: 100%;
+  background: url('../header_wide.jpg') top center;
+  z-index: 1;
+}
+
+
+#kontakt {
+  //background: linear-gradient(to bottom, rgb(5,171,224) 0%,rgb(83,203,241) 60%,rgb(135,224,253) 100%);
+  background: rgb(5,171,224);
+  padding: 15px 0px;
+  width: 100vw;
+  position: fixed;
+  bottom: 0;
+  opacity:0;
+  transition: opacity 2s ease-in;
+  z-index: 4;
+  &.show { opacity:1; }
+}
+#kontakt h2 { font-family: 'Changa One', cursive;}
 #kontakt h2, #kontakt p { color: white;}
 
-div.page {min-height: 100vh;}
+.js #hjem { opacity:1; }
+.js #hjem.startAnim { opacity:0; }
+.js #hjem.startAnim.active { opacity:1; }
+
+.js div.page {
+  position: absolute;    
+  overflow-y: hidden;
+  height: 100vh;
+  opacity:0;
+  z-index: 2;
+  top: 0px;
+  
+  &.active {
+    height: auto;
+    min-height: 100vh;
+  opacity :1;
+    z-index: 3;
+  }
+}
+
+div.page {
+  transition: opacity 2s ease-in;
+  padding-top: 100px;
+  width: 100vw;
+  display: block;
+  background: url('../pagebg.jpg') top center;
+
+  .container {
+    padding-bottom: 240px;
+  }
+  .container .inner {
+    padding: 35px;
+    background: #EDFBFF;
+    border-radius: 5px;
+    box-shadow: inset 0 0 30px 5px #000000;
+  }
+}
+
+
+#hjem {
+  opacity:1;
+  
+  &.page {position: none;
+    display: block;}
+}
+
 
 div.h1header {
   height: 180px;
@@ -98,6 +163,36 @@ div.h1header {
   }
 }
 
+div.h1header2 {
+  height: 180px;
+  
+  h1 {
+    display: block;
+    float: right;
+    right: 50%;
+    position: relative;
+    font-family: 'Changa One', cursive;
+    font-size: 5em;
+    height: 150px;
+      
+    span.wrap {
+      display: block;
+      float: right;
+      right: -50%;
+      position: relative;
+      
+      span.text {
+        display: block;
+        clear: both;
+        margin: 20px 20px;
+        padding: 30px 30px;
+  color: #fff;
+  text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135;
+      }
+
+    }
+  }
+}
 @keyframes animationFrames{
   0% {
     transform:  translate(0px,0px)  rotate(0deg) ;
@@ -218,16 +313,16 @@ ul.rot li:nth-child(3n+3) {-moz-transform: rotate(3deg);-webkit-transform: rotat
 
 .navbar-brand { margin-top: 0px; transition: all 2s ease-in;}
 
-.navbar-brand img { height: 116px; width: auto; position: relative; margin-top: 0px; transition: all 2s ease-in;}
+.navbar-brand img { height: 70px; width: auto; position: relative; margin-top: 0px; transition: all 2s ease-in;}
 
 @media (min-width: $screen-xs-max) {
-    .white .navbar-brand img { height: 50px; width: auto; }
+    .white .navbar-brand img { height: 70px; width: auto; }
     .white .navbar-brand { margin-top: 0px; }
 }
 
 @media (max-width: $screen-sm-max) {
-  .navbar-header { height: 70px; transition: all 2s ease-in;}
-  .navbar-brand img { height: 50px; width: auto; }
+  .navbar-header { height: 90px; transition: all 2s ease-in;}
+  .navbar-brand img { height: 70px; width: auto; }
   .navbar-brand { margin-top: 0px; }
 }
 
@@ -373,7 +468,7 @@ $navbar-transparent-toggle-border-color:        #fff;
       }
     }
 
-    @media (max-width: $screen-xs-max) {
+    @media (max-width: $screen-sm-max) {
       // Dropdowns get custom display
       .open .dropdown-menu {
         > .dropdown-header {
@@ -542,7 +637,7 @@ $navbar-white-toggle-border-color:        #ccc;
       }
     }
 
-    @media (max-width: $screen-xs-max) {
+    @media (max-width: $screen-sm-max) {
       // Dropdowns get custom display
       .open .dropdown-menu {
         > .dropdown-header {
@@ -587,9 +682,10 @@ $navbar-white-toggle-border-color:        #ccc;
 
 
 .navbar-transparent.white {
-  background-color: $navbar-white-bg;
+  //background-color: rgb(135,224,253);
+  // $navbar-white-bg;
+  background: rgb(5,171,224);
   border-color: $navbar-white-border;
-
   .navbar-brand {
     color: $navbar-white-brand-color;
     &:hover,
@@ -677,7 +773,7 @@ $navbar-white-toggle-border-color:        #ccc;
       }
     }
 
-    @media (max-width: $screen-xs-max) {
+    @media (max-width: $screen-sm-max) {
       // Dropdowns get custom display
       .open .dropdown-menu {
         > .dropdown-header {
@@ -720,16 +816,17 @@ $navbar-white-toggle-border-color:        #ccc;
 }
 
 
+@media (min-width: $screen-md-min) {
 .navbar-fixed-top {
-    min-height: 80px;
+    min-height: 100px;
 }
 
 .navbar-nav > li > a {
     padding-top: 0px;
     padding-bottom: 0px;
-    line-height: 80px;
+    line-height: 100px;
 }
-
+}
 @media (max-width: 767px) {
     .navbar-nav > li > a {
     line-height: 20px;
