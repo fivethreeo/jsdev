@@ -102,6 +102,24 @@ Pasteable commands: ::
   ${project}env/bin/pip install -r requirements.txt
   ${project}env/bin/python django/manage.py syncdb
 
+#!/bin/sh
+# This hook is run before this virtualenv is activated.
+
+PAW_DB_ENGINE=django.db.backends.postgresql_psycopg2
+PAW_DB_NAME=levangersundet
+PAW_DB_USERNAME=levangersundet
+PAW_DB_PASSWORD=
+PAW_DB_HOST=fivethreeo-190.postgres.pythonanywhere-services.com
+PAW_DB_PORT=10190
+
+
+export PAW_DB_ENGINE
+export PAW_DB_NAME
+export PAW_DB_USERNAME
+export PAW_DB_PASSWORD
+export PAW_DB_HOST
+export PAW_DB_PORT
+
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/
 .. _Python: https://www.python.org/downloads/release/python-2710/

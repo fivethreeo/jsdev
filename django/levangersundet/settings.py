@@ -30,7 +30,7 @@ SECRET_KEY = '+zqs41e&00r0he-fucf+x(@4@4^&ig7_dmv182i4ui3ntxn2h6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DJANGO_DEV' in os.environ
 
-ALLOWED_HOSTS = ['test.learnit24.no', '.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['fivethreeo.pythonanywhere.com', '.elasticbeanstalk.com']
 
 
 # Application definition
@@ -224,8 +224,8 @@ elif 'RDS_DB_NAME' in os.environ:
         }
     }
 elif 'PAW_DB_NAME' in os.environ:
-    # createuser --host=fivethreeo-190.postgres.pythonanywhere-services.com --port=10190 --username=super levangersundet
-    # createdb  --host=fivethreeo-190.postgres.pythonanywhere-services.com --port=10190 --username=super -O levangersundet -E unicode
+    # createuser -P --host=fivethreeo-190.postgres.pythonanywhere-services.com --port=10190 --username=super levangersundet
+    # createdb  --host=fivethreeo-190.postgres.pythonanywhere-services.com --port=10190 --username=super -O levangersundet -E unicode levangersundet
 
     DATABASES = {
         'default': {
