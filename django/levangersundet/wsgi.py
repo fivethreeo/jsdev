@@ -8,11 +8,11 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
 import sys, os, subprocess
-command = ['bash', '-c', 'source '+ os.path.join(os.path.dirname(sys.executable), 'postactivate' + ' && env')]
+command = ['bash', '-c', 'source '+ os.path.join(os.path.dirname(sys.executable), 'postactivate') + ' && env']
 proc = subprocess.Popen(command, stdout = subprocess.PIPE)
 
 for line in proc.stdout:
-  (key, _, value) = line.partition("=")
+  (key, _, value) = line.decode().partition("=")
   os.environ[key] = value
 
 from django.core.wsgi import get_wsgi_application
