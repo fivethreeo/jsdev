@@ -10,3 +10,4 @@ build
 *.db
 # uploaded media
 django/media
+cms_dump.json

@@ -98,9 +98,14 @@ Sync django database: ::
 Pasteable commands: ::
 
   project=levangersundet
-  mkvirtualenv ${project}env  --python=/usr/bin/python3.5
-  ${project}env/bin/pip install -r requirements.txt
-  ${project}env/bin/python django/manage.py syncdb
+  mkvirtualenv ${project}  --python=/usr/bin/python3.5
+  ${project}/bin/pip install -r requirements.txt
+  ${project}/bin/python django/manage.py migrate
+
+  mkdir -p /var/www/${project}/media                                                                                            
+  mkdir -p /var/www/${project}/static
+  
+  ${project}/bin/python django/manage.py collectstatic
 
 #!/bin/sh
 # This hook is run before this virtualenv is activated.
@@ -111,6 +116,9 @@ PAW_DB_USERNAME=levangersundet
 PAW_DB_PASSWORD=
 PAW_DB_HOST=fivethreeo-190.postgres.pythonanywhere-services.com
 PAW_DB_PORT=10190
+PAW_STATIC=/var/www/levangersundet/static
+PAW_MEDIA=/var/www/levangersundet/media
+
 
 
 export PAW_DB_ENGINE
@@ -120,6 +128,27 @@ export PAW_DB_PASSWORD
 export PAW_DB_HOST
 export PAW_DB_PORT
 
+# +++++++++++ CUSTOM WSGI +++++++++++
+# If you have a WSGI file that you want to serve using PythonAnywhere, perhaps
+# in your home directory under version control, then use something like this:
+
+
+import sys, os, subprocess
+
+venv = '/home/fivethreeo/.virtualenvs/levangersundetenv'
+postactivate = os.path.join(venv, 'bin', 'postactivate')
+command = ['bash', '-c', 'source '+ postactivate + ' && env']
+proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+
+for line in proc.stdout:
+  (key, _, value) = line.decode().strip().partition("=")
+  os.environ[key] = value
+
+path = '/home/fivethreeo/levangersundet/django/'
+if path not in sys.path:
+    sys.path.append(path)
+
+from levangersundet.wsgi import application
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/
 .. _Python: https://www.python.org/downloads/release/python-2710/
