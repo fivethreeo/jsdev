@@ -237,6 +237,8 @@ elif 'PAW_DB_NAME' in os.environ:
             'PORT': os.environ['PAW_DB_PORT']
         }
     }
+    MEDIA_ROOT = os.environ['PAW_MEDIA']
+    STATIC_ROOT = os.environ['PAW_STATIC']
 else:
     DATABASES = {
         'default': {
