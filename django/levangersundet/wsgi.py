@@ -8,6 +8,9 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
 import sys, os, subprocess
+
+sys.stderr.write('PYTHONIS ' + sys.executable)
+
 command = ['bash', '-c', 'source '+ os.path.join(os.path.dirname(sys.executable), 'postactivate') + ' && env']
 proc = subprocess.Popen(command, stdout = subprocess.PIPE)
 
