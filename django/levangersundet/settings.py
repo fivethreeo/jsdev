@@ -212,7 +212,7 @@ if 'DJANGO_DEV' in os.environ:
             'NAME': os.path.join(DATA_DIR, 'django.db'),
         }
     }
-if 'RDS_DB_NAME' in os.environ:
+elif 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -223,7 +223,7 @@ if 'RDS_DB_NAME' in os.environ:
             'PORT': os.environ['RDS_DB_PORT'],
         }
     }
-if 'PAW_DB_NAME' in os.environ:
+elif 'PAW_DB_NAME' in os.environ:
     # createuser --host=fivethreeo-190.postgres.pythonanywhere-services.com --port=10190 --username=super levangersundet
     # createdb  --host=fivethreeo-190.postgres.pythonanywhere-services.com --port=10190 --username=super -O levangersundet -E unicode
 
@@ -235,6 +235,17 @@ if 'PAW_DB_NAME' in os.environ:
             'PASSWORD': os.environ['PAW_DB_PASSWORD'],
             'HOST': os.environ['PAW_DB_HOST'],
             'PORT': os.environ['PAW_DB_PORT']
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': 'localhost',
+            'NAME': 'test_order',
+            'PASSWORD': 'rds81ro',
+            'PORT': '5432',
+            'USER': 'learnit24'
         }
     }
 
