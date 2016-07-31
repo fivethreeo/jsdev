@@ -7,7 +7,9 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
-import os
+import sys, os, subprocess
+command = ['bash', '-c', 'source '+ os.path.join(os.path.dirname(sys.executable), 'postactivate')]
+proc = subprocess.Popen(command, stdout = subprocess.PIPE)
 
 from django.core.wsgi import get_wsgi_application
 
