@@ -6706,7 +6706,7 @@ html, body {
     z-index: 3; }
 
 div.page {
-  transition: opacity 2s ease-in;
+  transition: opacity 1s ease-in;
   padding-top: 100px;
   width: 100vw;
   display: block;
