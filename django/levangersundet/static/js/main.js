@@ -22551,7 +22551,7 @@ define("bootstrap", function(){});
 require([
     "jquery", "underscore", "bootstrap", "moment", "moment-nb", "datetimepicker"
 ],
-function($, _, _, moment) {
+function($, _, Bootstrap, moment) {
   $(document).ready(function(){
     $('.bilder img').each(function(){
       var $this = $(this);
@@ -22566,6 +22566,7 @@ function($, _, _, moment) {
   });
 
   $("a[href^='#']").on('click', function(event) {
+    $('#header-navtoggle').trigger('click');
     var target;
     target = this.hash;
     $(this).closest('.nav').children().removeClass('active');
