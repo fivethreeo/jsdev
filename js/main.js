@@ -19,7 +19,7 @@ function($, _, Bootstrap, moment) {
     })
   });
 
-  $("a[href^='#']").on('click', function(event) {
+  $(".navbar a[href^='#']").on('click', function(event) {
     $('#header-navtoggle').trigger('click');
     var target;
     target = this.hash;

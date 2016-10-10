@@ -1,4 +1,5 @@
 
+
 $icon-font-path: "../fonts/";
 
 $grid-float-breakpoint: 992px;
@@ -23,6 +24,11 @@ html, body {
   height: 100vh;
   width: 100%;
   background: url('../header_wide.jpg') top center;
+  @media (max-width: $screen-xs-max) {
+    font-size: 2.2em;
+    background-size: auto 90%;
+  background-position: 77% 90px;
+  }
   z-index: 1;
 }
 
@@ -99,6 +105,9 @@ div.h1header {
     position: relative;
     font-family: 'Changa One', cursive;
     font-size: 3.5em;
+    @media (max-width: $screen-xs-max) {
+      font-size: 2.2em;
+    }
     height: 150px;
       
     span.wrap {
@@ -165,6 +174,9 @@ div.h1header {
 
 div.h1header2 {
   height: 180px;
+  @media (max-width: $screen-xs-max) {
+    height: 100px;
+  }
   
   h1 {
     display: block;
@@ -174,6 +186,10 @@ div.h1header2 {
     font-family: 'Changa One', cursive;
     font-size: 5em;
     height: 150px;
+    @media (max-width: $screen-xs-max) {
+      font-size: 3.5em;
+      height: 70px;
+    }
       
     span.wrap {
       display: block;
@@ -186,8 +202,13 @@ div.h1header2 {
         clear: both;
         margin: 20px 20px;
         padding: 30px 30px;
-  color: #fff;
-  text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135;
+        @media (max-width: $screen-xs-max) {
+
+            margin: 0px 0px;
+            padding: 20px 20px;
+        }
+        color: #fff;
+        text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135;
       }
 
     }
@@ -311,7 +332,7 @@ ul.rot li:nth-child(3n+3) {-moz-transform: rotate(3deg);-webkit-transform: rotat
     font-size: 1.5em;
 }
 
-.navbar-brand { margin-top: 0px; transition: all 2s ease-in;}
+.navbar-brand { margin-top: 0px; top: -5px; transition: all 2s ease-in; position: relative; float:none;}
 
 .navbar-brand img { height: 70px; width: auto; position: relative; margin-top: 0px; transition: all 2s ease-in;}
 

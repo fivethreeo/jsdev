@@ -6664,6 +6664,11 @@ html, body {
   width: 100%;
   background: url("../header_wide.jpg") top center;
   z-index: 1; }
+  @media (max-width: 767px) {
+    #hjem {
+      font-size: 2.2em;
+      background-size: auto 90%;
+      background-position: 77% 90px; } }
 
 #kontakt {
   background: #05abe0;
@@ -6735,6 +6740,9 @@ div.h1header {
     font-family: 'Changa One', cursive;
     font-size: 3.5em;
     height: 150px; }
+    @media (max-width: 767px) {
+      div.h1header h1 {
+        font-size: 2.2em; } }
     div.h1header h1 span.wrap {
       display: block;
       float: right;
@@ -6792,6 +6800,9 @@ div.h1header {
 
 div.h1header2 {
   height: 180px; }
+  @media (max-width: 767px) {
+    div.h1header2 {
+      height: 100px; } }
   div.h1header2 h1 {
     display: block;
     float: right;
@@ -6800,6 +6811,10 @@ div.h1header2 {
     font-family: 'Changa One', cursive;
     font-size: 5em;
     height: 150px; }
+    @media (max-width: 767px) {
+      div.h1header2 h1 {
+        font-size: 3.5em;
+        height: 70px; } }
     div.h1header2 h1 span.wrap {
       display: block;
       float: right;
@@ -6812,6 +6827,10 @@ div.h1header2 {
         padding: 30px 30px;
         color: #fff;
         text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135; }
+        @media (max-width: 767px) {
+          div.h1header2 h1 span.wrap span.text {
+            margin: 0px 0px;
+            padding: 20px 20px; } }
 
 @-webkit-keyframes animationFrames {
   0% {
@@ -6947,7 +6966,10 @@ ul.rot li:nth-child(3n+3) {
 
 .navbar-brand {
   margin-top: 0px;
-  transition: all 2s ease-in; }
+  top: -5px;
+  transition: all 2s ease-in;
+  position: relative;
+  float: none; }
 
 .navbar-brand img {
   height: 70px;
