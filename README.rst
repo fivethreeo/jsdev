@@ -107,48 +107,67 @@ Pasteable commands: ::
   
   ${project}/bin/python django/manage.py collectstatic
 
-#!/bin/sh
-# This hook is run before this virtualenv is activated.
+postinitialize: ::
 
-PAW_DB_ENGINE=django.db.backends.postgresql_psycopg2
-PAW_DB_NAME=levangersundet
-PAW_DB_USERNAME=levangersundet
-PAW_DB_PASSWORD=
-PAW_DB_HOST=fivethreeo-190.postgres.pythonanywhere-services.com
-PAW_DB_PORT=10190
-PAW_STATIC=/var/www/levangersundet/static
-PAW_MEDIA=/var/www/levangersundet/media
+  #!/bin/sh
+  # This hook is run before this virtualenv is activated.
 
-
-
-export PAW_DB_ENGINE
-export PAW_DB_NAME
-export PAW_DB_USERNAME
-export PAW_DB_PASSWORD
-export PAW_DB_HOST
-export PAW_DB_PORT
-
-# +++++++++++ CUSTOM WSGI +++++++++++
-# If you have a WSGI file that you want to serve using PythonAnywhere, perhaps
-# in your home directory under version control, then use something like this:
+  PAW_DB_ENGINE=django.db.backends.postgresql_psycopg2
+  PAW_DB_NAME=levangersundet
+  PAW_DB_USERNAME=levangersundet
+  PAW_DB_PASSWORD=
+  PAW_DB_HOST=fivethreeo-190.postgres.pythonanywhere-services.com
+  PAW_DB_PORT=10190
+  PAW_STATIC=/var/www/levangersundet/static
+  PAW_MEDIA=/var/www/levangersundet/media
 
 
-import sys, os, subprocess
 
-venv = '/home/fivethreeo/.virtualenvs/levangersundetenv'
-postactivate = os.path.join(venv, 'bin', 'postactivate')
-command = ['bash', '-c', 'source '+ postactivate + ' && env']
-proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+  export PAW_DB_ENGINE
+  export PAW_DB_NAME
+  export PAW_DB_USERNAME
+  export PAW_DB_PASSWORD
+  export PAW_DB_HOST
+  export PAW_DB_PORT
 
-for line in proc.stdout:
-  (key, _, value) = line.decode().strip().partition("=")
-  os.environ[key] = value
+postinitialize source: ::
 
-path = '/home/fivethreeo/levangersundet/django/'
-if path not in sys.path:
-    sys.path.append(path)
+  # +++++++++++ CUSTOM WSGI +++++++++++
+  # If you have a WSGI file that you want to serve using PythonAnywhere, perhaps
+  # in your home directory under version control, then use something like this:
 
-from levangersundet.wsgi import application
+
+  import sys, os, subprocess
+
+  venv = '/home/fivethreeo/.virtualenvs/levangersundetenv'
+  postactivate = os.path.join(venv, 'bin', 'postactivate')
+  command = ['bash', '-c', 'source '+ postactivate + ' && env']
+  proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+
+  for line in proc.stdout:
+    (key, _, value) = line.decode().strip().partition("=")
+    os.environ[key] = value
+
+  path = '/home/fivethreeo/levangersundet/django/'
+  if path not in sys.path:
+      sys.path.append(path)
+
+  from levangersundet.wsgi import application
+
+Install ansible on cygwin with lynx: ::
+
+  lynx -source rawgit.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+  install apt-cyg /bin
+  apt-cyg install wget binutils curl gmp libgmp-devel make python python-devel \
+  python-crypto python-openssl python-setuptools \
+  git nano openssh openssl openssl-devel libffi-devel gcc-core gcc-g++
+  wget http://peak.telecommunity.com/dist/ez_setup.py
+  python ez_setup.py -U setuptools
+  # restart terminal
+  easy_install pip
+  pip install ansible
+
+
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/
 .. _Python: https://www.python.org/downloads/release/python-2710/
