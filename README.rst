@@ -166,6 +166,11 @@ Install ansible on cygwin with lynx: ::
   # restart terminal
   easy_install pip
   pip install ansible
+  ssh-keygen -t rsa -b 4096 ~/.ssh/id_rsa
+  scp  ~/.ssh/id_rsa.pub fivethreeo@ssh.pythonanywhere.com:~/
+  ssh fivethreeo@ssh.pythonanywhere.com 'cat ~/id_rsa.pub >> ~/.ssh/authorized_keys'
+  eval `ssh-agent`
+  ssh-add ~/.ssh/id_rsa
 
 
 .. _nodejs: https://nodejs.org/

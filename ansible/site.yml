@@ -1,0 +1,5 @@
+- name: configure and deploy the app
+  hosts: default
+  remote_user: fivethreeo
+  roles:
+    - cms
