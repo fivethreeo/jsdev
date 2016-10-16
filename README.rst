@@ -135,7 +135,7 @@ Install ansible on cygwin with lynx: ::
   eval `ssh-agent`
   ssh-add ~/.ssh/id_rsa
 
-pxe booting with virtualbox (does not work):: :
+pxe booting with virtualbox (does not work): ::
 
   cd ~/.VirtualBox/
   mkdir TFTP
@@ -148,7 +148,7 @@ pxe booting with virtualbox (does not work):: :
   rm pxelinux.cfg
   cp -R debian-installer/amd64/pxelinux.cfg .
 
-iPXE booting with VirtualBox:: :
+iPXE booting with VirtualBox: ::
 
   # Create pxe image at https://rom-o-matic.eu/ using:
 
