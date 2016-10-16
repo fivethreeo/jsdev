@@ -107,46 +107,9 @@ Pasteable commands: ::
   
   ${project}/bin/python django/manage.py collectstatic
 
-postinitialize: ::
+Custom wsgi: ::
 
-  #!/bin/sh
-  # This hook is run before this virtualenv is activated.
-
-  PAW_DB_ENGINE=django.db.backends.postgresql_psycopg2
-  PAW_DB_NAME=levangersundet
-  PAW_DB_USERNAME=levangersundet
-  PAW_DB_PASSWORD=
-  PAW_DB_HOST=fivethreeo-190.postgres.pythonanywhere-services.com
-  PAW_DB_PORT=10190
-  PAW_STATIC=/var/www/levangersundet/static
-  PAW_MEDIA=/var/www/levangersundet/media
-
-
-
-  export PAW_DB_ENGINE
-  export PAW_DB_NAME
-  export PAW_DB_USERNAME
-  export PAW_DB_PASSWORD
-  export PAW_DB_HOST
-  export PAW_DB_PORT
-
-postinitialize source: ::
-
-  # +++++++++++ CUSTOM WSGI +++++++++++
-  # If you have a WSGI file that you want to serve using PythonAnywhere, perhaps
-  # in your home directory under version control, then use something like this:
-
-
-  import sys, os, subprocess
-
-  venv = '/home/fivethreeo/.virtualenvs/levangersundetenv'
-  postactivate = os.path.join(venv, 'bin', 'postactivate')
-  command = ['bash', '-c', 'source '+ postactivate + ' && env']
-  proc = subprocess.Popen(command, stdout = subprocess.PIPE)
-
-  for line in proc.stdout:
-    (key, _, value) = line.decode().strip().partition("=")
-    os.environ[key] = value
+  import sys
 
   path = '/home/fivethreeo/levangersundet/django/'
   if path not in sys.path:
@@ -172,6 +135,49 @@ Install ansible on cygwin with lynx: ::
   eval `ssh-agent`
   ssh-add ~/.ssh/id_rsa
 
+pxe booting with virtualbox (does not work):: :
+
+  cd ~/.VirtualBox/
+  mkdir TFTP
+  cd TFTP
+  
+  curl http://ftp.no.debian.org/debian/dists/Debian8.6/main/installer-amd64/current/images/netboot/netboot.tar.gz| tar zx --strip-components 1
+
+  rm pxelinux.0
+  cp debian-installer/amd64/pxelinux.0 .
+  rm pxelinux.cfg
+  cp -R debian-installer/amd64/pxelinux.cfg .
+
+iPXE booting with VirtualBox:: :
+
+  # Create pxe image at https://rom-o-matic.eu/ using:
+
+    #!ipxe
+    dhcp
+    chain tftp://10.0.2.4/ipxe
+
+  preseed=`pwd`/preseed.cfg
+
+  cd ~/.VirtualBox/
+  mkdir TFTP
+  cd TFTP
+  cp "$preseed" .
+  # Save undionly.kpxe here
+
+  # Configure vm vmname with linux 64bit, nat and pxe network boot
+  
+  vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage`"
+  "$vb" modifyvm "vmname" --nattftpfile1 /undionly.kpxe
+  
+  curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
+
+  #!ipxe
+
+  kernel tftp://10.0.2.4/linux
+  initrd tftp://10.0.2.4/initrd.gz
+  initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
+  imgargs linux auto=true preseed=file:///preseed.cfg hostname=unassigned-hostname domain=unassigned-domain priority=critical
+  boot
 
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/
