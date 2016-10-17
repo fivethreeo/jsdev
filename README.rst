@@ -148,13 +148,15 @@ pxe booting with virtualbox (does not work): ::
   rm pxelinux.cfg
   cp -R debian-installer/amd64/pxelinux.cfg .
 
-iPXE booting with VirtualBox: ::
+iPXE booting with VirtualBox:
 
-  # Create pxe image at https://rom-o-matic.eu/ using:
+Create pxe image at https://rom-o-matic.eu/ using: ::
 
-    #!ipxe
-    dhcp
-    chain tftp://10.0.2.4/ipxe
+  #!ipxe
+  dhcp
+  chain tftp://10.0.2.4/ipxe
+  
+Set up vms for PXE booting: ::
 
   preseed=`pwd`/ansible/preseed.cfg
 
