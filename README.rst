@@ -161,15 +161,39 @@ iPXE booting with VirtualBox: ::
   cd ~/.VirtualBox/
   mkdir TFTP
   cd TFTP
-  cp "$preseed" .
   # Save undionly.kpxe here
+  curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
+  cp "$preseed" .
 
   # Configure vm vmname with linux 64bit, nat and pxe network boot
-  
-  vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage`"
-  "$vb" modifyvm "vmname" --nattftpfile1 /undionly.kpxe
-  
-  curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
+
+  cd ..
+
+  vb="vboxmanage"
+  cygpath="echo"
+  if [[ "$(uname)" == CYGWIN* ]]
+  then
+    vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage`"
+    cygpath="cygpath -w"
+  fi
+
+  vdidir=`pwd`
+  array=( nm )
+  for i in "${array[@]}"
+  do
+     vdi=`$cygpath "$vdidir/node_$i.vdi"`
+     "$vb" createmedium disk --filename "$vdi" --size 6000
+     "$vb" createvm --name "node_$i" --register
+     "$vb" modifyvm "node_$i" --memory 1024 --vram 128
+     "$vb" modifyvm "node_$i"  --rtcuseutc on
+     "$vb" storagectl "node_$i" --name "SATA Controller" --add sata
+     "$vb" storageattach "node_$i" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
+     "$vb" modifyvm "node_$i" --nic1 nat --nattftpfile1 /undionly.kpxe --cableconnected1 on
+     "$vb" modifyvm "node_$i" --boot1 disk
+     "$vb" modifyvm "node_$i" --boot2 net
+     "$vb" modifyvm "node_$i" --boot3 none
+     "$vb" modifyvm "node_$i" --boot4 none
+  done
 
   #!ipxe
 
