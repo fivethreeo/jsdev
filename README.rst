@@ -158,11 +158,12 @@ Create pxe image at https://rom-o-matic.eu/ using: ::
   
 Set up vms for PXE booting: ::
 
-  preseed=`pwd`/ansible/preseed.cfg
+  preseed=`pwd`/ansible/preseed.cfg"
 
-  cd ~/.VirtualBox/
+  pushd ~/.VirtualBox/
   mkdir TFTP
   cd TFTP
+
   # Save undionly.kpxe here
   curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
   (cat <<'EOF'
@@ -177,9 +178,11 @@ Set up vms for PXE booting: ::
   ) > ipxe
   cp "$preseed" .
 
-  # Configure vm vmname with linux 64bit, nat and pxe network boot
+  popd
 
-  cd ..
+  mkdir vdis
+  cd vdis
+  vdidir=`pwd`
 
   vb="vboxmanage"
   cygpath="echo"
@@ -189,7 +192,8 @@ Set up vms for PXE booting: ::
     cygpath="cygpath -w"
   fi
 
-  vdidir=`pwd`
+  # Configure vms with nat and pxe network boot
+
   array=( nm )
   for i in "${array[@]}"
   do
