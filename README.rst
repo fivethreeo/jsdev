@@ -156,13 +156,23 @@ iPXE booting with VirtualBox: ::
     dhcp
     chain tftp://10.0.2.4/ipxe
 
-  preseed=`pwd`/preseed.cfg
+  preseed=`pwd`/ansible/preseed.cfg
 
   cd ~/.VirtualBox/
   mkdir TFTP
   cd TFTP
   # Save undionly.kpxe here
   curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
+  (cat <<'EOF'
+  #!ipxe
+
+  kernel tftp://10.0.2.4/linux
+  initrd tftp://10.0.2.4/initrd.gz
+  initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
+  imgargs linux auto=true preseed=file:///preseed.cfg hostname=unassigned-hostname domain=unassigned-domain priority=critical
+  boot
+  EOF
+  ) > ipxe
   cp "$preseed" .
 
   # Configure vm vmname with linux 64bit, nat and pxe network boot
@@ -171,7 +181,7 @@ iPXE booting with VirtualBox: ::
 
   vb="vboxmanage"
   cygpath="echo"
-  if [[ "$(uname)" == CYGWIN* ]]
+  if [[ $(uname) == CYGWIN* ]]
   then
     vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage`"
     cygpath="cygpath -w"
@@ -195,13 +205,6 @@ iPXE booting with VirtualBox: ::
      "$vb" modifyvm "node_$i" --boot4 none
   done
 
-  #!ipxe
-
-  kernel tftp://10.0.2.4/linux
-  initrd tftp://10.0.2.4/initrd.gz
-  initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
-  imgargs linux auto=true preseed=file:///preseed.cfg hostname=unassigned-hostname domain=unassigned-domain priority=critical
-  boot
 
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/
