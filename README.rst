@@ -150,7 +150,7 @@ pxe booting with virtualbox (does not work): ::
 
 iPXE booting with VirtualBox:
 
-Create pxe image at https://rom-o-matic.eu/ using: ::
+Create pxe image (if wget fails below) at https://rom-o-matic.eu/ using: ::
 
   #!ipxe
   dhcp
@@ -158,15 +158,23 @@ Create pxe image at https://rom-o-matic.eu/ using: ::
   
 Set up vms for PXE booting: ::
 
-  preseed=`pwd`/ansible/preseed.cfg"
+  preseed="`pwd`/ansible/preseed.cfg"
 
   pushd ~/.VirtualBox/
   mkdir TFTP
   cd TFTP
 
-  # Save undionly.kpxe here
+  # Can be slow, be patient
+  wget --no-check-certificate -O undionly.kpxe 'https://rom-o-matic.eu/build.fcgi?BINARY=undionly.kpxe&BINDIR=bin&REVISION=master&DEBUG=&EMBED.00script.ipxe=%23%21ipxe%0Adhcp%0Achain%20tftp%3A//10.0.2.4/ipxe%0A&'
+
+  mkdir installer
+  cd installer
   curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
-  (cat <<'EOF'
+  cd ..
+  cp installer/ubuntu-installer/amd64/linux .
+  cp installer/ubuntu-installer/amd64/initrd.gz .
+
+  (cat <<EOF
   #!ipxe
 
   kernel tftp://10.0.2.4/linux
@@ -180,6 +188,8 @@ Set up vms for PXE booting: ::
 
   popd
 
+  # Configure vms with nat and pxe network boot
+
   mkdir vdis
   cd vdis
   vdidir=`pwd`
@@ -188,13 +198,11 @@ Set up vms for PXE booting: ::
   cygpath="echo"
   if [[ $(uname) == CYGWIN* ]]
   then
-    vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage`"
+    vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage.exe`"
     cygpath="cygpath -w"
   fi
 
-  # Configure vms with nat and pxe network boot
-
-  array=( nm )
+  array=( one two )
   for i in "${array[@]}"
   do
      vdi=`$cygpath "$vdidir/node_$i.vdi"`

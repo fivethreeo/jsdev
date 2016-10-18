@@ -22,3 +22,25 @@
 - name: install python modules into virtualenv
   pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
     virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
+
+- name: create postgres user
+  postgresql_user: name="{{ django_db_username }}"
+                   password="{{ vault_django_db_password }}"
+                   state=present
+                   login_host="{{ django_db_host }}"
+                   port="{{ django_db_port }}"
+                   login_user="{{ master_db_user }}"
+                   login_password="{{ vault_master_db_password }}"
+
+- name: create postgres db
+  postgresql_db: name="{{ django_db_name }}"
+                 encoding='UTF-8'
+                 lc_collate='nb_NO.UTF-8'
+                 lc_ctype='nb_NO.UTF-8'
+                 template='template0'
+                 owner="{{ django_db_username }}"
+                 state=present
+                 login_host="{{ django_db_host }}"
+                 port="{{ django_db_port }}"
+                 login_user="{{ master_db_user }}"
+                 login_password="{{ vault_master_db_password }}"
