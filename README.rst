@@ -188,7 +188,7 @@ Set up vms for PXE booting: ::
 
   popd
 
-  # Configure vms with nat and pxe network boot
+  # Configure vms with nat and intel pxe network boot
 
   mkdir vdis
   cd vdis
@@ -212,13 +212,13 @@ Set up vms for PXE booting: ::
      "$vb" modifyvm "node_$i"  --rtcuseutc on
      "$vb" storagectl "node_$i" --name "SATA Controller" --add sata
      "$vb" storageattach "node_$i" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
-     "$vb" modifyvm "node_$i" --nic1 nat --nattftpfile1 /undionly.kpxe --cableconnected1 on
+     "$vb" modifyvm "node_$i" --nic1 nat --nattftpfile1 /undionly.kpxe --nictype1 82540EM --cableconnected1 on
      "$vb" modifyvm "node_$i" --boot1 disk
      "$vb" modifyvm "node_$i" --boot2 net
      "$vb" modifyvm "node_$i" --boot3 none
      "$vb" modifyvm "node_$i" --boot4 none
   done
-
+  # newline
 
 .. _nodejs: https://nodejs.org/
 .. _io.js: https://iojs.org/
