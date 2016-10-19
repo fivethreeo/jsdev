@@ -129,11 +129,14 @@ Install ansible on cygwin with lynx: ::
   # restart terminal
   easy_install pip
   pip install ansible
-  ssh-keygen -t rsa -b 4096 ~/.ssh/id_rsa
-  scp  ~/.ssh/id_rsa.pub fivethreeo@ssh.pythonanywhere.com:~/
+
+  homedir=`cygpath -H`/$USER
+  
+  ssh-keygen -t rsa -b 4096 -f $homedir/.ssh/id_rsa
+  scp  $homedir/.ssh/id_rsa.pub fivethreeo@ssh.pythonanywhere.com:~/
   ssh fivethreeo@ssh.pythonanywhere.com 'cat ~/id_rsa.pub >> ~/.ssh/authorized_keys'
   eval `ssh-agent`
-  ssh-add ~/.ssh/id_rsa
+  ssh-add $homedir/.ssh/id_rsa
 
 pxe booting with virtualbox (does not work): ::
 
@@ -158,12 +161,22 @@ Create pxe image (if wget fails below) at https://rom-o-matic.eu/ using: ::
   
 Set up vms for PXE booting: ::
 
+  vb="vboxmanage"
+  cygpath="echo"
+  homedir="~"
+  if [[ $(uname) == CYGWIN* ]]
+  then
+    vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage.exe`"
+    cygpath="cygpath -w"
+    homedir=`cygpath -H`/$USER
+  fi
+
   preseed="`pwd`/ansible/preseed.cfg"
 
-  pushd ~/.VirtualBox/
+  mkdir -p "$homedir/.VirtualBox"
+  pushd "$homedir/.VirtualBox"
   mkdir TFTP
   cd TFTP
-
   # Can be slow, be patient
   wget --no-check-certificate -O undionly.kpxe 'https://rom-o-matic.eu/build.fcgi?BINARY=undionly.kpxe&BINDIR=bin&REVISION=master&DEBUG=&EMBED.00script.ipxe=%23%21ipxe%0Adhcp%0Achain%20tftp%3A//10.0.2.4/ipxe%0A&'
 
@@ -191,16 +204,7 @@ Set up vms for PXE booting: ::
   # Configure vms with nat and intel pxe network boot
 
   mkdir vdis
-  cd vdis
-  vdidir=`pwd`
-
-  vb="vboxmanage"
-  cygpath="echo"
-  if [[ $(uname) == CYGWIN* ]]
-  then
-    vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage.exe`"
-    cygpath="cygpath -w"
-  fi
+  vdidir=`pwd`/vdis
 
   array=( one two )
   for i in "${array[@]}"
