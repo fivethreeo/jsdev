@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'post_office',
     'smuggler',
+    'cmsplugin_filer_image',
     'aldryn_apphooks_config',
     'parler',
     'taggit',
