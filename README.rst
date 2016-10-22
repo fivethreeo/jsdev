@@ -1,18 +1,4 @@
 
-To deploy existing app in django/
-=================================
-
-Install `nodejs`_ or `io.js`_ and `Python`_.
-
-::
-
-  pip install awscli
-  npm install
-  aws configure
-  gulp configure
-  gulp deploy_lambda_resource
-  gulp deploy_full_stack
-
 To build css/javascript
 =======================
 
@@ -21,6 +7,7 @@ Install `nodejs`_ or `io.js`_.
 Install node modules: ::
 
   npm install
+  npm install -g gulp
   npm install -g bower
 
 Install bower assets: ::
@@ -30,6 +17,7 @@ Install bower assets: ::
 Pasteable commands: ::
 
   npm install
+  npm install -g gulp
   npm install -g bower
   bower install
   gulp build 
@@ -84,6 +72,13 @@ Pasteable commands (win): ::
 To run project on pythonanywhere
 ================================
 
+Use ansible:: :
+
+  cd ansible
+  ansible-playbook -i hosts --ask-vault-pass site.yml
+
+or 
+
 Create virtualenv: ::
 
   project=levangersundet
@@ -114,11 +109,11 @@ Custom wsgi: ::
 
   import sys
 
-  path = '/home/fivethreeo/levangersundet/django/'
+  path = '/home/fivethreeo/mainapp/django/'
   if path not in sys.path:
       sys.path.append(path)
 
-  from levangersundet.wsgi import application
+  from mainapp.wsgi import application
 
 Install ansible on cygwin with lynx: ::
 

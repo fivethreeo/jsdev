@@ -6,6 +6,16 @@ ADMINS = (
 STATIC_ROOT = '{{ django_static_root }}'
 MEDIA_ROOT = '{{ django_media_root }}'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': {{ django_db_name }},
+        'USER': {{django_db_username }},
+        'PASSWORD': {{ vault_django_db_password }},
+        'HOST': {{ django_db_host }},
+        'PORT': {{ django_db_port }},
+    }
+}
 """
 SERVER_EMAIL = ''
 
