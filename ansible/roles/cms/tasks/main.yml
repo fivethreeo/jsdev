@@ -1,7 +1,7 @@
 ---
 # tasks file for cms
 
-- name: create postgres user
+- name: Create postgres user
   postgresql_user: name="{{ django_db_username }}"
                    password="{{ vault_django_db_password }}"
                    state=present
@@ -10,7 +10,7 @@
                    login_user="{{ master_db_user }}"
                    login_password="{{ vault_master_db_password }}"
 
-- name: create postgres db
+- name: Create postgres db
   postgresql_db: name="{{ django_db_name }}"
                  encoding='UTF-8'
                  lc_collate='nb_NO.UTF-8'
@@ -22,18 +22,19 @@
                  port="{{ django_db_port }}"
                  login_user="{{ master_db_user }}"
                  login_password="{{ vault_master_db_password }}"
-                 
-- name: checkout app code 
-  git: repo="{{ app_repo }}"
-    dest="{{ ansible_env.HOME }}/{{ app_dir }}"
-    version=master
 
-- name: check for virtualenv
+- name: Create django static directory
+  file: path="{{ django_static_root }}" state=directory
+
+- name: Create django media directory
+  file: path="{{ django_media_root }}" state=directory
+
+- name: Check for virtualenv
   stat: path="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
   register: venv_file
 - debug: msg="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }} exists {{ venv_file.stat.exists }}"
 
-- name: make sure virtualenv exists
+- name: Make sure virtualenv exists
   shell: "source `which virtualenvwrapper.sh` && mkvirtualenv {{ cms_virtualenv }}" 
   args:
     executable: /bin/bash
@@ -42,7 +43,21 @@
 - debug: var=run_cmd.stdout_lines
   when: run_cmd.stdout_lines is defined
 
+- name: Checkout app code 
+  git: repo="{{ app_repo }}"
+    dest="{{ ansible_env.HOME }}/{{ app_dir }}"
+    version=master
 - name: install python modules into virtualenv
   pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
     virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
   when: venv_file.stat.exists
+
+- name: Create local_settings.py
+  template: src="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py.j2"
+    dest="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
+
+- name: Migrate django database
+  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
+
+- name: Collect django static files
+  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py collectstatic --noiput" 
