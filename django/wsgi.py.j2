@@ -1,0 +1,7 @@
+import sys
+
+path = '{{ ansible_env.HOME }}/{{ app_dir }}/django/'
+if path not in sys.path:
+    sys.path.append(path)
+
+from mainapp.wsgi import application

@@ -63,4 +63,8 @@
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
 
 - name: Collect django static files
-  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py collectstatic --noiput" 
+  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py collectstatic --noiput"
+
+- name: Create pythonanywhere wsgi
+  template: src="{{ ansible_env.HOME }}/{{ app_dir }}/django/wsgi.py.j2"
+    dest="/var/www/{{ wsgi_name }}.py"

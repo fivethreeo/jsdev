@@ -11,3 +11,4 @@ django_media_root: /var/www/cmsblog/media
 cms_virtualenv: cmsblog
 app_repo: git@github.com:fivethreeo/cmsblog.git
 app_dir: cmsblog
+wsgi_name: fivethreeo_pythonanywhere_com_wsgi
