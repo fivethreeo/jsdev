@@ -33,6 +33,7 @@
 - name: Check for virtualenv
   stat: path="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
   register: venv_file
+  
 - debug: msg="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }} exists {{ venv_file.stat.exists }}"
 
 - name: Make sure virtualenv exists
@@ -41,6 +42,7 @@
     executable: /bin/bash
   register: run_cmd
   when: not venv_file.stat.exists
+
 - debug: var=run_cmd.stdout_lines
   when: run_cmd.stdout_lines is defined
 
@@ -60,10 +62,21 @@
 
 - name: Migrate django database
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
+  register: run_cmd
+
+- debug: var=run_cmd.stdout_lines
+  when: run_cmd.stdout_lines is defined
 
 - name: Collect django static files
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py collectstatic --noinput"
+  register: run_cmd
+
+- debug: var=run_cmd.stdout_lines
+  when: run_cmd.stdout_lines is defined
 
 - name: Create pythonanywhere wsgi
   template: src="../../../../django/wsgi.py.j2"
     dest="/var/www/{{ wsgi_name }}.py"
+
+- name: Touch pythonanywhere wsgi
+  file: path="/var/www/{{ wsgi_name }}.py" state=touch

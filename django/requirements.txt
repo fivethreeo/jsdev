@@ -27,3 +27,4 @@ kombu
 celery
 django-celery
 django-select2
+aldryn-apphooks-config
