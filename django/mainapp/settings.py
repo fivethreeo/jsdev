@@ -178,7 +178,7 @@ PARLER_LANGUAGES = {
         'fallbacks': ['nb']
     },
     1: (
-        {'code': 'nb'}
+        {'code': 'nb'},
     )
 }
 CMS_TEMPLATES = (
