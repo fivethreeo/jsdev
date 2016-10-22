@@ -9,6 +9,7 @@
                    port="{{ django_db_port }}"
                    login_user="{{ master_db_user }}"
                    login_password="{{ vault_master_db_password }}"
+                   db=template1
 
 - name: Create postgres db
   postgresql_db: name="{{ django_db_name }}"
@@ -47,14 +48,16 @@
   git: repo="{{ app_repo }}"
     dest="{{ ansible_env.HOME }}/{{ app_dir }}"
     version=master
+    force=yes
+
 - name: install python modules into virtualenv
   pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
     virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
   when: venv_file.stat.exists
 
 - name: Create local_settings.py
-  template: src="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py.j2"
-    dest="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
+  template: src="{{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py.j2"
+    dest="{{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
 
 - name: Migrate django database
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 

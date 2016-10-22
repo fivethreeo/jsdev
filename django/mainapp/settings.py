@@ -214,3 +214,8 @@ ALDRYN_STYLE_CLASS_NAMES = (
     ('page', _('page')),
     ('page bilder', _('bilder'))
 )
+
+try:
+  from .local_settings import *
+except:
+    pass
