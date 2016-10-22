@@ -74,6 +74,9 @@ To run project on pythonanywhere
 
 Use ansible:: :
 
+  eval `ssh-agent`
+  homedir=`cygpath -H`/$USER  
+  ssh-add $homedir/.ssh/id_rsa
   cd ansible
   ansible-playbook -i hosts --ask-vault-pass site.yml
 

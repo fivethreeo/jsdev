@@ -55,10 +55,15 @@
 - name: Install python modules into virtualenv
   pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
     virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
+  register: run_cmd
+
+- debug: var=run_cmd.stdout_lines
+  when: run_cmd.stdout_lines is defined
 
 - name: Create local_settings.py
   template: src="../../../../django/mainapp/local_settings.py.j2"
     dest="{{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
+  
 
 - name: Migrate django database
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
