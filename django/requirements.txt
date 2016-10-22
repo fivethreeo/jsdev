@@ -14,7 +14,7 @@ djangocms-admin-style
 djangocms-text-ckeditor
 pytz
 django-classy-tags
-html5lib
+html5lib<0.99999999
 Pillow
 django-sekizai
 six
@@ -26,3 +26,4 @@ boto
 kombu
 celery
 django-celery
+django-select2

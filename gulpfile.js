@@ -24,16 +24,16 @@ gulp.task('sass', function () {
       cascade: false
     }))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static', 'css')));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static', 'css')));
 
 });
 
 gulp.task('copy', function() {
   gulp.src(['static/**/*' ])
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static')));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static')));
 
   gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'levangersundet', 'static', 'fonts')));
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static', 'fonts')));
 });
 
 var python = /^win/.test(process.platform) ? path.join(__dirname, 'env', 'Scripts', 'python.exe') : path.join(__dirname, 'env', 'bin', 'python');
@@ -99,7 +99,7 @@ gulp.task('js', function (callback) {
       ],
  //     optimize: "uglify",
       optimize: "none",
-      out: path.join(__dirname, 'django',  'levangersundet', 'static', 'js', 'main.js'),
+      out: path.join(__dirname, 'django',  'mainapp', 'static', 'js', 'main.js'),
       // The shim config allows us to configure dependencies for
       // scripts that do not call define() to register a module
       'shim': {
@@ -124,8 +124,7 @@ gulp.task('js', function (callback) {
           'select2': 'bower_components/select2/dist/js/select2',
           'requireLib': 'bower_components/requirejs/require',
           'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
-          'moment': 'bower_components/moment/moment',
-          'moment-nb': 'bower_components/moment/locale/nb'
+          'moment': 'bower_components/moment/min/moment-with-locales'
       }
   };
 

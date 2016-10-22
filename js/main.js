@@ -3,7 +3,7 @@
  */
 
 require([
-    "jquery", "underscore", "bootstrap", "moment", "moment-nb", "datetimepicker"
+    "jquery", "underscore", "bootstrap", "moment", "datetimepicker"
 ],
 function($, _, Bootstrap, moment) {
   $(document).ready(function(){

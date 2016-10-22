@@ -57,7 +57,7 @@ Install python modules: ::
 
 Sync django database: ::
 
-  env/bin/python django/manage.py syncdb
+  env/bin/python django/manage.py migrate
 
 Pasteable commands (linux): ::
 
@@ -65,16 +65,19 @@ Pasteable commands (linux): ::
 
   virtualenv env
   env/bin/pip install -r requirements-dev.txt
-  env/bin/python django/manage.py syncdb
+  env/bin/python django/manage.py migrate
   gulp serve
 
 Pasteable commands (win): ::
-  
+
+  npm install
+  npm install -g bower
+  npm install -g gulp
   pip install virtualenv
 
   virtualenv env
-  env\Scripts\pip.exe install -r requirements-dev.txt
-  env\Scripts\python.exe django\manage.py syncdb
+  env\Scripts\pip.exe install -r django\requirements.txt
+  env\Scripts\python.exe django\manage.py migrate
   gulp serve
   
   
@@ -93,7 +96,7 @@ Install python modules: ::
 
 Sync django database: ::
 
-  env/bin/python django/manage.py syncdb
+  env/bin/python django/manage.py migrate
 
 Pasteable commands: ::
 

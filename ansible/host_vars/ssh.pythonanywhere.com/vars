@@ -1,13 +1,13 @@
 master_db_user: super
 vault_master_db_password: 
 django_db_engine: django.db.backends.postgresql_psycopg2
-django_db_name: levangersundet
-django_db_username: levangersundet
+django_db_name: cmsblog
+django_db_username: cmsblog
 vault_django_db_password: 
 django_db_host: fivethreeo-190.postgres.pythonanywhere-services.com
 django_db_port: 10190
-django_static_root: /var/www/levangersundet/static
-django_media_root: /var/www/levangersundet/media
+django_static_root: /var/www/cmsblog/static
+django_media_root: /var/www/cmsblog/media
 cms_virtualenv: cms
-app_repo: git@github.com:fivethreeo/levangersundet.git
-app_dir: testing
+app_repo: git@github.com:fivethreeo/cmsblog.git
+app_dir: cmsblog

@@ -1,0 +1,16 @@
+
+SERVER_EMAIL = 'learnit24@learnit24.no'
+
+if 'DJANGO_DEV' in os.environ:
+    TEST_NOTIFY_EMAIL = 'oyvind.saltvik@gmail.com'
+else:
+    TEST_NOTIFY_EMAIL = SERVER_EMAIL
+
+EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.learnit24.no'
+EMAIL_HOST_USER = 'learnit24@learnit24.no'
+EMAIL_HOST_PASSWORD = '4Yxwb9x0'
+
+ADMINS = (
+    ('Oyvind Saltvik', 'oyvind.saltvik@gmail.com'),
+)

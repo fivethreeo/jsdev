@@ -1,27 +1,5 @@
 ---
 # tasks file for cms
-- name: checkout app code 
-  git: repo="{{ app_repo }}"
-    dest="{{ ansible_env.HOME }}/{{ app_dir }}"
-    version=master
-
-- name: check for virtualenv
-  stat: path="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
-  register: venv_file
-- debug: msg="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }} exists {{ venv_file.stat.exists }}"
-
-- name: make sure virtualenv exists
-  shell: "source `which virtualenvwrapper.sh` && mkvirtualenv {{ cms_virtualenv }}" 
-  args:
-    executable: /bin/bash
-  register: run_cmd
-  when: not venv_file.stat.exists
-- debug: var=run_cmd.stdout_lines
-  when: run_cmd.stdout_lines is defined
-
-- name: install python modules into virtualenv
-  pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
-    virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
 
 - name: create postgres user
   postgresql_user: name="{{ django_db_username }}"
@@ -44,3 +22,27 @@
                  port="{{ django_db_port }}"
                  login_user="{{ master_db_user }}"
                  login_password="{{ vault_master_db_password }}"
+                 
+- name: checkout app code 
+  git: repo="{{ app_repo }}"
+    dest="{{ ansible_env.HOME }}/{{ app_dir }}"
+    version=master
+
+- name: check for virtualenv
+  stat: path="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
+  register: venv_file
+- debug: msg="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }} exists {{ venv_file.stat.exists }}"
+
+- name: make sure virtualenv exists
+  shell: "source `which virtualenvwrapper.sh` && mkvirtualenv {{ cms_virtualenv }}" 
+  args:
+    executable: /bin/bash
+  register: run_cmd
+  when: not venv_file.stat.exists
+- debug: var=run_cmd.stdout_lines
+  when: run_cmd.stdout_lines is defined
+
+- name: install python modules into virtualenv
+  pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
+    virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
+  when: venv_file.stat.exists
