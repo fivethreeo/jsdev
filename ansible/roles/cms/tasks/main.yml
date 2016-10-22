@@ -33,7 +33,7 @@
 - name: Check for virtualenv
   stat: path="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
   register: venv_file
-  
+
 - debug: msg="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }} exists {{ venv_file.stat.exists }}"
 
 - name: Make sure virtualenv exists
@@ -64,6 +64,10 @@
   template: src="../../../../django/mainapp/local_settings.py.j2"
     dest="{{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
   
+
+- name: Migrate djangocms_blog djangocms_blog 0017
+  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
+  register: run_cmd
 
 - name: Migrate django database
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
