@@ -142,7 +142,13 @@ INSTALLED_APPS = (
     'storages',
     'widget_tweaks',
     'post_office',
-    'smuggler'
+    'smuggler',
+    'aldryn_apphooks_config',
+    'parler',
+    'taggit',
+    'taggit_autosuggest',
+    'meta',
+    'djangocms_blog'
 )
 
 LANGUAGES = (
@@ -167,7 +173,14 @@ CMS_LANGUAGES = {
         },
     ],
 }
-
+PARLER_LANGUAGES = {
+    'default': {
+        'fallbacks': ['nb']
+    },
+    1: (
+        {'code': 'nb'}
+    )
+}
 CMS_TEMPLATES = (
     ## Customize this
     ('page.html', 'Page'),
