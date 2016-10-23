@@ -18,7 +18,7 @@
                  lc_ctype='nb_NO.UTF-8'
                  template='template0'
                  owner="{{ django_db_username }}"
-                 state=absent
+                 state=present
                  login_host="{{ django_db_host }}"
                  port="{{ django_db_port }}"
                  login_user="{{ master_db_user }}"
