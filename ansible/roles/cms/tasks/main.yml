@@ -18,7 +18,7 @@
                  lc_ctype='nb_NO.UTF-8'
                  template='template0'
                  owner="{{ django_db_username }}"
-                 state=present
+                 state=absent
                  login_host="{{ django_db_host }}"
                  port="{{ django_db_port }}"
                  login_user="{{ master_db_user }}"
@@ -63,11 +63,7 @@
 - name: Create local_settings.py
   template: src="../../../../django/mainapp/local_settings.py.j2"
     dest="{{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
-  
 
-- name: Migrate djangocms_blog djangocms_blog 0017
-  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
-  register: run_cmd
 
 - name: Migrate django database
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 

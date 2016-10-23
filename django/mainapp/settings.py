@@ -148,8 +148,7 @@ INSTALLED_APPS = (
     'parler',
     'taggit',
     'taggit_autosuggest',
-    'meta',
-    'djangocms_blog'
+    'meta'
 )
 
 LANGUAGES = (
