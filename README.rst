@@ -63,7 +63,7 @@ Pasteable commands (win): ::
   npm install -g gulp
   pip install virtualenv
 
-  virtualenv env
+  virtualenv env --system-site-packages
   env\Scripts\pip.exe install -r django\requirements.txt
   env\Scripts\python.exe django\manage.py migrate
   gulp serve

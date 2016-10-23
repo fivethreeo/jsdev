@@ -51,33 +51,49 @@
     dest="{{ ansible_env.HOME }}/{{ app_dir }}"
     version=master
     force=yes
+  tags:
+    - checkout
 
 - name: Install python modules into virtualenv
   pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
     virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
   register: run_cmd
+  tags:
+    - pip
 
 - debug: var=run_cmd.stdout_lines
   when: run_cmd.stdout_lines is defined
+  tags:
+    - pip
 
 - name: Create local_settings.py
   template: src="../../../../django/mainapp/local_settings.py.j2"
     dest="{{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
-
+  tags:
+    - settings
+    - checkout
 
 - name: Migrate django database
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
   register: run_cmd
+  tags:
+    - migrate
 
 - debug: var=run_cmd.stdout_lines
   when: run_cmd.stdout_lines is defined
+  tags:
+    - migrate
 
 - name: Collect django static files
   shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py collectstatic --noinput"
   register: run_cmd
+  tags:
+    - static
 
 - debug: var=run_cmd.stdout_lines
   when: run_cmd.stdout_lines is defined
+  tags:
+    - static
 
 - name: Create pythonanywhere wsgi
   template: src="../../../../django/wsgi.py.j2"
@@ -85,3 +101,7 @@
 
 - name: Touch pythonanywhere wsgi
   file: path="/var/www/{{ wsgi_name }}.py" state=touch
+  tags:
+    - checkout
+    - pip
+    - settings
