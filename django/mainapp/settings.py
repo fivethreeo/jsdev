@@ -152,6 +152,9 @@ INSTALLED_APPS = (
     'djangocms_blog'
 )
 
+META_SITE_PROTOCOL = 'http'
+META_USE_SITES = True
+
 LANGUAGES = (
     ## Customize this
     ('nb', gettext('nb')),
@@ -222,6 +225,6 @@ ALDRYN_STYLE_CLASS_NAMES = (
 )
 
 try:
-  from .local_settings import *
+    from .local_settings import *
 except:
     pass
