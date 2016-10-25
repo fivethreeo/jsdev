@@ -14,7 +14,8 @@
     </div>
     {% endif %}
     <div class="blog-lead">
-        {% render_placeholder post.content as placeholder_content %}
+        {% render_placeholder post.content 
+        as placeholder_content %}
         {% if not TRUNCWORDS_COUNT %}
           {{ placeholder_content|safe }}
         {% else %}

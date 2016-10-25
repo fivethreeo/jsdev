@@ -7,7 +7,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var spawn = require('cross-spawn-async');
 var prompt = require('prompt');
-
+var _ = require('lodash');
 gulp.task('sass', function () {
 
   gulp.src('sass/*.scss')
@@ -85,53 +85,56 @@ gulp.task('manage', function (callback) {
 gulp.task('js', function (callback) {
 
   var requirejs = require('requirejs');
-
-  var config = {
-      baseUrl: '',
-      name: 'js/main',
-      include: [
-        'requireLib',
-        'text',
-        'jquery',
-        'underscore',
-        'bootstrap',
-        //'backbone',
-        'select2'
-        //,
-        //'backbone-filter'
-      ],
- //     optimize: "uglify",
-      optimize: "none",
-      out: path.join(__dirname, 'django',  'mainapp', 'static', 'js', 'main.js'),
-      // The shim config allows us to configure dependencies for
-      // scripts that do not call define() to register a module
-      'shim': {
-          'underscore': {
-              'exports': '_'
-          },
-          'backbone': {
-              'deps': [
-                  'underscore',
-                  'jquery'
-              ],
-              'exports': 'Backbone'
-          }
-      },
-      'paths': {
-          'jquery': 'bower_components/jquery/dist/jquery',
-          'underscore': 'bower_components/underscore/underscore',
-          'backbone': 'bower_components/backbone/backbone',
-          'backbone-filter': 'bower_components/backbone-filtered-collection/backbone-filtered-collection',
-          'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
-          'text': 'bower_components/text/text',
-          'select2': 'bower_components/select2/dist/js/select2',
-          'requireLib': 'bower_components/requirejs/require',
-          'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
-          'moment': 'bower_components/moment/min/moment-with-locales'
-      }
+  var paths = {
+    'jquery': 'bower_components/jquery/dist/jquery',
+    'underscore': 'bower_components/underscore/underscore',
+    'backbone': 'bower_components/backbone/backbone',
+    'backbone-filter': 'bower_components/backbone-filtered-collection/backbone-filtered-collection',
+    'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
+    'text': 'bower_components/text/text',
+    'select2': 'bower_components/select2/dist/js/select2',
+    'requireLib': 'bower_components/requirejs/require',
+    'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
+    'moment': 'bower_components/moment/min/moment-with-locales'
   };
-
-  return requirejs.optimize(config, function (res) {
+  var shim = {
+    'underscore': {
+      'exports': '_'
+    },
+    'backbone': {
+      'deps': [
+        'underscore',
+        'jquery'
+      ],
+    'exports': 'Backbone'
+    }
+  };
+  var optimize = "uglify";
+  // optimize: "none",
+  var config = {
+    baseUrl: '',
+    optimize: optimize,
+    // The shim config allows us to configure dependencies for
+    // scripts that do not call define() to register a module
+    shim: shim,
+    paths: paths
+  };
+  var include = [
+    'requireLib',
+    'text',
+    'jquery',
+    'underscore',
+    'bootstrap',
+     //'backbone',
+    'select2' // ,
+    //'backbone-filter'
+  ];
+  var mainconfig = _.cloneDeep(config);
+  mainconfig.name = 'js/main';
+  mainconfig.include = include;
+  mainconfig.out = path.join(__dirname, 'django',  'mainapp', 'static', 'js', 'main.js');
+      
+  return requirejs.optimize(mainconfig, function (res) {
     callback();
   }, function(err) {
     console.log(err);
