@@ -32,6 +32,9 @@ gulp.task('copy', function() {
   gulp.src(['static/**/*' ])
     .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static')));
 
+  gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'modernizr', 'modernizr.js') ])
+    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static', 'js')));
+
   gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
     .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static', 'fonts')));
 });
