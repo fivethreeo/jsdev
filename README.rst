@@ -72,7 +72,7 @@ Pasteable commands (win): ::
 To run project on pythonanywhere
 ================================
 
-Use ansible:: :
+Use ansible: ::
 
   eval `ssh-agent`
   homedir=`cygpath -H`/$USER  
@@ -82,31 +82,39 @@ Use ansible:: :
 
 or 
 
+Clone repo: ::
+  
+  project=myproject
+  git clone this_repo $project
+  cd $project
+
 Create virtualenv: ::
 
-  project=levangersundet
-  mkvirtualenv ${project}env  --python=/usr/bin/python3.5
-
+  mkvirtualenv ${project} --python=python3.5
+  workon ${project}
 
 Install python modules: ::
 
-  ${project}env/bin/pip install -r requirements.txt
+  pip install -r django/requirements.txt
 
 Sync django database: ::
 
-  env/bin/python django/manage.py migrate
+  python django/manage.py migrate
 
 Pasteable commands: ::
 
-  project=levangersundet
-  mkvirtualenv ${project}  --python=/usr/bin/python3.5
-  ${project}/bin/pip install -r requirements.txt
-  ${project}/bin/python django/manage.py migrate
+  project=myproject
+  git clone this_repo $project
+  cd $project
+  mkvirtualenv ${project} --python=python3.5
+  workon ${project}
+  pip install -r requirements.txt
+  python django/manage.py migrate
 
   mkdir -p /var/www/${project}/media                                                                                            
   mkdir -p /var/www/${project}/static
   
-  ${project}/bin/python django/manage.py collectstatic
+  python django/manage.py collectstatic
 
 Custom wsgi: ::
 

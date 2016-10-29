@@ -7,7 +7,53 @@ var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var spawn = require('cross-spawn-async');
 var prompt = require('prompt');
+var requirejs = require('requirejs');
 var _ = require('lodash');
+
+var rjs = function(opts, cb) {
+  return requirejs.optimize(opts, function (res) {
+    cb();
+  }, function(err) {
+    console.log(err);
+  });
+};
+
+var staticdir = path.join(__dirname, 'django',  'mainapp', 'static');
+
+var paths = {
+  'jquery': 'bower_components/jquery/dist/jquery',
+  'underscore': 'bower_components/underscore/underscore',
+  'backbone': 'bower_components/backbone/backbone',
+  'backbone-filter': 'bower_components/backbone-filtered-collection/backbone-filtered-collection',
+  'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
+  'text': 'bower_components/text/text',
+  'select2': 'bower_components/select2/dist/js/select2',
+  'requireLib': 'bower_components/requirejs/require',
+  'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
+  'moment': 'bower_components/moment/min/moment-with-locales',
+  'modernizr': 'bower_components/modernizr/modernizr'
+};
+var shim = {
+  'underscore': {
+    'exports': '_'
+  },
+  'backbone': {
+    'deps': [
+      'underscore',
+      'jquery'
+    ],
+  'exports': 'Backbone'
+  }
+};
+var defaultConfig = {
+  baseUrl: '',
+  optimize: "uglify",
+  // The shim config allows us to configure dependencies for
+  // scripts that do not call define() to register a module
+  shim: shim,
+  paths: paths
+};
+
 gulp.task('sass', function () {
 
   gulp.src('sass/*.scss')
@@ -24,23 +70,65 @@ gulp.task('sass', function () {
       cascade: false
     }))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static', 'css')));
+    .pipe(gulp.dest(path.join(staticdir, 'css')));
 
 });
 
 gulp.task('copy', function() {
   gulp.src(['static/**/*' ])
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static')));
-
-  gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'modernizr', 'modernizr.js') ])
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static', 'js')));
+    .pipe(gulp.dest(staticdir));
 
   gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
-    .pipe(gulp.dest(path.join(__dirname, 'django',  'mainapp', 'static', 'fonts')));
+    .pipe(gulp.dest(path.join(staticdir, 'fonts')));
+});
+
+gulp.task('js', function (callback) {
+  var optimize = "uglify";
+  // optimize = "none";
+  var config = _.cloneDeep(defaultConfig);
+  config.name = 'js/main';
+  config.optimize = optimize,
+  config.include = [
+    'requireLib',
+    'text',
+    'jquery',
+    'underscore',
+    'bootstrap',
+     //'backbone',
+    'select2' // ,
+    //'backbone-filter'
+  ];
+  config.out = path.join(staticdir, 'js', 'main.js');
+      
+  return rjs(config, callback)
+});
+
+gulp.task('modernizr', function (callback) {
+  var optimize = "uglify";
+  // optimize = "none";
+  var config = _.cloneDeep(defaultConfig);
+  config.name = paths.modernizr;
+  config.optimize = optimize;
+  config.out = path.join(staticdir, 'js', 'modernizr.js');
+
+  return rjs(config, callback)
+});
+
+gulp.task('build', ['js', 'modernizr', 'sass', 'copy'], function () {
+   
 });
 
 var python = /^win/.test(process.platform) ? path.join(__dirname, 'env', 'Scripts', 'python.exe') : path.join(__dirname, 'env', 'bin', 'python');
 var manage = path.join(__dirname, 'django', 'manage.py');
+
+gulp.task('serve', ['connectdjango'], function () {
+   
+    require('opn')('http://localhost:9000');
+    
+    gulp.watch(['./js/**/*'], ['js']);
+    gulp.watch(['./sass/**/*'], ['sass']);
+});
+
 
 gulp.task('connectdjango', function () {
     var env = process.env,
@@ -80,76 +168,4 @@ gulp.task('manage', function (callback) {
     callback();
   });
 
-});
-
-gulp.task('js', function (callback) {
-
-  var requirejs = require('requirejs');
-  var paths = {
-    'jquery': 'bower_components/jquery/dist/jquery',
-    'underscore': 'bower_components/underscore/underscore',
-    'backbone': 'bower_components/backbone/backbone',
-    'backbone-filter': 'bower_components/backbone-filtered-collection/backbone-filtered-collection',
-    'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
-    'text': 'bower_components/text/text',
-    'select2': 'bower_components/select2/dist/js/select2',
-    'requireLib': 'bower_components/requirejs/require',
-    'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
-    'moment': 'bower_components/moment/min/moment-with-locales'
-  };
-  var shim = {
-    'underscore': {
-      'exports': '_'
-    },
-    'backbone': {
-      'deps': [
-        'underscore',
-        'jquery'
-      ],
-    'exports': 'Backbone'
-    }
-  };
-  var optimize = "uglify";
-  // optimize: "none",
-  var config = {
-    baseUrl: '',
-    optimize: optimize,
-    // The shim config allows us to configure dependencies for
-    // scripts that do not call define() to register a module
-    shim: shim,
-    paths: paths
-  };
-  var include = [
-    'requireLib',
-    'text',
-    'jquery',
-    'underscore',
-    'bootstrap',
-     //'backbone',
-    'select2' // ,
-    //'backbone-filter'
-  ];
-  var mainconfig = _.cloneDeep(config);
-  mainconfig.name = 'js/main';
-  mainconfig.include = include;
-  mainconfig.out = path.join(__dirname, 'django',  'mainapp', 'static', 'js', 'main.js');
-      
-  return requirejs.optimize(mainconfig, function (res) {
-    callback();
-  }, function(err) {
-    console.log(err);
-  });
-
-});
-gulp.task('serve', ['connectdjango'], function () {
-   
-    require('opn')('http://localhost:9000');
-    
-    gulp.watch(['./js/**/*'], ['js']);
-    gulp.watch(['./sass/**/*'], ['sass']);
-});
-
-
-gulp.task('build', ['js', 'sass', 'copy'], function () {
-   
 });
