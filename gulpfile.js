@@ -1,171 +1,227 @@
+/* eslint strict: [2, "global"] */
+'use strict';
 
-var fs = require('fs');
-var path = require('path');
+// #####################################################################################################################
+// #IMPORTS#
 var gulp = require('gulp');
+var gutil = require('gulp-util');
+var plumber = require('gulp-plumber');
+var fs = require('fs');
+var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss');
+var gulpif = require('gulp-if');
+var iconfont = require('gulp-iconfont');
+var iconfontCss = require('gulp-iconfont-css');
 var sass = require('gulp-sass');
-var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
-var spawn = require('cross-spawn-async');
-var prompt = require('prompt');
-var requirejs = require('requirejs');
-var _ = require('lodash');
+var minifyCss = require('gulp-clean-css');
+var eslint = require('gulp-eslint');
+var webpack = require('webpack');
+var KarmaServer = require('karma').Server;
+var integrationTests = require('djangocms-casper-helpers/gulp');
 
-var rjs = function(opts, cb) {
-  return requirejs.optimize(opts, function (res) {
-    cb();
-  }, function(err) {
-    console.log(err);
-  });
+var argv = require('minimist')(process.argv.slice(2)); // eslint-disable-line
+
+// #####################################################################################################################
+// #SETTINGS#
+var options = {
+    debug: argv.debug
+};
+var PROJECT_ROOT = __dirname + '/cms/static/cms';
+var PROJECT_PATH = {
+    js: PROJECT_ROOT + '/js',
+    sass: PROJECT_ROOT + '/sass',
+    css: PROJECT_ROOT + '/css',
+    icons: PROJECT_ROOT + '/fonts',
+    tests: __dirname + '/cms/tests/frontend'
 };
 
-var staticdir = path.join(__dirname, 'django',  'mainapp', 'static');
-
-var paths = {
-  'jquery': 'bower_components/jquery/dist/jquery',
-  'underscore': 'bower_components/underscore/underscore',
-  'backbone': 'bower_components/backbone/backbone',
-  'backbone-filter': 'bower_components/backbone-filtered-collection/backbone-filtered-collection',
-  'bootstrap': 'bower_components/bootstrap/dist/js/bootstrap',
-  'text': 'bower_components/text/text',
-  'select2': 'bower_components/select2/dist/js/select2',
-  'requireLib': 'bower_components/requirejs/require',
-  'datetimepicker': 'bower_components/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
-  'moment': 'bower_components/moment/min/moment-with-locales',
-  'modernizr': 'bower_components/modernizr/modernizr'
-};
-var shim = {
-  'underscore': {
-    'exports': '_'
-  },
-  'backbone': {
-    'deps': [
-      'underscore',
-      'jquery'
+var PROJECT_PATTERNS = {
+    js: [
+        PROJECT_PATH.js + '/modules/*.js',
+        PROJECT_PATH.js + '/widgets/*.js',
+        PROJECT_PATH.js + '/*.js',
+        PROJECT_PATH.js + '/gulpfile.js',
+        PROJECT_PATH.tests + '/**/*.js',
+        '!' + PROJECT_PATH.tests + '/unit/helpers/**/*.js',
+        '!' + PROJECT_PATH.tests + '/coverage/**/*.js',
+        '!' + PROJECT_PATH.js + '/modules/jquery.*.js',
+        '!' + PROJECT_PATH.js + '/dist/*.js'
     ],
-  'exports': 'Backbone'
-  }
-};
-var defaultConfig = {
-  baseUrl: '',
-  optimize: "uglify",
-  // The shim config allows us to configure dependencies for
-  // scripts that do not call define() to register a module
-  shim: shim,
-  paths: paths
+    sass: [
+        PROJECT_PATH.sass + '/**/*.{scss,sass}'
+    ],
+    icons: [
+        PROJECT_PATH.icons + '/src/*.svg'
+    ]
 };
 
+var INTEGRATION_TESTS = [
+    [
+        'loginAdmin',
+        'toolbar',
+        'addFirstPage',
+        'wizard',
+        'editMode',
+        'sideframe',
+        'createContent',
+        'users',
+        'addNewUser',
+        'newPage',
+        'pageControl',
+        'modal',
+        'permissions',
+        'logout',
+        'clipboard',
+        'link-plugin-content-mode'
+    ],
+    [
+        'pageTypes',
+        'switchLanguage',
+        'editContent',
+        'editContentTools',
+        'publish',
+        'loginToolbar',
+        'changeSettings',
+        'toolbar-login-apphooks',
+        'permissions-enabled',
+        {
+            serverArgs: '--CMS_PERMISSION=False --CMS_TOOLBAR_URL__EDIT_ON=test-edit',
+            file: 'copy-from-language'
+        },
+        {
+            serverArgs: '--CMS_PERMISSION=False --CMS_TOOLBAR_URL__EDIT_ON=test-edit',
+            file: 'pagetree-no-permission'
+        },
+        {
+            serverArgs: '--CMS_PERMISSION=False --CMS_TOOLBAR_URL__EDIT_ON=test-edit',
+            file: 'permissions-disabled'
+        }
+    ],
+    [
+        'pagetree',
+        'pagetree-drag-n-drop-copy',
+        'disableToolbar',
+        'dragndrop',
+        'copy-apphook-page',
+        //'history',
+        //'revertLive',
+        'narrowScreen'
+    ]
+];
+
+var CMS_VERSION = fs.readFileSync('cms/__init__.py', { encoding: 'utf-8' })
+    .match(/__version__ = '(.*?)'/)[1];
+
+// #####################################################################################################################
+// #TASKS#
 gulp.task('sass', function () {
+    gulp.src(PROJECT_PATTERNS.sass)
+        .pipe(gulpif(options.debug, sourcemaps.init()))
+        .pipe(sass())
+        .on('error', function (error) {
+            gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.messageFormatted));
+        })
+        .pipe(postcss([
+            autoprefixer({
+                cascade: false
+            })
+        ]))
+        .pipe(minifyCss({
+            rebase: false
+        }))
+        .pipe(gulpif(options.debug, sourcemaps.write()))
+        .pipe(gulp.dest(PROJECT_PATH.css + '/' + CMS_VERSION + '/'));
+});
 
-  gulp.src('sass/*.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass({
-      //style: 'compressed',
-      includePaths: [
-      path.join(__dirname, 'sass'),
-      path.join(__dirname, 'bower_components', 'bootstrap-sass', 'assets', 'stylesheets'),
-      path.join(__dirname, 'bower_components')
-    ]}).on('error', sass.logError))
-    .pipe(autoprefixer({
-      browsers: ['last 3 versions'],
-      cascade: false
+gulp.task('icons', function () {
+    gulp.src(PROJECT_PATTERNS.icons)
+    .pipe(iconfontCss({
+        fontName: 'django-cms-iconfont',
+        fontPath: '../../fonts/' + CMS_VERSION + '/',
+        path: PROJECT_PATH.sass + '/libs/_iconfont.scss',
+        targetPath: '../../sass/components/_iconography.scss'
     }))
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(path.join(staticdir, 'css')));
-
+    .pipe(iconfont({
+        fontName: 'django-cms-iconfont',
+        normalize: true
+    }))
+    .on('glyphs', function (glyphs, opts) {
+        gutil.log.bind(glyphs, opts);
+    })
+    .pipe(gulp.dest(PROJECT_PATH.icons + '/' + CMS_VERSION + '/'));
 });
 
-gulp.task('copy', function() {
-  gulp.src(['static/**/*' ])
-    .pipe(gulp.dest(staticdir));
-
-  gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
-    .pipe(gulp.dest(path.join(staticdir, 'fonts')));
+gulp.task('lint', ['lint:javascript']);
+gulp.task('lint:javascript', function () {
+    // DOCS: http://eslint.org
+    return gulp.src(PROJECT_PATTERNS.js)
+        .pipe(gulpif(!process.env.CI, plumber()))
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError())
+        .pipe(gulpif(!process.env.CI, plumber.stop()));
 });
 
-gulp.task('js', function (callback) {
-  var optimize = "uglify";
-  // optimize = "none";
-  var config = _.cloneDeep(defaultConfig);
-  config.name = 'js/main';
-  config.optimize = optimize,
-  config.include = [
-    'requireLib',
-    'text',
-    'jquery',
-    'underscore',
-    'bootstrap',
-     //'backbone',
-    'select2' // ,
-    //'backbone-filter'
-  ];
-  config.out = path.join(staticdir, 'js', 'main.js');
-      
-  return rjs(config, callback)
+gulp.task('tests', ['tests:unit', 'tests:integration']);
+
+// gulp tests:unit --tests=cms.base,cms.modal
+gulp.task('tests:unit', function (done) {
+    var server = new KarmaServer({
+        configFile: PROJECT_PATH.tests + '/karma.conf.js',
+        singleRun: true
+    }, done);
+
+    server.start();
 });
 
-gulp.task('modernizr', function (callback) {
-  var optimize = "uglify";
-  // optimize = "none";
-  var config = _.cloneDeep(defaultConfig);
-  config.name = paths.modernizr;
-  config.optimize = optimize;
-  config.out = path.join(staticdir, 'js', 'modernizr.js');
+gulp.task('tests:unit:watch', function () {
+    var server = new KarmaServer({
+        configFile: PROJECT_PATH.tests + '/karma.conf.js'
+    });
 
-  return rjs(config, callback)
+    server.start();
 });
 
-gulp.task('build', ['js', 'modernizr', 'sass', 'copy'], function () {
-   
+// gulp tests:integration [--clean] [--screenshots] [--tests=loginAdmin,toolbar]
+gulp.task('tests:integration', integrationTests({
+    tests: INTEGRATION_TESTS,
+    pathToTests: PROJECT_PATH.tests,
+    argv: argv,
+    dbPath: 'testdb.sqlite',
+    serverCommand: 'testserver.py',
+    logger: gutil.log.bind(gutil)
+}));
+
+var webpackBundle = function (opts) {
+    var webpackOptions = opts || {};
+
+    webpackOptions.PROJECT_PATH = PROJECT_PATH;
+    webpackOptions.debug = options.debug;
+    webpackOptions.CMS_VERSION = CMS_VERSION;
+
+    return function (done) {
+        var config = require('./webpack.config')(webpackOptions);
+
+        webpack(config, function (err, stats) {
+            if (err) {
+                throw new gutil.PluginError('webpack', err);
+            }
+            gutil.log('[webpack]', stats.toString({ colors: true }));
+            if (typeof done !== 'undefined' && (!opts || !opts.watch)) {
+                done();
+            }
+        });
+    };
+};
+
+gulp.task('bundle:watch', webpackBundle({ watch: true }));
+gulp.task('bundle', webpackBundle());
+
+gulp.task('watch', function () {
+    gulp.start('bundle:watch');
+    gulp.watch(PROJECT_PATTERNS.sass, ['sass']);
+    gulp.watch(PROJECT_PATTERNS.js, ['lint']);
 });
 
-var python = /^win/.test(process.platform) ? path.join(__dirname, 'env', 'Scripts', 'python.exe') : path.join(__dirname, 'env', 'bin', 'python');
-var manage = path.join(__dirname, 'django', 'manage.py');
-
-gulp.task('serve', ['connectdjango'], function () {
-   
-    require('opn')('http://localhost:9000');
-    
-    gulp.watch(['./js/**/*'], ['js']);
-    gulp.watch(['./sass/**/*'], ['sass']);
-});
-
-
-gulp.task('connectdjango', function () {
-    var env = process.env,
-        varName,
-        envCopy = {DJANGO_DEV:1};
-
-    // Copy process.env into envCopy
-    for (varName in env) {
-      envCopy[varName] = env[varName];
-    }
-    return spawn(python, [
-       manage, 'runserver', '0.0.0.0:9000'
-    ], {stdio: 'inherit', env: envCopy});
-
-});
-
-gulp.task('manage', function (callback) {
-  prompt.start();
-  prompt.get([{
-    name: 'command',
-    description: 'Command',
-    type: 'string',
-    required: true
-  }], function(err, result) {
-    
-  var env = process.env,
-        varName,
-        envCopy = {DJANGO_DEV:1};
-
-    // Copy process.env into envCopy
-    for (varName in env) {
-      envCopy[varName] = env[varName];
-    }
-    return spawn(python,
-       [manage].concat(result['command'].split(' '))
-    , {stdio: 'inherit', env: envCopy});
-    callback();
-  });
-
-});
+gulp.task('default', ['sass', 'lint', 'watch']);
