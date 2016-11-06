@@ -1,5 +1,12 @@
-- name: configure and deploy the app
-  hosts: default
-  remote_user: fivethreeo
-  roles:
-    - cms
+# - name: configure and deploy the app
+#   hosts: default
+#   remote_user: fivethreeo
+#   roles:
+#     - cms
+
+- name: collect facts
+  hosts: local
+  tasks:
+    - name: collect facts
+      setup:
+

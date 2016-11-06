@@ -6637,6 +6637,18 @@ html, body {
   height: 100%;
   width: 100%; }
 
+.post-detail {
+  list-style-type: none;
+  padding: .5em 0;
+  margin: 0;
+  overflow: hidden; }
+  .post-detail > li {
+    display: block;
+    float: left;
+    margin-right: .5em; }
+    .post-detail > li:last-child {
+      margin-right: 0px; }
+
 @keyframes animationFrames {
   0% {
     transform: translate(0px, 0px) rotate(0deg); }

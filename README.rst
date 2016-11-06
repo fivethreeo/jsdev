@@ -2,7 +2,7 @@
 To build css/javascript
 =======================
 
-Install `nodejs`_ or `io.js`_.
+Install `nodejs`_.
 
 Install node modules: ::
 
@@ -25,7 +25,7 @@ Pasteable commands: ::
 To run project locally
 ======================
 
-Install `nodejs`_ or `io.js`_ and `Python`_.
+Install `nodejs`_ and `Python`_.
 
 Install node modules needed: ::
 
@@ -108,7 +108,7 @@ Pasteable commands: ::
   cd $project
   mkvirtualenv ${project} --python=python3.5
   workon ${project}
-  pip install -r requirements.txt
+  pip install -r django/requirements.txt
   python django/manage.py migrate
 
   mkdir -p /var/www/${project}/media                                                                                            
@@ -160,15 +160,7 @@ pxe booting with virtualbox (does not work): ::
   rm pxelinux.cfg
   cp -R debian-installer/amd64/pxelinux.cfg .
 
-iPXE booting with VirtualBox:
-
-Create pxe image (if wget fails below) at https://rom-o-matic.eu/ using: ::
-
-  #!ipxe
-  dhcp
-  chain tftp://10.0.2.4/ipxe
-  
-Set up vms for PXE booting: ::
+iPXE booting with VirtualBox: ::
 
   vb="vboxmanage"
   cygpath="echo"
@@ -180,14 +172,17 @@ Set up vms for PXE booting: ::
     homedir=`cygpath -H`/$USER
   fi
 
+  ssh-keygen -t rsa -b 4096 -f $homedir/.ssh/id_rsa
+
   preseed="`pwd`/ansible/preseed.cfg"
+
+  # Can be slow, be patient
+  wget --no-check-certificate -O ipxe.iso 'http://boot.ipxe.org/ipxe.iso'
 
   mkdir -p "$homedir/.VirtualBox"
   pushd "$homedir/.VirtualBox"
   mkdir TFTP
   cd TFTP
-  # Can be slow, be patient
-  wget --no-check-certificate -O undionly.kpxe 'https://rom-o-matic.eu/build.fcgi?BINARY=undionly.kpxe&BINDIR=bin&REVISION=master&DEBUG=&EMBED.00script.ipxe=%23%21ipxe%0Adhcp%0Achain%20tftp%3A//10.0.2.4/ipxe%0A&'
 
   mkdir installer
   cd installer
@@ -206,33 +201,59 @@ Set up vms for PXE booting: ::
   boot
   EOF
   ) > ipxe
+
   cp "$preseed" .
+  cp $homedir/.ssh/id_rsa.pub authorized_keys
 
   popd
 
   # Configure vms with nat and intel pxe network boot
 
+  ipxe="`pwd`/ipxe.iso"
   mkdir vdis
   vdidir=`pwd`/vdis
 
-  array=( one two )
+  array=( maas_master fourth )
   for i in "${array[@]}"
   do
      vdi=`$cygpath "$vdidir/node_$i.vdi"`
+     ipxe=`$cygpath "$ipxe"`
      "$vb" createmedium disk --filename "$vdi" --size 6000
      "$vb" createvm --name "node_$i" --register
-     "$vb" modifyvm "node_$i" --memory 1024 --vram 128
-     "$vb" modifyvm "node_$i"  --rtcuseutc on
+     "$vb" modifyvm "node_$i" --memory 1024 --vram 128 --rtcuseutc on --ioapic on
      "$vb" storagectl "node_$i" --name "SATA Controller" --add sata
      "$vb" storageattach "node_$i" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
-     "$vb" modifyvm "node_$i" --nic1 nat --nattftpfile1 /undionly.kpxe --nictype1 82540EM --cableconnected1 on
-     "$vb" modifyvm "node_$i" --boot1 disk
-     "$vb" modifyvm "node_$i" --boot2 net
-     "$vb" modifyvm "node_$i" --boot3 none
-     "$vb" modifyvm "node_$i" --boot4 none
+     if [[ $i == *_master ]]
+     then
+       "$vb" storageattach "node_$i" --storagectl "SATA Controller" \
+         --port 1 --device 0 --type dvddrive --medium "$ipxe"
+       "$vb" modifyvm "node_$i" --nic1 nat --nattftpfile1 /ipxe --nictype1 82540EM --cableconnected1 on
+       "$vb" modifyvm "node_$i" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
+       "$vb" modifyvm "node_$i" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
+       "$vb" modifyvm "node_$i" --nic2 intnet --intnet2 "cluster" --nictype2 82540EM \
+         --nicpromisc2 allow-vms --cableconnected2 on
+       "$vb" modifyvm "node_$i" --boot1 disk
+       "$vb" modifyvm "node_$i" --boot2 dvd
+     else
+       "$vb" modifyvm "node_$i" --nic1 intnet --intnet1 "cluster" --nictype1 82540EM \
+         --nicpromisc1 allow-vms --cableconnected1 on
+       "$vb" modifyvm "node_$i" --boot1 net
+       "$vb" modifyvm "node_$i" --boot2 none
+     fi
   done
   # newline
 
+  eval `ssh-agent`
+  ssh-add $homedir/.ssh/id_rsa
+
+  proxy="-o ProxyJump=ansible@localhost:2222"
+  ansible_cfg=$"[ssh_connection]\nssh_args="
+  ansible_proxy=$"[group:vars]\nansible_ssh_common_args=$proxy"
+  echo -e $ansible_cfg
+  echo -e $ansible_proxy
+  ssh ansible@localhost -p 2222
+  ssh $proxy ansible@a_intnet_host
+  ansible $ansible_proxy_arg -i hosts -m ping all
+
 .. _nodejs: https://nodejs.org/
-.. _io.js: https://iojs.org/
 .. _Python: https://www.python.org/downloads/release/python-2710/
