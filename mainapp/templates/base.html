@@ -1,0 +1,23 @@
+{% load cms_tags staticfiles sekizai_tags menu_tags %}
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+    <title>{% block title %}{{ request.site }}{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/0.9/main.css' %}">
+    {% render_block "css" %}
+</head>
+<body>
+    <script type="text/javascript" src="{% static 'js/modernizr.js' %}"></script>
+    {% cms_toolbar %}
+    {% comment %}
+
+    {% endcomment %}    
+    {% block contentbase %}{% endblock contentbase %}
+    {% render_block "js" %}
+    <script src="{% static 'js/dist/0.9/bundle.main.min.js' %}"></script>
+</body>
+</html>

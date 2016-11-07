@@ -7,6 +7,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var plumber = require('gulp-plumber');
 var fs = require('fs');
+var path = require('path');
 var autoprefixer = require('autoprefixer');
 var postcss = require('gulp-postcss');
 var gulpif = require('gulp-if');
@@ -20,6 +21,9 @@ var webpack = require('webpack');
 var KarmaServer = require('karma').Server;
 var integrationTests = require('djangocms-casper-helpers/gulp');
 
+var child_process = require('child_process');
+var spawn = require('child_process').spawn;
+
 var argv = require('minimist')(process.argv.slice(2)); // eslint-disable-line
 
 // #####################################################################################################################
@@ -27,25 +31,22 @@ var argv = require('minimist')(process.argv.slice(2)); // eslint-disable-line
 var options = {
     debug: argv.debug
 };
-var PROJECT_ROOT = __dirname + '/cms/static/cms';
+var PROJECT_ROOT = __dirname + '/mainapp/static';
 var PROJECT_PATH = {
     js: PROJECT_ROOT + '/js',
     sass: PROJECT_ROOT + '/sass',
     css: PROJECT_ROOT + '/css',
     icons: PROJECT_ROOT + '/fonts',
-    tests: __dirname + '/cms/tests/frontend'
+    tests: __dirname + '/mainapp/tests/frontend'
 };
 
 var PROJECT_PATTERNS = {
     js: [
-        PROJECT_PATH.js + '/modules/*.js',
-        PROJECT_PATH.js + '/widgets/*.js',
         PROJECT_PATH.js + '/*.js',
         PROJECT_PATH.js + '/gulpfile.js',
         PROJECT_PATH.tests + '/**/*.js',
         '!' + PROJECT_PATH.tests + '/unit/helpers/**/*.js',
         '!' + PROJECT_PATH.tests + '/coverage/**/*.js',
-        '!' + PROJECT_PATH.js + '/modules/jquery.*.js',
         '!' + PROJECT_PATH.js + '/dist/*.js'
     ],
     sass: [
@@ -58,59 +59,17 @@ var PROJECT_PATTERNS = {
 
 var INTEGRATION_TESTS = [
     [
-        'loginAdmin',
-        'toolbar',
-        'addFirstPage',
-        'wizard',
-        'editMode',
-        'sideframe',
-        'createContent',
-        'users',
-        'addNewUser',
-        'newPage',
-        'pageControl',
-        'modal',
-        'permissions',
-        'logout',
-        'clipboard',
-        'link-plugin-content-mode'
+        
     ],
     [
-        'pageTypes',
-        'switchLanguage',
-        'editContent',
-        'editContentTools',
-        'publish',
-        'loginToolbar',
-        'changeSettings',
-        'toolbar-login-apphooks',
-        'permissions-enabled',
-        {
-            serverArgs: '--CMS_PERMISSION=False --CMS_TOOLBAR_URL__EDIT_ON=test-edit',
-            file: 'copy-from-language'
-        },
-        {
-            serverArgs: '--CMS_PERMISSION=False --CMS_TOOLBAR_URL__EDIT_ON=test-edit',
-            file: 'pagetree-no-permission'
-        },
-        {
-            serverArgs: '--CMS_PERMISSION=False --CMS_TOOLBAR_URL__EDIT_ON=test-edit',
-            file: 'permissions-disabled'
-        }
+        
     ],
     [
-        'pagetree',
-        'pagetree-drag-n-drop-copy',
-        'disableToolbar',
-        'dragndrop',
-        'copy-apphook-page',
-        //'history',
-        //'revertLive',
-        'narrowScreen'
+        
     ]
 ];
 
-var CMS_VERSION = fs.readFileSync('cms/__init__.py', { encoding: 'utf-8' })
+var PROJECT_VERSION = fs.readFileSync('mainapp/__init__.py', { encoding: 'utf-8' })
     .match(/__version__ = '(.*?)'/)[1];
 
 // #####################################################################################################################
@@ -118,7 +77,10 @@ var CMS_VERSION = fs.readFileSync('cms/__init__.py', { encoding: 'utf-8' })
 gulp.task('sass', function () {
     gulp.src(PROJECT_PATTERNS.sass)
         .pipe(gulpif(options.debug, sourcemaps.init()))
-        .pipe(sass())
+        .pipe(sass({
+          includePaths: [
+            path.join(__dirname, 'node_modules', 'bootstrap-sass', 'assets', 'stylesheets'),
+        ]}))
         .on('error', function (error) {
             gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.messageFormatted));
         })
@@ -131,14 +93,14 @@ gulp.task('sass', function () {
             rebase: false
         }))
         .pipe(gulpif(options.debug, sourcemaps.write()))
-        .pipe(gulp.dest(PROJECT_PATH.css + '/' + CMS_VERSION + '/'));
+        .pipe(gulp.dest(PROJECT_PATH.css + '/' + PROJECT_VERSION + '/'));
 });
 
 gulp.task('icons', function () {
     gulp.src(PROJECT_PATTERNS.icons)
     .pipe(iconfontCss({
         fontName: 'django-cms-iconfont',
-        fontPath: '../../fonts/' + CMS_VERSION + '/',
+        fontPath: '../../fonts/' + PROJECT_VERSION + '/',
         path: PROJECT_PATH.sass + '/libs/_iconfont.scss',
         targetPath: '../../sass/components/_iconography.scss'
     }))
@@ -149,7 +111,7 @@ gulp.task('icons', function () {
     .on('glyphs', function (glyphs, opts) {
         gutil.log.bind(glyphs, opts);
     })
-    .pipe(gulp.dest(PROJECT_PATH.icons + '/' + CMS_VERSION + '/'));
+    .pipe(gulp.dest(PROJECT_PATH.icons + '/' + PROJECT_VERSION + '/'));
 });
 
 gulp.task('lint', ['lint:javascript']);
@@ -198,7 +160,7 @@ var webpackBundle = function (opts) {
 
     webpackOptions.PROJECT_PATH = PROJECT_PATH;
     webpackOptions.debug = options.debug;
-    webpackOptions.CMS_VERSION = CMS_VERSION;
+    webpackOptions.PROJECT_VERSION = PROJECT_VERSION;
 
     return function (done) {
         var config = require('./webpack.config')(webpackOptions);
@@ -225,3 +187,36 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', ['sass', 'lint', 'watch']);
+
+gulp.task('fonts', function() {
+  gulp.src([path.join(__dirname, 'bower_components', 'bootstrap', 'fonts') + '/**/*' ])
+    .pipe(gulp.dest(PROJECT_PATH.icons + '/' + PROJECT_VERSION + '/'));
+});
+
+var python = /^win/.test(process.platform) ? path.join(__dirname, 'env', 'Scripts', 'python.exe') : path.join(__dirname, 'env', 'bin', 'python');
+var manage = path.join(__dirname, 'manage.py');
+
+gulp.task('serve', ['connectdjango'], function () {
+  require('opn')('http://localhost:9000');
+  gulp.start('watch');
+});
+
+gulp.task('connectdjango', function () {
+  var command = [manage, 'runserver', '0.0.0.0:9000'];
+  return spawn(python, command, {stdio: 'inherit'});
+});
+
+gulp.task('manage', function (callback) {
+  prompt.start();
+  prompt.get([{
+    name: 'command',
+    description: 'Command',
+    type: 'string',
+    required: true
+  }], function(err, result) {
+    var command = [manage].concat(result['command'].split(' '));
+    return spawn(python, command, {stdio: 'inherit'});
+    callback();
+  });
+
+});

@@ -55,7 +55,7 @@
     - checkout
 
 - name: Install python modules into virtualenv
-  pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/django/requirements.txt" 
+  pip: requirements="{{ ansible_env.HOME }}/{{ app_dir }}/requirements.txt" 
     virtualenv="{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}"
   register: run_cmd
   tags:
@@ -67,14 +67,14 @@
     - pip
 
 - name: Create local_settings.py
-  template: src="../../../../django/mainapp/local_settings.py.j2"
+  template: src="../../../../mainapp/local_settings.py.j2"
     dest="{{ ansible_env.HOME }}/{{ app_dir }}/django/mainapp/local_settings.py"
   tags:
     - settings
     - checkout
 
 - name: Migrate django database
-  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py migrate" 
+  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/manage.py migrate" 
   register: run_cmd
   tags:
     - migrate
@@ -85,7 +85,7 @@
     - migrate
 
 - name: Collect django static files
-  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/django/manage.py collectstatic --noinput"
+  shell: "{{ ansible_env.HOME }}/.virtualenvs/{{ cms_virtualenv }}/bin/python {{ ansible_env.HOME }}/{{ app_dir }}/manage.py collectstatic --noinput"
   register: run_cmd
   tags:
     - static
@@ -96,7 +96,7 @@
     - static
 
 - name: Create pythonanywhere wsgi
-  template: src="../../../../django/wsgi.py.j2"
+  template: src="../../../../wsgi.py.j2"
     dest="/var/www/{{ wsgi_name }}.py"
 
 - name: Touch pythonanywhere wsgi

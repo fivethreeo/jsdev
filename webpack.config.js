@@ -4,32 +4,23 @@ module.exports = function (opts) {
     'use strict';
 
     var PROJECT_PATH = opts.PROJECT_PATH;
-    var CMS_VERSION = opts.CMS_VERSION;
+    var PROJECT_VERSION = opts.PROJECT_VERSION;
     var debug = opts.debug;
 
     var baseConfig = {
         devtool: false,
         watch: !!opts.watch,
         entry: {
-            // CMS frontend
-            'toolbar': PROJECT_PATH.js + '/toolbar.js',
-            // CMS admin
-            'admin.base': PROJECT_PATH.js + '/admin.base.js',
-            'admin.pagetree': PROJECT_PATH.js + '/admin.pagetree.js',
-            'admin.changeform': PROJECT_PATH.js + '/admin.changeform.js',
-            // CMS widgets
-            // they will load the on-demand bundle called admin.widget
-            'forms.pageselectwidget': PROJECT_PATH.js + '/widgets/forms.pageselectwidget.js',
-            'forms.pagesmartlinkwidget': PROJECT_PATH.js + '/widgets/forms.pagesmartlinkwidget.js',
-            'forms.apphookselect': PROJECT_PATH.js + '/widgets/forms.apphookselect.js'
+            'main': PROJECT_PATH.js + '/main.js'
         },
         output: {
-            path: PROJECT_PATH.js + '/dist/' + CMS_VERSION + '/',
+            path: PROJECT_PATH.js + '/dist/' + PROJECT_VERSION + '/',
             filename: 'bundle.[name].min.js',
             chunkFilename: 'bundle.[name].min.js',
-            jsonpFunction: 'cmsWebpackJsonp'
+            jsonpFunction: 'webpackJsonp'
         },
         plugins: [
+             /*
             // this way admin.pagetree bundle won't
             // include deps already required in admin.base bundle
             new webpack.optimize.CommonsChunkPlugin({
@@ -39,16 +30,17 @@ module.exports = function (opts) {
                     'admin.changeform'
                 ]
             })
+            */
         ],
         resolve: {
             extensions: ['', '.js'],
-            alias: {
+            alias: {/*
                 jquery: PROJECT_PATH.js + '/libs/jquery.min.js',
                 classjs: PROJECT_PATH.js + '/libs/class.min.js',
                 jstree: PROJECT_PATH.js + '/libs/jstree/jstree.min.js'
-            }
+            */}
         },
-        module: {
+        module: {/*
             loaders: [
                 {
                     test: /(modules\/jquery|libs\/pep|select2\/select2)/,
@@ -69,7 +61,7 @@ module.exports = function (opts) {
                     ]
                 }
             ]
-        }
+        */}
     };
 
     if (debug) {
