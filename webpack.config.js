@@ -34,24 +34,14 @@ module.exports = function (opts) {
         ],
         resolve: {
             extensions: ['', '.js'],
-            alias: {/*
-                jquery: PROJECT_PATH.js + '/libs/jquery.min.js',
-                classjs: PROJECT_PATH.js + '/libs/class.min.js',
-                jstree: PROJECT_PATH.js + '/libs/jstree/jstree.min.js'
-            */}
+            alias: {}
         },
-        module: {/*
+        module: {
             loaders: [
                 {
-                    test: /(modules\/jquery|libs\/pep|select2\/select2)/,
+                    test: /(modules\/jquery|libs\/pep|select2\/select2|bootstrap-sass)/,
                     loaders: [
                         'imports?jQuery=jquery'
-                    ]
-                },
-                {
-                    test: /class.min.js/,
-                    loaders: [
-                        'exports?Class'
                     ]
                 },
                 {
@@ -61,7 +51,7 @@ module.exports = function (opts) {
                     ]
                 }
             ]
-        */}
+        }
     };
 
     if (debug) {
@@ -82,6 +72,7 @@ module.exports = function (opts) {
             new webpack.optimize.UglifyJsPlugin({
                 comments: false,
                 compressor: {
+                    warnings: false,
                     drop_console: true // eslint-disable-line
                 }
             })

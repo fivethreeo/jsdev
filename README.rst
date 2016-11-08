@@ -41,7 +41,7 @@ Create virtualenv: ::
 
 Install python modules: ::
 
-  env/bin/pip install -r requirements-dev.txt
+  env/bin/pip install -r requirements.txt
 
 Sync django database: ::
 
@@ -52,8 +52,8 @@ Pasteable commands (linux): ::
   pip install virtualenv
 
   virtualenv env
-  env/bin/pip install -r requirements-dev.txt
-  env/bin/python django/manage.py migrate
+  env/bin/pip install -r requirements.txt
+  env/bin/python manage.py migrate
   gulp serve
 
 Pasteable commands (win): ::
@@ -64,8 +64,8 @@ Pasteable commands (win): ::
   pip install virtualenv
 
   virtualenv env --system-site-packages
-  env\Scripts\pip.exe install -r django\requirements.txt
-  env\Scripts\python.exe django\manage.py migrate
+  env\Scripts\pip.exe install -r requirements.txt
+  env\Scripts\python.exe manage.py migrate
   gulp serve
   
   
@@ -95,11 +95,11 @@ Create virtualenv: ::
 
 Install python modules: ::
 
-  pip install -r django/requirements.txt
+  pip install -r requirements.txt
 
 Sync django database: ::
 
-  python django/manage.py migrate
+  python manage.py migrate
 
 Pasteable commands: ::
 
@@ -108,19 +108,19 @@ Pasteable commands: ::
   cd $project
   mkvirtualenv ${project} --python=python3.5
   workon ${project}
-  pip install -r django/requirements.txt
-  python django/manage.py migrate
+  pip install -r requirements.txt
+  python manage.py migrate
 
   mkdir -p /var/www/${project}/media                                                                                            
   mkdir -p /var/www/${project}/static
   
-  python django/manage.py collectstatic
+  python manage.py collectstatic
 
 Custom wsgi: ::
 
   import sys
 
-  path = '/home/fivethreeo/mainapp/django/'
+  path = '/home/fivethreeo/mainapp/'
   if path not in sys.path:
       sys.path.append(path)
 

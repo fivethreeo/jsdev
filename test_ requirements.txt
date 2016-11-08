@@ -1,4 +1,4 @@
--r requirements
+-r requirements.txt
 coverage==4.2
 python-coveralls==2.5.0
 unittest-xml-reporting==1.11.0

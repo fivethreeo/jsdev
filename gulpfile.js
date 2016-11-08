@@ -121,8 +121,8 @@ gulp.task('lint:javascript', function () {
         .pipe(gulpif(!process.env.CI, plumber()))
         .pipe(eslint())
         .pipe(eslint.format())
-        .pipe(eslint.failAfterError())
-        .pipe(gulpif(!process.env.CI, plumber.stop()));
+        .pipe(gulpif(process.env.CI, eslint.failAfterError()))
+        .pipe(gulpif(!process.env.CI, plumber.stop()))
 });
 
 gulp.task('tests', ['tests:unit', 'tests:integration']);
