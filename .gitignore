@@ -11,3 +11,5 @@ build
 # uploaded media
 django/media
 cms_dump.json
+vdis
+ipxe.iso
