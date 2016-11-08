@@ -11,7 +11,8 @@ module.exports = function (opts) {
         devtool: false,
         watch: !!opts.watch,
         entry: {
-            'main': PROJECT_PATH.js + '/main.js'
+            'main': PROJECT_PATH.js + '/main.js',
+            'modernizr': 'modernizr'
         },
         output: {
             path: PROJECT_PATH.js + '/dist/' + PROJECT_VERSION + '/',
