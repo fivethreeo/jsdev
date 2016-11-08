@@ -9,7 +9,7 @@ env
 build
 *.db
 # uploaded media
-django/media
+media
 cms_dump.json
 vdis
 ipxe.iso
