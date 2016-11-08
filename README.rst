@@ -174,7 +174,7 @@ iPXE booting with VirtualBox: ::
 
   ssh-keygen -t rsa -b 4096 -f $homedir/.ssh/id_rsa
 
-  preseed="`pwd`/ansible/preseed.cfg"
+  preseed="`pwd`/utils/preseed.cfg"
 
   # Can be slow, be patient
   wget --no-check-certificate -O ipxe.iso 'http://boot.ipxe.org/ipxe.iso'
@@ -243,22 +243,22 @@ iPXE booting with VirtualBox: ::
   done
   # newline
 
-  eval `ssh-agent`
-  ssh-add $homedir/.ssh/id_rsa
-
   proxy="-o ProxyJump=ansible@localhost:2222"
   ansible_cfg=$"[ssh_connection]\nssh_args="
   ansible_proxy=$"[group:vars]\nansible_ssh_common_args=$proxy"
+  SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
+  export EDITOR="$(pwd)/utils/cygrun.sh \"$SUBLIME\" -w"
+
   echo -e $ansible_cfg
   echo -e $ansible_proxy
+  echo $EDITOR
+
+  eval `ssh-agent`
+  ssh-add $homedir/.ssh/id_rsa
+
   ssh ansible@localhost -p 2222
   ssh $proxy ansible@a_intnet_host
   ansible $ansible_proxy_arg -i hosts -m ping all
-  SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
-  export EDITOR="\"$SUBLIME\" -w"
-  vaultedit () {
-    ansible-vault $(cygpath -w "$*")
-  }
 
 .. _nodejs: https://nodejs.org/
 .. _Python: https://www.python.org/downloads/release/python-2710/
