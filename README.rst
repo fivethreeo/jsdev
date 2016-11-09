@@ -175,15 +175,15 @@ iPXE booting with VirtualBox: ::
   tftp_dir="$homedir/.VirtualBox/TFTP"
   mkdir -p "$tftp_dir"
 
-  # Create ansible key
+  # Create ansible key and copy pubkey to tftp dir
   ssh_key="$homedir/.ssh/id_rsa"
-  ssh-keygen -t rsa -b 4096 -f $ssh_key
+  ssh-keygen -t rsa -b 4096 -f $ssh_key -q -N ""
   cp "${ssh_key}.pub" "${tftp_dir}/authorized_keys"
-
-  # Copy preseed config
+  
+  # Copy preseed config to tftp dir
   cp utils/preseed.cfg "$tftp_dir"
 
-  # Create tftp chainboot, is set as tftp boot image in virtualbox
+  # Create ipxe chainboot, is set as tftp boot image in virtualbox
   (cat <<EOF
   #!ipxe
 
@@ -194,9 +194,9 @@ iPXE booting with VirtualBox: ::
   imgargs linux auto=true preseed=file:///preseed.cfg hostname=unassigned-hostname domain=unassigned-domain priority=critical
   boot
   EOF
-  ) > "$tftp_dir/ipxe"
+  ) > "$tftp_dir/ipxe_chainboot"
 
-  # Copy ubuntu net installer
+  # Copy ubuntu net installer to tftp dir
   mkdir installer
   pushd installer
   curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
@@ -205,16 +205,15 @@ iPXE booting with VirtualBox: ::
   popd
   rm -rf installer
 
-  # Configure vms with nat and intel pxe network boot
-
   # Copy ipxe.iso, we will boot from this
-  # and get tftp chainboot location from virtualbox dhcp
+  # and get ipxe_chainboot location from virtualbox dhcp
   wget --no-check-certificate -O ipxe.iso 'http://boot.ipxe.org/ipxe.iso'
 
   ipxe="`pwd`/ipxe.iso"
   mkdir vdis
   vdidir=`pwd`/vdis
 
+  # Configure vms with nat and intel pxe network boot
   array=( bastion first second third fourth )
   for i in "${array[@]}"
   do
@@ -231,7 +230,7 @@ iPXE booting with VirtualBox: ::
        "$vb" storageattach "$name" --storagectl "SATA Controller" \
          --port 1 --device 0 --type dvddrive --medium "$ipxe"
        # ipxe trick here
-       "$vb" modifyvm "$name" --nic1 nat --nattftpfile1 /ipxe --nictype1 82540EM --cableconnected1 on
+       "$vb" modifyvm "$name" --nic1 nat --nattftpfile1 /ipxe_chainboot --nictype1 82540EM --cableconnected1 on
        "$vb" modifyvm "$name" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
        "$vb" modifyvm "$name" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
        "$vb" modifyvm "$name" --nic2 intnet --intnet2 "cluster" --nictype2 82540EM \
@@ -246,9 +245,14 @@ iPXE booting with VirtualBox: ::
      fi
   done
 
+  # Start bastion
+  "$vb" startvm bastion_host
+
+  # Wait for deployment to finish
   eval `ssh-agent`
   ssh-add $homedir/.ssh/id_rsa
 
+  # ssh to bastion
   ssh ansible@localhost -p 2222
   # set up maas
   (cat <<EOF
@@ -257,30 +261,35 @@ iPXE booting with VirtualBox: ::
   address 10.0.0.1
   netmask 255.255.255.0
   EOF
-  ) > /etc/network/interfaces.d/enp0s8
-  sudo apt-get install maas
-  sudo vi /etc/maas/preseeds/curtin_userdata
-  package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"]
-  sudo maas createadmin
-  sudo vi /etc/dhcp/dhclient.conf
-  prepend domain-name-servers 10.0.0.1;
+  ) | sudo tee /etc/network/interfaces.d/enp0s8
+  sudu apt-get install maas
+  sudo sed -i -e 's/\({{endif}}\)/\1\n  package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"]/' /etc/maas/preseeds/curtin_userdata
+  sudo sed -i -r -e 's/#?(prepend domain-name-servers).*/\1 127.0.0.1;/' /etc/dhcp/dhclient.conf
+  sudo maas createadmin --username maas --password password --email your@email.com
   sudo reboot
+  # done setting up bastion
 
   # http://127.0.0.1:8080/MAAS/
-  # Add key
-  cat $homedir/.ssh/id_rsa
+  # Add key in settings
+  cat $homedir/.ssh/id_rsa.pub
+  # Add dhcp to VLAN in fabric-1
+
+  # Start other vms
+  "$vb" startvm first
 
   # Set up proxied ssh connection through bastion for ansible
   proxy="-o ProxyJump=ansible@localhost:2222"
-  ansible_cfg=$"[ssh_connection]\nssh_args="
-  ansible_proxy=$"[group:vars]\nansible_ssh_common_args=$proxy"
+  ansible_cfg="[ssh_connection]\nssh_args="
+  ansible_proxy="[group:vars]\nansible_ssh_common_args=$proxy"
   # echo -e $ansible_cfg > ansible.cfg
   # echo -e $ansible_proxy > hosts
+
+  echo $proxy
   echo -e $ansible_cfg
   echo -e $ansible_proxy
 
-  ssh $proxy ansible@a_intnet_host
-  ansible -i hosts -m ping all
+  ssh $proxy ubuntu@a_intnet_host
+  ansible -i hosts -m ping local --ask-vault-pass
 
   SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
   export EDITOR="$(pwd)/utils/cygrun.sh \"$SUBLIME\" -w"

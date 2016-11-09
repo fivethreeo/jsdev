@@ -5,20 +5,14 @@ ssh.pythonanywhere.com
 ansible_ssh_common_args=-o ControlMaster=no -o ForwardAgent=yes
 
 [local]
-real-beagle.maas
-immune-wasp.maas
-equal-gar.maas
-honest-marmot.maas
+choice-impala.maas
+flying-marten.maas
+in-dragon.maas
+steady-oryx.maas
 
 [local:vars]
 ansible_user=ubuntu
 ansible_ssh_common_args=-o ForwardAgent=yes -o ProxyJump=ansible@localhost:2222
-# auto enp0s8
-# iface enp0s8 inet static
-# address 10.0.0.1
-# netmask 255.255.255.0
-# prepend domain-name-servers 10.0.0.1; # dhclient global
-# package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"] # /etc/maas/preseeds/curtin_userdata
 
 [db_masters]
-immune-wasp.maas
+choice-impala.maas
