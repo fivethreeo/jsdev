@@ -5,14 +5,14 @@ ssh.pythonanywhere.com
 ansible_ssh_common_args=-o ControlMaster=no -o ForwardAgent=yes
 
 [local]
-choice-impala.maas
-flying-marten.maas
-in-dragon.maas
-steady-oryx.maas
+alive-yeti.maas
+ample-egret.maas
+dear-racer.maas
+lucky-mole.maas
 
 [local:vars]
 ansible_user=ubuntu
 ansible_ssh_common_args=-o ForwardAgent=yes -o ProxyJump=ansible@localhost:2222
 
 [db_masters]
-choice-impala.maas
+alive-yeti.maas

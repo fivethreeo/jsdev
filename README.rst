@@ -179,7 +179,7 @@ iPXE booting with VirtualBox: ::
   ssh_key="$homedir/.ssh/id_rsa"
   ssh-keygen -t rsa -b 4096 -f $ssh_key -q -N ""
   cp "${ssh_key}.pub" "${tftp_dir}/authorized_keys"
-  
+
   # Copy preseed config to tftp dir
   cp utils/preseed.cfg "$tftp_dir"
 
@@ -262,7 +262,7 @@ iPXE booting with VirtualBox: ::
   netmask 255.255.255.0
   EOF
   ) | sudo tee /etc/network/interfaces.d/enp0s8
-  sudo apt-get install maas
+  sudo apt-get -y install maas
   sudo sed -i -e 's/\({{endif}}\)/\1\n  package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"]/' /etc/maas/preseeds/curtin_userdata
   sudo sed -i -r -e 's/#?(prepend domain-name-servers).*/\1 127.0.0.1;/' /etc/dhcp/dhclient.conf
   sudo maas createadmin --username maas --password password --email your@email.com
@@ -275,7 +275,7 @@ iPXE booting with VirtualBox: ::
   # Add dhcp to VLAN in fabric-1
 
   # Start other vms
-  "$vb" startvm first
+  "$vb" startvm first_host
 
   # Set up proxied ssh connection through bastion for ansible
   proxy="-o ProxyJump=ansible@localhost:2222"
@@ -289,7 +289,8 @@ iPXE booting with VirtualBox: ::
   echo -e $ansible_proxy
 
   ssh $proxy ubuntu@a_intnet_host
-  ansible -i hosts -m ping local --ask-vault-pass
+  # Pass -f 1 to accept hosts one by one
+  ansible -i hosts -m ping local --ask-vault-pass -f 1
 
   SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
   export EDITOR="$(pwd)/utils/cygrun.sh \"$SUBLIME\" -w"
