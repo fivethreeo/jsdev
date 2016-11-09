@@ -293,7 +293,8 @@ iPXE booting with VirtualBox: ::
   ssh $proxy ubuntu@a_intnet_host
   # Pass -f 1 to accept hosts one by one
   ansible -i hosts -m ping local --ask-vault-pass -f 1
-
+  ansible-playbook site.yml --limit=local -i hosts --ask-vault-pass
+  
   SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
   export EDITOR="$(pwd)/utils/cygrun.sh \"$SUBLIME\" -w"
   echo $EDITOR

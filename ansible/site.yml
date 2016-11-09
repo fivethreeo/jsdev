@@ -1,10 +1,8 @@
-# - name: configure and deploy the app
-#   hosts: paw
-#   remote_user: fivethreeo
-#   roles:
-#     - cms
-    tags:
-      - paw
+- name: configure and deploy the app
+  hosts: paw
+  remote_user: fivethreeo
+  roles:
+    - cms
 
 - name: collect facts
   hosts: local
