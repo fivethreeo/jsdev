@@ -172,93 +172,120 @@ iPXE booting with VirtualBox: ::
     homedir=`cygpath -H`/$USER
   fi
 
-  ssh-keygen -t rsa -b 4096 -f $homedir/.ssh/id_rsa
+  tftp_dir="$homedir/.VirtualBox/TFTP"
+  mkdir -p "$tftp_dir"
 
-  preseed="`pwd`/utils/preseed.cfg"
+  # Create ansible key
+  ssh_key="$homedir/.ssh/id_rsa"
+  ssh-keygen -t rsa -b 4096 -f $ssh_key
+  cp "${ssh_key}.pub" "${tftp_dir}/authorized_keys"
 
-  # Can be slow, be patient
-  wget --no-check-certificate -O ipxe.iso 'http://boot.ipxe.org/ipxe.iso'
+  # Copy preseed config
+  cp utils/preseed.cfg "$tftp_dir"
 
-  mkdir -p "$homedir/.VirtualBox"
-  pushd "$homedir/.VirtualBox"
-  mkdir TFTP
-  cd TFTP
-
-  mkdir installer
-  cd installer
-  curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
-  cd ..
-  cp installer/ubuntu-installer/amd64/linux .
-  cp installer/ubuntu-installer/amd64/initrd.gz .
-
+  # Create tftp chainboot, is set as tftp boot image in virtualbox
   (cat <<EOF
   #!ipxe
 
   kernel tftp://10.0.2.4/linux
   initrd tftp://10.0.2.4/initrd.gz
   initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
+  initrd tftp://10.0.2.4/authorized_keys authorized_keys
   imgargs linux auto=true preseed=file:///preseed.cfg hostname=unassigned-hostname domain=unassigned-domain priority=critical
   boot
   EOF
-  ) > ipxe
+  ) > "$tftp_dir/ipxe"
 
-  cp "$preseed" .
-  cp $homedir/.ssh/id_rsa.pub authorized_keys
-
+  # Copy ubuntu net installer
+  mkdir installer
+  pushd installer
+  curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
+  cp ubuntu-installer/amd64/linux $tftp_dir
+  cp ubuntu-installer/amd64/initrd.gz $tftp_dir
   popd
+  rm -rf installer
 
   # Configure vms with nat and intel pxe network boot
+
+  # Copy ipxe.iso, we will boot from this
+  # and get tftp chainboot location from virtualbox dhcp
+  wget --no-check-certificate -O ipxe.iso 'http://boot.ipxe.org/ipxe.iso'
 
   ipxe="`pwd`/ipxe.iso"
   mkdir vdis
   vdidir=`pwd`/vdis
 
-  array=( maas_master fourth )
+  array=( bastion first second third fourth )
   for i in "${array[@]}"
   do
-     vdi=`$cygpath "$vdidir/node_$i.vdi"`
+     name="${i}_host"
+     vdi=`$cygpath "$vdidir/$name.vdi"`
      ipxe=`$cygpath "$ipxe"`
      "$vb" createmedium disk --filename "$vdi" --size 6000
-     "$vb" createvm --name "node_$i" --register
-     "$vb" modifyvm "node_$i" --memory 1024 --vram 128 --rtcuseutc on --ioapic on
-     "$vb" storagectl "node_$i" --name "SATA Controller" --add sata
-     "$vb" storageattach "node_$i" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
-     if [[ $i == *_master ]]
+     "$vb" createvm --name "$name" --register
+     "$vb" modifyvm "$name" --memory 1024 --vram 128 --rtcuseutc on --ioapic on
+     "$vb" storagectl "$name" --name "SATA Controller" --add sata
+     "$vb" storageattach "$name" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
+     if [[ $i == bastion ]]
      then
-       "$vb" storageattach "node_$i" --storagectl "SATA Controller" \
+       "$vb" storageattach "$name" --storagectl "SATA Controller" \
          --port 1 --device 0 --type dvddrive --medium "$ipxe"
-       "$vb" modifyvm "node_$i" --nic1 nat --nattftpfile1 /ipxe --nictype1 82540EM --cableconnected1 on
-       "$vb" modifyvm "node_$i" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
-       "$vb" modifyvm "node_$i" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
-       "$vb" modifyvm "node_$i" --nic2 intnet --intnet2 "cluster" --nictype2 82540EM \
+       # ipxe trick here
+       "$vb" modifyvm "$name" --nic1 nat --nattftpfile1 /ipxe --nictype1 82540EM --cableconnected1 on
+       "$vb" modifyvm "$name" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
+       "$vb" modifyvm "$name" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
+       "$vb" modifyvm "$name" --nic2 intnet --intnet2 "cluster" --nictype2 82540EM \
          --nicpromisc2 allow-vms --cableconnected2 on
-       "$vb" modifyvm "node_$i" --boot1 disk
-       "$vb" modifyvm "node_$i" --boot2 dvd
+       "$vb" modifyvm "$name" --boot1 disk
+       "$vb" modifyvm "$name" --boot2 dvd
      else
-       "$vb" modifyvm "node_$i" --nic1 intnet --intnet1 "cluster" --nictype1 82540EM \
+       "$vb" modifyvm "$name" --nic1 intnet --intnet1 "cluster" --nictype1 82540EM \
          --nicpromisc1 allow-vms --cableconnected1 on
-       "$vb" modifyvm "node_$i" --boot1 net
-       "$vb" modifyvm "node_$i" --boot2 none
+       "$vb" modifyvm "$name" --boot1 net
+       "$vb" modifyvm "$name" --boot2 none
      fi
   done
-  # newline
-
-  proxy="-o ProxyJump=ansible@localhost:2222"
-  ansible_cfg=$"[ssh_connection]\nssh_args="
-  ansible_proxy=$"[group:vars]\nansible_ssh_common_args=$proxy"
-  SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
-  export EDITOR="$(pwd)/utils/cygrun.sh \"$SUBLIME\" -w"
-
-  echo -e $ansible_cfg
-  echo -e $ansible_proxy
-  echo $EDITOR
 
   eval `ssh-agent`
   ssh-add $homedir/.ssh/id_rsa
 
   ssh ansible@localhost -p 2222
+  # set up maas
+  (cat <<EOF
+  auto enp0s8
+  iface enp0s8 inet static
+  address 10.0.0.1
+  netmask 255.255.255.0
+  EOF
+  ) > /etc/network/interfaces.d/enp0s8
+  sudo apt-get install maas
+  sudo vi /etc/maas/preseeds/curtin_userdata
+  package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"]
+  sudo maas createadmin
+  sudo vi /etc/dhcp/dhclient.conf
+  prepend domain-name-servers 10.0.0.1;
+  sudo reboot
+
+  # http://127.0.0.1:8080/MAAS/
+  # Add key
+  cat $homedir/.ssh/id_rsa
+
+  # Set up proxied ssh connection through bastion for ansible
+  proxy="-o ProxyJump=ansible@localhost:2222"
+  ansible_cfg=$"[ssh_connection]\nssh_args="
+  ansible_proxy=$"[group:vars]\nansible_ssh_common_args=$proxy"
+  # echo -e $ansible_cfg > ansible.cfg
+  # echo -e $ansible_proxy > hosts
+  echo -e $ansible_cfg
+  echo -e $ansible_proxy
+
   ssh $proxy ansible@a_intnet_host
-  ansible $ansible_proxy_arg -i hosts -m ping all
+  ansible -i hosts -m ping all
+
+  SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
+  export EDITOR="$(pwd)/utils/cygrun.sh \"$SUBLIME\" -w"
+  echo $EDITOR
+
 
 .. _nodejs: https://nodejs.org/
 .. _Python: https://www.python.org/downloads/release/python-2710/
