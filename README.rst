@@ -277,6 +277,8 @@ iPXE booting with VirtualBox: ::
   # Start other vms
   "$vb" startvm first_host
 
+  # Commission and deploy in maas admin
+
   # Set up proxied ssh connection through bastion for ansible
   proxy="-o ProxyJump=ansible@localhost:2222"
   ansible_cfg="[ssh_connection]\nssh_args="
