@@ -262,7 +262,7 @@ iPXE booting with VirtualBox: ::
   netmask 255.255.255.0
   EOF
   ) | sudo tee /etc/network/interfaces.d/enp0s8
-  sudu apt-get install maas
+  sudo apt-get install maas
   sudo sed -i -e 's/\({{endif}}\)/\1\n  package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"]/' /etc/maas/preseeds/curtin_userdata
   sudo sed -i -r -e 's/#?(prepend domain-name-servers).*/\1 127.0.0.1;/' /etc/dhcp/dhclient.conf
   sudo maas createadmin --username maas --password password --email your@email.com
