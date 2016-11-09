@@ -1,7 +1,7 @@
-[default]
+[paw]
 ssh.pythonanywhere.com
 
-[default:vars]
+[paw:vars]
 ansible_ssh_common_args=-o ControlMaster=no -o ForwardAgent=yes
 
 [local]

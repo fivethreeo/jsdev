@@ -191,7 +191,7 @@ iPXE booting with VirtualBox: ::
   initrd tftp://10.0.2.4/initrd.gz
   initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
   initrd tftp://10.0.2.4/authorized_keys authorized_keys
-  imgargs linux auto=true preseed=file:///preseed.cfg hostname=unassigned-hostname domain=unassigned-domain priority=critical
+  imgargs linux auto=true preseed=file:///preseed.cfg hostname=maas-bastion priority=critical
   boot
   EOF
   ) > "$tftp_dir/ipxe_chainboot"
