@@ -27,27 +27,39 @@ To run project locally
 
 Install `nodejs`_ and `Python`_.
 
-Install node modules needed: ::
+Install node modules needed: 
+
+.. code-block:: bash
 
   npm install
 
-Install virtualenv: ::
-  
+Install virtualenv:
+
+.. code-block:: bash
+
   pip install virtualenv
 
-Create virtualenv: ::
+Create virtualenv:
+
+.. code-block:: bash
 
   virtualenv env
 
-Install python modules: ::
+Install python modules:
+
+.. code-block:: bash
 
   env/bin/pip install -r requirements.txt
 
-Sync django database: ::
+Sync django database:
+
+.. code-block:: bash
 
   env/bin/python django/manage.py migrate
 
-Pasteable commands (linux): ::
+Pasteable commands (linux): 
+
+.. code-block:: bash
 
   pip install virtualenv
 
@@ -56,7 +68,9 @@ Pasteable commands (linux): ::
   env/bin/python manage.py migrate
   gulp serve
 
-Pasteable commands (win): ::
+Pasteable commands (win): 
+
+.. code-block:: batch
 
   npm install
   npm install -g bower
@@ -72,7 +86,9 @@ Pasteable commands (win): ::
 To run project on pythonanywhere
 ================================
 
-Use ansible: ::
+Use ansible:
+
+.. code-block:: bash
 
   eval `ssh-agent`
   homedir=`cygpath -H`/$USER  
@@ -82,26 +98,39 @@ Use ansible: ::
 
 or 
 
-Clone repo: ::
-  
+Clone repo:
+
+.. code-block:: bash
+
   project=myproject
   git clone this_repo $project
   cd $project
 
-Create virtualenv: ::
+Create virtualenv: 
+
+.. code-block:: bash
+
 
   mkvirtualenv ${project} --python=python3.5
   workon ${project}
 
-Install python modules: ::
+Install python modules: 
+
+.. code-block:: bash
+
 
   pip install -r requirements.txt
 
-Sync django database: ::
+Sync django database: 
+
+.. code-block:: bash
+
 
   python manage.py migrate
 
-Pasteable commands: ::
+Pasteable commands: 
+
+.. code-block:: bash
 
   project=myproject
   git clone this_repo $project
@@ -116,7 +145,10 @@ Pasteable commands: ::
   
   python manage.py collectstatic
 
-Custom wsgi: ::
+Custom wsgi:
+
+.. code-block:: python
+
 
   import sys
 
@@ -126,7 +158,9 @@ Custom wsgi: ::
 
   from mainapp.wsgi import application
 
-Install ansible on cygwin with lynx: ::
+Install ansible on cygwin with lynx: 
+
+.. code-block:: bash
 
   lynx -source rawgit.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
   install apt-cyg /bin
