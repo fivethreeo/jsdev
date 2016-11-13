@@ -1,14 +1,56 @@
-- name: configure and deploy the app
-  hosts: paw
-  remote_user: fivethreeo
+
+- name: install pgpool2
+  hosts: pgpool_hosts
+  become: true
+  serial: 1
+  vars:
+    pgpool2_wd_hostname: "{{ ansible_hostname }}"
+  pre_tasks:
+  - name: why sudo time out?
+    lineinfile: dest=/etc/hosts line="127.0.0.1 {{ ansible_hostname }}"
+  - name: collect facts
+    setup:
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    with_items: "{{ groups['pgpool_hosts'] }}"
+  - name: make the facts
+    set_fact:
+      pgpool2_query_nodes: "{{
+        pgpool2_query_nodes|default([]) +
+          [{
+            'hostname': item,
+            'address': hostvars[item].ansible_enp0s3.ipv4.address,
+            'port': 5432,
+            'wd_port': 9000
+          }] }}"
+    with_items: "{{ base_pgpool2_query_nodes }}"
+  - debug: var=pgpool2_query_nodes
   roles:
-    - cms
-
-- name: collect facts
-  hosts: local
-  tasks:
-    - name: collect facts
-      setup:
+  - pgpool2
   tags:
-    - facts
+    - pgpool2
 
+
+- name: install postgresql master
+  hosts: postgresql_master_hosts
+  become: true
+  pre_tasks:
+  - name: collect facts
+    setup:
+  roles:
+  - { role: ANXS.postgresql }
+  tags:
+  - postgresql
+  - postgresql-master
+
+- name: install postgresql slave
+  hosts: postgresql_hosts
+  become: true
+  pre_tasks:
+  - name: collect facts
+    setup:
+  roles:
+  - { role: ANXS.postgresql, postgresql_master: "{{ groups['postgresql_master_hosts'][0] }}" }
+  tags:
+  - postgresql
+  - postgresql-slave

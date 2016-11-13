@@ -13,3 +13,5 @@ media
 cms_dump.json
 vdis
 ipxe.iso
+fakevirsh
+*.retry

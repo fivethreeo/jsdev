@@ -5,14 +5,30 @@ ssh.pythonanywhere.com
 ansible_ssh_common_args=-o ControlMaster=no -o ForwardAgent=yes
 
 [local]
-alive-yeti.maas
-ample-egret.maas
-dear-racer.maas
-lucky-mole.maas
+solid-koala.maas
+ideal-hyena.maas
 
 [local:vars]
 ansible_user=ubuntu
 ansible_ssh_common_args=-o ForwardAgent=yes -o ProxyJump=ansible@localhost:2222
 
-[db_masters]
-alive-yeti.maas
+[pgpool_hosts]
+solid-koala.maas
+ideal-hyena.maas
+#  ansible-playbook site.yml --limit=pgpool_hosts -i hosts --ask-vault-pass
+
+[postgresql_master_hosts]
+solid-koala.maas
+
+[postgresql_master_hosts:vars]
+postgresql_master=true
+
+[postgresql_slave_hosts]
+ideal-hyena.maas
+
+[postgresql_hosts:children]
+postgresql_master_hosts
+postgresql_slave_hosts
+
+[postgresql_hosts:vars]
+postgresql_replication=true

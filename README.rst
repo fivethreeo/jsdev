@@ -145,131 +145,145 @@ Install ansible on cygwin with lynx: ::
   scp  $homedir/.ssh/id_rsa.pub fivethreeo@ssh.pythonanywhere.com:~/
   ssh fivethreeo@ssh.pythonanywhere.com 'cat ~/id_rsa.pub >> ~/.ssh/authorized_keys'
   eval `ssh-agent`
-  ssh-add $homedir/.ssh/id_rsa
-
-pxe booting with virtualbox (does not work): ::
-
-  cd ~/.VirtualBox/
-  mkdir TFTP
-  cd TFTP
-  
-  curl http://ftp.no.debian.org/debian/dists/Debian8.6/main/installer-amd64/current/images/netboot/netboot.tar.gz| tar zx --strip-components 1
-
-  rm pxelinux.0
-  cp debian-installer/amd64/pxelinux.0 .
-  rm pxelinux.cfg
-  cp -R debian-installer/amd64/pxelinux.cfg .
+  ssh-add $homedir/.ssh/id_rsa 
 
 iPXE booting with VirtualBox: ::
 
-  vb="vboxmanage"
-  cygpath="echo"
-  homedir="~"
-  if [[ $(uname) == CYGWIN* ]]
-  then
-    vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage.exe`"
-    cygpath="cygpath -w"
-    homedir=`cygpath -H`/$USER
-  fi
+vb="vboxmanage"
+cygpath="echo"
+homedir="~"
+if [[ $(uname) == CYGWIN* ]]
+then
+  vb="`find /cygdrive/c/Program\ Files | grep -i vboxmanage.exe`"
+  cygpath="cygpath -w"
+  homedir=`cygpath -H`/$USER
+fi
 
-  tftp_dir="$homedir/.VirtualBox/TFTP"
-  mkdir -p "$tftp_dir"
+tftp_dir="$homedir/.VirtualBox/TFTP"
+mkdir -p "$tftp_dir"
 
-  # Create ansible key and copy pubkey to tftp dir
-  ssh_key="$homedir/.ssh/id_rsa"
-  ssh-keygen -t rsa -b 4096 -f $ssh_key -q -N ""
-  cp "${ssh_key}.pub" "${tftp_dir}/authorized_keys"
+# Create ansible key and copy pubkey to tftp dir
+ssh_key="$homedir/.ssh/id_rsa"
+ssh-keygen -t rsa -b 4096 -f $ssh_key -q -N ""
+cp "${ssh_key}.pub" "${tftp_dir}/authorized_keys"
 
-  # Copy preseed config to tftp dir
-  cp utils/preseed.cfg "$tftp_dir"
+# Copy preseed config to tftp dir
+cp utils/preseed.cfg "$tftp_dir"
 
-  # Create ipxe chainboot, is set as tftp boot image in virtualbox
-  (cat <<EOF
-  #!ipxe
+# Create ipxe chainboot, is set as tftp boot image in virtualbox
+(cat <<EOF
+#!ipxe
 
-  kernel tftp://10.0.2.4/linux
-  initrd tftp://10.0.2.4/initrd.gz
-  initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
-  initrd tftp://10.0.2.4/authorized_keys authorized_keys
-  imgargs linux auto=true preseed=file:///preseed.cfg hostname=maas-bastion priority=critical
-  boot
-  EOF
-  ) > "$tftp_dir/ipxe_chainboot"
+kernel tftp://10.0.2.4/linux
+initrd tftp://10.0.2.4/initrd.gz
+initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
+initrd tftp://10.0.2.4/authorized_keys authorized_keys
+imgargs linux auto=true preseed=file:///preseed.cfg hostname=maas-bastion priority=critical
+boot
+EOF
+) > "$tftp_dir/ipxe_chainboot"
 
-  # Copy ubuntu net installer to tftp dir
-  mkdir installer
-  pushd installer
-  curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
-  cp ubuntu-installer/amd64/linux $tftp_dir
-  cp ubuntu-installer/amd64/initrd.gz $tftp_dir
-  popd
-  rm -rf installer
+# Copy ubuntu net installer to tftp dir
+mkdir installer
+pushd installer
+curl http://archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/current/images/netboot/netboot.tar.gz | tar zx --strip-components 1
+cp ubuntu-installer/amd64/linux $tftp_dir
+cp ubuntu-installer/amd64/initrd.gz $tftp_dir
+popd
+rm -rf installer
 
-  # Copy ipxe.iso, we will boot from this
-  # and get ipxe_chainboot location from virtualbox dhcp
-  wget --no-check-certificate -O ipxe.iso 'http://boot.ipxe.org/ipxe.iso'
+# Copy ipxe.iso, we will boot from this
+# and get ipxe_chainboot location from virtualbox dhcp
+wget --no-check-certificate -O ipxe.iso 'http://boot.ipxe.org/ipxe.iso'
 
-  ipxe="`pwd`/ipxe.iso"
-  mkdir vdis
-  vdidir=`pwd`/vdis
+ipxe="`pwd`/ipxe.iso"
+mkdir vdis
+vdidir=`pwd`/vdis
 
-  # Configure vms with nat and intel pxe network boot
-  array=( bastion first second third fourth )
-  for i in "${array[@]}"
-  do
-     name="${i}_host"
-     vdi=`$cygpath "$vdidir/$name.vdi"`
-     ipxe=`$cygpath "$ipxe"`
-     "$vb" createmedium disk --filename "$vdi" --size 6000
-     "$vb" createvm --name "$name" --register
-     "$vb" modifyvm "$name" --memory 1024 --vram 128 --rtcuseutc on --ioapic on
-     "$vb" storagectl "$name" --name "SATA Controller" --add sata
-     "$vb" storageattach "$name" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
-     if [[ $i == bastion ]]
-     then
-       "$vb" storageattach "$name" --storagectl "SATA Controller" \
-         --port 1 --device 0 --type dvddrive --medium "$ipxe"
-       # ipxe trick here
-       "$vb" modifyvm "$name" --nic1 nat --nattftpfile1 /ipxe_chainboot --nictype1 82540EM --cableconnected1 on
-       "$vb" modifyvm "$name" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
-       "$vb" modifyvm "$name" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
-       "$vb" modifyvm "$name" --nic2 intnet --intnet2 "cluster" --nictype2 82540EM \
-         --nicpromisc2 allow-vms --cableconnected2 on
-       "$vb" modifyvm "$name" --boot1 disk
-       "$vb" modifyvm "$name" --boot2 dvd
-     else
-       "$vb" modifyvm "$name" --nic1 intnet --intnet1 "cluster" --nictype1 82540EM \
-         --nicpromisc1 allow-vms --cableconnected1 on
-       "$vb" modifyvm "$name" --boot1 net
-       "$vb" modifyvm "$name" --boot2 none
-     fi
-  done
+# Configure vms with nat and intel pxe network boot
+array=( bastion first second third fourth )
+for i in "${array[@]}"
+do
+   name="${i}-host"
+   vdi=`$cygpath "$vdidir/$name.vdi"`
+   ipxe=`$cygpath "$ipxe"`
+   "$vb" createmedium disk --filename "$vdi" --size 6000
+   "$vb" createvm --name "$name" --register
+   "$vb" modifyvm "$name" --memory 1024 --vram 128 --rtcuseutc on --ioapic on
+   "$vb" storagectl "$name" --name "SATA Controller" --add sata
+   "$vb" storageattach "$name" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
+   if [[ $i == bastion ]]
+   then
+     "$vb" storageattach "$name" --storagectl "SATA Controller" \
+       --port 1 --device 0 --type dvddrive --medium "$ipxe"
+     # ipxe trick here
+     "$vb" modifyvm "$name" --nic1 nat --nattftpfile1 /ipxe_chainboot --nictype1 82540EM --cableconnected1 on
+     "$vb" modifyvm "$name" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
+     "$vb" modifyvm "$name" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
+     "$vb" modifyvm "$name" --nic2 intnet --intnet2 "cluster" --nictype2 82540EM \
+       --nicpromisc2 allow-vms --cableconnected2 on
+     "$vb" modifyvm "$name" --boot1 disk
+     "$vb" modifyvm "$name" --boot2 dvd
+   else
+     "$vb" modifyvm "$name" --nic1 intnet --intnet1 "cluster" --nictype1 82540EM \
+       --nicpromisc1 allow-vms --cableconnected1 on
+     "$vb" modifyvm "$name" --boot1 net
+     "$vb" modifyvm "$name" --boot2 none
+   fi
+done
 
+  mkdir -p fakevirsh
+  pwd=`pwd`
+  "$vb" sharedfolder add bastion-host --name fakevirsh --hostpath `$cygpath "$pwd/fakevirsh"` --automount 
   # Start bastion
-  "$vb" startvm bastion_host
+  "$vb" startvm bastion-host
 
   # Wait for deployment to finish
   eval `ssh-agent`
   ssh-add $homedir/.ssh/id_rsa
 
+  # all lines above are pasteable into bash
+
   # ssh to bastion
   ssh ansible@localhost -p 2222
-  # set up maas
+  # set up maas with these pasteable commands
+  sudo apt-get -y install debconf-utils iptables maas
   (cat <<EOF
   auto enp0s8
   iface enp0s8 inet static
   address 10.0.0.1
   netmask 255.255.255.0
+  post-up iptables-restore < /etc/iptables.rules
   EOF
   ) | sudo tee /etc/network/interfaces.d/enp0s8
-  sudo apt-get -y install maas
+  sudo ifconfig enp0s8 up
+  sudo sed -i -r -e 's/#?(net.ipv4.ip_forward=1)/\1/' /etc/sysctl.conf
+  sudo sysctl -p /etc/sysctl.conf
+  sudo iptables -A FORWARD -o enp0s3 -i enp0s8 -s 10.0.0.0/24 -m conntrack --ctstate NEW -j ACCEPT
+  sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+  sudo iptables -t nat -F POSTROUTING
+  sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
+  sudo iptables-save | sudo tee /etc/iptables.rules
+  echo "maas-rack-controller    maas-rack-controller/maas-url   string  http://10.0.0.1:5240/MAAS" | sudo debconf-set-selections
+  sudo dpkg-reconfigure maas-rack-controller -f noninteractive
   sudo sed -i -e 's/\({{endif}}\)/\1\n  package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"]/' /etc/maas/preseeds/curtin_userdata
-  sudo sed -i -r -e 's/#?(prepend domain-name-servers).*/\1 127.0.0.1;/' /etc/dhcp/dhclient.conf
+  sudo sed -i -r -e 's/#?(prepend domain-name-servers).*/\1 10.0.0.1;/' /etc/dhcp/dhclient.conf
   sudo maas createadmin --username maas --password password --email your@email.com
+
+  vbox_ver=5.1.8
+  wget http://download.virtualbox.org/virtualbox/$vbox_ver/VBoxGuestAdditions_$vbox_ver.iso -P /tmp
+  sudo mount -o loop /tmp/VBoxGuestAdditions_$vbox_ver.iso /mnt
+  sudo sh /mnt/VBoxLinuxAdditions.run
+  sudo umonut /mnt/
+  sudo rm /tmp/VBoxGuestAdditions_$vbox_ver.iso
+  sudo usermod -a -G vboxsf maas
+
   sudo reboot
+
+  # done pasteable 
   # done setting up bastion
 
-  # http://127.0.0.1:8080/MAAS/
+  # Go to http://127.0.0.1:8080/MAAS/
   # Add key in settings
   cat $homedir/.ssh/id_rsa.pub
   # Add dhcp to VLAN in fabric-1
