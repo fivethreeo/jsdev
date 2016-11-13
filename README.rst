@@ -147,7 +147,9 @@ Install ansible on cygwin with lynx: ::
   eval `ssh-agent`
   ssh-add $homedir/.ssh/id_rsa 
 
-iPXE booting with VirtualBox: ::
+iPXE booting with VirtualBox: 
+
+.. code-block:: bash
 
   vb="vboxmanage"
   cygpath="echo"
