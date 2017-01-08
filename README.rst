@@ -185,6 +185,8 @@ iPXE booting with VirtualBox:
 
 .. code-block:: bash
 
+  # Unindent code block before pasting heredocs!
+
   vb="vboxmanage"
   cygpath="echo"
   homedir="~"
@@ -260,10 +262,15 @@ iPXE booting with VirtualBox:
 
   done
 
+  mkdir -p sharedfolder
+  pwd=`pwd`
+  "$vb" sharedfolder add jsdev-host --name sharedfolder --hostpath `$cygpath "$pwd/sharedfolder"` --automount
+
   # Wait for deployment to finish
   eval `ssh-agent`
   ssh-add $homedir/.ssh/id_rsa
 
+  ssh ansible@127.0.0.1 -p 2222
   # all lines above are pasteable into bash
 
   vbox_ver=5.1.8
@@ -272,6 +279,7 @@ iPXE booting with VirtualBox:
   sudo sh /mnt/VBoxLinuxAdditions.run
   sudo umonut /mnt/
   sudo rm /tmp/VBoxGuestAdditions_$vbox_ver.iso
+  sudo touch /media/sf_sharedfolder/sharing
 
   sudo reboot
 
