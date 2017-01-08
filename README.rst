@@ -198,9 +198,9 @@ iPXE booting with VirtualBox:
   tftp_dir="$homedir/.VirtualBox/TFTP"
   mkdir -p "$tftp_dir"
 
-  # Create ansible key and copy pubkey to tftp dir
+  # Create ansible key if not existing key is found and copy pubkey to tftp dir
   ssh_key="$homedir/.ssh/id_rsa"
-  ssh-keygen -t rsa -b 4096 -f $ssh_key -q -N ""
+  if [ ! -f $ssh_key ]; then ssh-keygen -t rsa -b 4096 -f $ssh_key -q -N ""; fi
   cp "${ssh_key}.pub" "${tftp_dir}/authorized_keys"
 
   # Copy preseed config to tftp dir
@@ -214,7 +214,7 @@ iPXE booting with VirtualBox:
   initrd tftp://10.0.2.4/initrd.gz
   initrd tftp://10.0.2.4/preseed.cfg preseed.cfg
   initrd tftp://10.0.2.4/authorized_keys authorized_keys
-  imgargs linux auto=true preseed=file:///preseed.cfg hostname=maas-bastion priority=critical
+  imgargs linux auto=true preseed=file:///preseed.cfg hostname=jsdev priority=critical
   boot
   EOF
   ) > "$tftp_dir/ipxe_chainboot"
@@ -237,7 +237,7 @@ iPXE booting with VirtualBox:
   vdidir=`pwd`/vdis
 
   # Configure vms with nat and intel pxe network boot
-  array=( bastion first second third fourth )
+  array=( jsdev )
   for i in "${array[@]}"
   do
      name="${i}-host"
@@ -248,31 +248,17 @@ iPXE booting with VirtualBox:
      "$vb" modifyvm "$name" --memory 1024 --vram 128 --rtcuseutc on --ioapic on
      "$vb" storagectl "$name" --name "SATA Controller" --add sata
      "$vb" storageattach "$name" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$vdi"
-     if [[ $i == bastion ]]
-     then
-       "$vb" storageattach "$name" --storagectl "SATA Controller" \
-         --port 1 --device 0 --type dvddrive --medium "$ipxe"
-       # ipxe trick here
-       "$vb" modifyvm "$name" --nic1 nat --nattftpfile1 /ipxe_chainboot --nictype1 82540EM --cableconnected1 on
-       "$vb" modifyvm "$name" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
-       "$vb" modifyvm "$name" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
-       "$vb" modifyvm "$name" --nic2 intnet --intnet2 "cluster" --nictype2 82540EM \
-         --nicpromisc2 allow-vms --cableconnected2 on
-       "$vb" modifyvm "$name" --boot1 disk
-       "$vb" modifyvm "$name" --boot2 dvd
-     else
-       "$vb" modifyvm "$name" --nic1 intnet --intnet1 "cluster" --nictype1 82540EM \
-         --nicpromisc1 allow-vms --cableconnected1 on
-       "$vb" modifyvm "$name" --boot1 net
-       "$vb" modifyvm "$name" --boot2 none
-     fi
-  done
 
-  mkdir -p fakevirsh
-  pwd=`pwd`
-  "$vb" sharedfolder add bastion-host --name fakevirsh --hostpath `$cygpath "$pwd/fakevirsh"` --automount 
-  # Start bastion
-  "$vb" startvm bastion-host
+     "$vb" storageattach "$name" --storagectl "SATA Controller" \
+       --port 1 --device 0 --type dvddrive --medium "$ipxe"
+     # ipxe trick here
+     "$vb" modifyvm "$name" --nic1 nat --nattftpfile1 /ipxe_chainboot --nictype1 82540EM --cableconnected1 on
+     "$vb" modifyvm "$name" --natpf1 "ssh,tcp,127.0.0.1,2222,10.0.2.15,22"
+     "$vb" modifyvm "$name" --natpf1 "http,tcp,127.0.0.1,8080,10.0.2.15,80"
+     "$vb" modifyvm "$name" --boot1 disk
+     "$vb" modifyvm "$name" --boot2 dvd
+
+  done
 
   # Wait for deployment to finish
   eval `ssh-agent`
@@ -280,69 +266,15 @@ iPXE booting with VirtualBox:
 
   # all lines above are pasteable into bash
 
-  # ssh to bastion
-  ssh ansible@localhost -p 2222
-  # set up maas with these pasteable commands
-  sudo apt-get -y install debconf-utils iptables maas
-  (cat <<EOF
-  auto enp0s8
-  iface enp0s8 inet static
-  address 10.0.0.1
-  netmask 255.255.255.0
-  post-up iptables-restore < /etc/iptables.rules
-  EOF
-  ) | sudo tee /etc/network/interfaces.d/enp0s8
-  sudo ifconfig enp0s8 up
-  sudo sed -i -r -e 's/#?(net.ipv4.ip_forward=1)/\1/' /etc/sysctl.conf
-  sudo sysctl -p /etc/sysctl.conf
-  sudo iptables -A FORWARD -o enp0s3 -i enp0s8 -s 10.0.0.0/24 -m conntrack --ctstate NEW -j ACCEPT
-  sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-  sudo iptables -t nat -F POSTROUTING
-  sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
-  sudo iptables-save | sudo tee /etc/iptables.rules
-  echo "maas-rack-controller    maas-rack-controller/maas-url   string  http://10.0.0.1:5240/MAAS" | sudo debconf-set-selections
-  sudo dpkg-reconfigure maas-rack-controller -f noninteractive
-  sudo sed -i -e 's/\({{endif}}\)/\1\n  package_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "python"]/' /etc/maas/preseeds/curtin_userdata
-  sudo sed -i -r -e 's/#?(prepend domain-name-servers).*/\1 10.0.0.1;/' /etc/dhcp/dhclient.conf
-  sudo maas createadmin --username maas --password password --email your@email.com
-
   vbox_ver=5.1.8
   wget http://download.virtualbox.org/virtualbox/$vbox_ver/VBoxGuestAdditions_$vbox_ver.iso -P /tmp
   sudo mount -o loop /tmp/VBoxGuestAdditions_$vbox_ver.iso /mnt
   sudo sh /mnt/VBoxLinuxAdditions.run
   sudo umonut /mnt/
   sudo rm /tmp/VBoxGuestAdditions_$vbox_ver.iso
-  sudo usermod -a -G vboxsf maas
 
   sudo reboot
 
-  # done pasteable 
-  # done setting up bastion
-
-  # Go to http://127.0.0.1:8080/MAAS/
-  # Add key in settings
-  cat $homedir/.ssh/id_rsa.pub
-  # Add dhcp to VLAN in fabric-1
-
-  # Start other vms
-  "$vb" startvm first_host
-
-  # Commission and deploy in maas admin
-
-  # Set up proxied ssh connection through bastion for ansible
-  proxy="-o ProxyJump=ansible@localhost:2222"
-  ansible_cfg="[ssh_connection]\nssh_args="
-  ansible_proxy="[group:vars]\nansible_ssh_common_args=$proxy"
-  # echo -e $ansible_cfg > ansible.cfg
-  # echo -e $ansible_proxy > hosts
-
-  echo $proxy
-  echo -e $ansible_cfg
-  echo -e $ansible_proxy
-
-  ssh $proxy ubuntu@a_intnet_host
-  # Pass -f 1 to accept hosts one by one
-  ansible -i hosts -m ping local --ask-vault-pass -f 1
   ansible-playbook site.yml --limit=local -i hosts --ask-vault-pass
   
   SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
