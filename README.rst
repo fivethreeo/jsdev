@@ -282,6 +282,16 @@ iPXE booting with VirtualBox:
   sudo touch /media/sf_sharedfolder/sharing
 
   sudo reboot
+  pw='mypassword'
+  echo $pw
+  export DEBIAN_FRONTEND=noninteractive
+  sudo debconf-set-selections <<< 'mariadb-server-10.0 mysql-server/root_password password $pw'
+  sudo debconf-set-selections <<< 'mariadb-server-10.0 mysql-server/root_password_again password $pw'
+  sudo apt-get install -y curl mariadb-server
+  sudo mysql -u root --execute="use mysql; update user set password=PASSWORD(\"$pw\") where User='root'; update user set plugin='' where User='root'; flush privileges;"
+  curl -L https://github.com/ansible-semaphore/semaphore/releases/download/v2.1.0/semaphore_linux_amd64 | sudo dd of=/usr/bin/semaphore
+  sudo chmod u=x /usr/bin/semaphore
+  sudo semaphore -setup
 
   ansible-playbook site.yml --limit=local -i hosts --ask-vault-pass
   
