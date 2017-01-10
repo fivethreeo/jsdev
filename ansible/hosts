@@ -1,34 +1,11 @@
-[paw]
-ssh.pythonanywhere.com
-
-[paw:vars]
-ansible_ssh_common_args=-o ControlMaster=no -o ForwardAgent=yes
-
 [local]
-solid-koala.maas
-ideal-hyena.maas
+127.0.0.1:2222
 
 [local:vars]
-ansible_user=ubuntu
-ansible_ssh_common_args=-o ForwardAgent=yes -o ProxyJump=ansible@localhost:2222
+ansible_user=ansible
+ansible_ssh_common_args=-o ControlMaster=no -o ForwardAgent=yes
 
-[pgpool_hosts]
-solid-koala.maas
-ideal-hyena.maas
-#  ansible-playbook site.yml --limit=pgpool_hosts -i hosts --ask-vault-pass
-
-[postgresql_master_hosts]
-solid-koala.maas
-
-[postgresql_master_hosts:vars]
-postgresql_master=true
-
-[postgresql_slave_hosts]
-ideal-hyena.maas
-
-[postgresql_hosts:children]
-postgresql_master_hosts
-postgresql_slave_hosts
-
-[postgresql_hosts:vars]
-postgresql_replication=true
+[proxied]
+# ansible_user=ubuntu
+# ansible_ssh_common_args=-o ForwardAgent=yes -o ProxyJump=ansible@localhost:2222
+# ansible-playbook site.yml --limit=local -i hosts --ask-vault-pass

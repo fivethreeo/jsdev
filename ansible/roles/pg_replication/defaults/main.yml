@@ -1,4 +1,0 @@
----
-# defaults file for pg_replication
-postgresql_slave: false
-postgresql_master: false

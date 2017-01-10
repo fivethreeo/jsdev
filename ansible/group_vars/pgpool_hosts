@@ -1,7 +1,0 @@
-pgpool2_if_down_cmd: sudo /sbin/ifconfig enp0s3:0 down
-pgpool2_if_up_cmd: sudo /sbin/ifconfig enp0s3:0 inet $_IP_$ netmask 255.255.255.0
-pgpool2_delegate_IP: '10.0.0.50'
-pgpool2_use_watchdog: 'on'
-base_pgpool2_query_nodes: 
-- solid-koala.maas
-- ideal-hyena.maas

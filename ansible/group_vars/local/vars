@@ -1,0 +1,5 @@
+
+nginx_sites:
+  app:
+    template: app.conf.j2
+    server_name: _

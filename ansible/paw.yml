@@ -1,5 +1,0 @@
-- name: configure and deploy the app
-  hosts: paw
-  remote_user: fivethreeo
-  roles:
-    - cms
