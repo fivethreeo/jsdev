@@ -4,18 +4,20 @@ f=$1
 [[ $0 != "$BASH_SOURCE" ]] && exittype="return" || exittype="exit 1"
 
 if [ "$1" == "-s" ] || [ "$1" == "-d" ]; then
-	if [ $0 == "$BASH_SOURCE" ]; then
-		echo "Script must be sourced with '. $0'"
-		$exittype
-	fi 
+  if [ $0 == "$BASH_SOURCE" ]; then
+    echo "Script must be sourced with '. $0'"
+    $exittype
+  fi 
 fi
 
 if [ "$1" == "-d" ]; then
-	rm ~/.vaultpw
-	echo Deleted ~/.vaultpw
-	echo Unset ANSIBLE_VAULT_PASSWORD_FILE
-	export ANSIBLE_VAULT_PASSWORD_FILE=
-	$exittype
+  if [ -f ~/.vaultpw ]; then
+    rm ~/.vaultpw
+    echo Deleted ~/.vaultpw
+  fi
+  echo Unset ANSIBLE_VAULT_PASSWORD_FILE
+  export ANSIBLE_VAULT_PASSWORD_FILE=
+  $exittype
 fi
 
 tmpf="$1.decrypted"
@@ -25,21 +27,21 @@ echo -n "Enter vault password and press [ENTER]: "
 read vaultpw
 
 if [ "$1" == "-s" ]; then
-	echo $vaultpw > ~/.vaultpw
-	echo Saved ~/.vaultpw
-	echo Set ANSIBLE_VAULT_PASSWORD_FILE=~/.vaultpw
-	echo "Remember to run '. vaultedit -d' when done"
-	export ANSIBLE_VAULT_PASSWORD_FILE=~/.vaultpw
-	$exittype
+  echo $vaultpw > ~/.vaultpw
+  echo Saved ~/.vaultpw
+  echo Set ANSIBLE_VAULT_PASSWORD_FILE=~/.vaultpw
+  echo "Remember to run '. vaultedit -d' when done"
+  export ANSIBLE_VAULT_PASSWORD_FILE=~/.vaultpw
+  $exittype
 fi
 
 if [ "$vaultpw" == "" ]; then
-	if [ ! -f ~/.vaultpw ]; then
-  	    echo ~/.vaultpw not found, run '. vaultedit -s'
-	fi
-	cp ~/.vaultpw ~/.vaultpw.ed
+  if [ ! -f ~/.vaultpw ]; then
+        echo ~/.vaultpw not found, run '. vaultedit -s'
+  fi
+  cp ~/.vaultpw ~/.vaultpw.ed
 else
-	echo $vaultpw > ~/.vaultpw.ed
+  echo $vaultpw > ~/.vaultpw.ed
 fi
 
 trap "rm $tmpf; rm $tmpfe; rm ~/.vaultpw.ed; $exittype" 2
@@ -58,10 +60,10 @@ if [ "$2" != "-n" ]; then
 fi
 
 while : ; do  
-    if [ "$tmpf" -nt "$tmpfe" ]; then  
-        cp "$tmpf" "$tmpfe"  
-        cp "$tmpf" "$f"
-        ansible-vault encrypt "$f" --vault-password-file ~/.vaultpw.ed        
-    fi  
-    sleep 2  
+  if [ "$tmpf" -nt "$tmpfe" ]; then  
+    cp "$tmpf" "$tmpfe"  
+    cp "$tmpf" "$f"
+    ansible-vault encrypt "$f" --vault-password-file ~/.vaultpw.ed        
+  fi  
+  sleep 2  
 done  
