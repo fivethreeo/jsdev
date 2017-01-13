@@ -1,0 +1,21 @@
+---
+# tasks file for uwsgi install
+- name: install uwsgi
+  pip:
+    name: uwsgi
+    executable: "{{ uwsgi_pip_executeable }}"
+- name: make uwsgi sites directory
+  file:
+    path: "{{ uwsgi_emperor_sites }}"
+    state: directory
+    mode: 0755
+    owner: "{{ uwsgi_emperor_user }}"
+    group: "{{ uwsgi_emperor_group }}"
+- name: template out uwsgi service
+  template:
+    src: ../files/uwsgi.service.j2
+    dest: /etc/systemd/system/uwsgi.service
+- name: reload uwsgi service definition
+  command: systemctl daemon-reload
+- name: restart uwsgi service
+  service: name=uwsgi.service state=restarted enabled=yes

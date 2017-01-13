@@ -1,0 +1,32 @@
+---
+# tasks file for managing express apps
+- name: template out express app service
+  template:
+    src: ../files/express.service.j2
+    dest: "/etc/systemd/system/{{ item.name }}-express.service"
+  register: template_result
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ express_apps }}"
+
+- name: reload express app service definition
+  command: systemctl daemon-reload
+#  when: "{{ template_result.results|selectattr('changed', 'equalto', 'false')|list|length > 0 }}"
+  when: "template_result.changed"
+
+- name: restart express app service
+  service: name={{ item.item.name }}-express.service state=restarted enabled=yes
+  when: "item.changed"
+  with_items: "{{ template_result.results }}"
+
+- name: stop express app service
+  service: name={{ item.name }}-express.service state=stopped enabled=no
+  register: stop_result
+  when: "{{ item.absent|default(False) }}"
+  with_items: "{{ express_apps }}"
+
+- name: make sure express apps are absent
+  file:
+    name: "/etc/systemd/system/{{ item.item.name }}-express.service" 
+    state: absent
+  when: "{{ item.item.absent|default(False) and (item|skipped or item.state == 'stopped') }}"
+  with_items: "{{ stop_result.results }}"

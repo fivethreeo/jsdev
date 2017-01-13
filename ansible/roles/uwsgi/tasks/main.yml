@@ -1,0 +1,8 @@
+---
+# tasks file for uwsgi
+- include: install.yml
+  tags:
+    - install
+- include: manage.yml
+  tags:
+    - manage

@@ -1,0 +1,16 @@
+[Unit]
+Description={{ item.name }} express app
+
+[Service]
+ExecStart={{ item.node_interpeter|default('/usr/bin/node') }} {{ item.script }}
+Restart=always
+RestartSec=10                       # Restart service after 10 seconds if node service crashes
+StandardOutput=syslog               # Output to syslog
+StandardError=syslog                # Output to syslog
+SyslogIdentifier={{ item.name }}-express
+User={{ item.user }}
+Group={{ item.group }}
+Environment=NODE_ENV={{ item.NODE_ENV }} {% for kv in item.get('env', {}).items() %}{{kv.0}}={{ kv.1 }} {% endfor %}
+
+[Install]
+WantedBy=multi-user.target

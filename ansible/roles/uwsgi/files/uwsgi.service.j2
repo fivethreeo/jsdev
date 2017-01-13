@@ -1,0 +1,15 @@
+[Unit]
+Description=uWSGI Emperor service
+
+[Service]
+ExecStartPre=/bin/bash -c 'mkdir -p /run/uwsgi; chown {{ uwsgi_emperor_user }}:{{ uwsgi_emperor_group }} /run/uwsgi'
+ExecStart=/usr/local/bin/uwsgi --emperor {{ uwsgi_emperor_sites }}
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+NotifyAccess=all
+User={{ uwsgi_emperor_user }}
+Group={{ uwsgi_emperor_group }}
+
+[Install]
+WantedBy=multi-user.target

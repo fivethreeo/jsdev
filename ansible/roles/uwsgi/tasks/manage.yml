@@ -1,0 +1,18 @@
+---
+# tasks file for managing uwsgi sites
+- name: make sure uwsgi sites are present and configured
+  template:
+    src: ../files/app.ini.j2
+    dest: "{{ uwsgi_emperor_sites }}/{{ item.name }}.ini"
+    owner: "{{ uwsgi_emperor_user }}"
+    group:  "{{ uwsgi_emperor_group }}"
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ uwsgi_sites }}"
+- name: make sure uwsgi sites are absent
+  file:
+    name: "{{ uwsgi_emperor_sites }}/{{ item.name }}.ini" 
+    state: absent
+  when: "{{ item.absent|default(False) }}"
+  with_items: "{{ uwsgi_sites }}"
+- name: restart uwsgi service
+  service: name=uwsgi.service state=restarted enabled=yes

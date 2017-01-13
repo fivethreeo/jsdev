@@ -1,5 +1,61 @@
 
+postgresql_version: 9.5
+
+postgresql_cluster_name: "main"
+postgresql_cluster_reset: false
+
+postgresql_data_directory: "/postgres_cluster/"
+postgresql_apt_repository: 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main 9.5'
+
 nginx_sites:
   app:
-    template: app.conf.j2
+    template: ../files/app.conf.j2
     server_name: _
+
+uwsgi_emperor_sites: /etc/uwsgi/sites
+uwsgi_emperor_user: root
+uwsgi_emperor_group: www-data
+uwsgi_pip_executeable: pip3
+
+projects:
+  - name: one
+    present: yes
+    parts:
+      uwsgi:
+        project: one
+        user: appuser
+        group: www-data
+        socket: :8081
+        vacuum: true
+      express:
+        project: one
+        user: appuser
+        group: www-data
+        script: /home/appuser/hello.js
+        NODE_ENV: production
+        env:
+          PORT: 8080
+      nginx:
+        app:
+          template: ../files/app.conf.j2
+          server_name: _
+
+uwsgi_sites:
+  - name: one
+    project: one
+    user: appuser
+    group: www-data
+    socket: :8081
+    vacuum: true
+    present: yes
+
+express_apps:
+  - name: one
+    project: one
+    user: appuser
+    group: www-data
+    script: /home/appuser/hello.js
+    NODE_ENV: production
+    env:
+      PORT: 8080
+    present: yes

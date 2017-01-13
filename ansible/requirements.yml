@@ -1,3 +1,4 @@
 - src: weareinteractive.pm2
 - src: geerlingguy.nodejs
 - src: jdauphant.nginx
+- src: gdamjan.uwsgi

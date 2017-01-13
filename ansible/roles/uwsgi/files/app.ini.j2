@@ -1,0 +1,17 @@
+[uwsgi]
+project = {{ item.project }}
+uid = {{ item.user }}
+base = {{ item.base|default('/home/%%(uid)') }}
+
+chdir = {{ item.chdir|default('%%(base)/%%(project)') }}
+home = {{ item.virtualenv|default('%%(base)/uwsgi_env') }}
+module = {{ item.module|default('%%(project).wsgi:application') }}
+
+master = {{ item.master|default(False) and 'true' or 'false' }}
+processes = {{ item.processes|default(1) }}
+threads = {{ item.threads|default(1) }}
+
+socket = {{ item.socket|default('/run/uwsgi/%%(project).sock') }}
+chown-socket = {{ item.chown_socket|default('%%(uid)'+item.group) }}
+chmod-socket =  {{ item.chmod_socket|default(660) }}
+vacuum = {{ item.vacuum|default(False) and 'true' or 'false' }}

@@ -3,31 +3,13 @@
   hosts: local
   become: true
   become_user: root
-  vars:
-    dummyvar: "{{ ansible_hostname }}"
   pre_tasks:
   - name: why sudo time out?
-    lineinfile: dest=/etc/hosts line="127.0.0.1 {{ ansible_hostname }}"
-  - name: copy hello
-    copy:
-      src: hello.js
-      dest: /home/ansible/hello.js
-  - name: copy service
-    copy:
-      src: app.service
-      dest: /etc/systemd/system/app.service
-  post_tasks:
-  - name: App | start app
-    service: name=app.service state=started enabled=yes
-  # - name: collect facts
-  #   setup:
-  #   delegate_to: "{{ item }}"
-  #   delegate_facts: true
-  #   with_items: "{{ groups['local'] }}"
-  # - name: make the facts
-  #   set_fact:
-  #     nginx_sites: "{{ nginx_sites|default({})|combine({}) }}"
-  # with_items: "{{ nginx_sites.keys() }}"
+    lineinfile: dest=/etc/hosts line="127.0.0.1 {{ inventory_hostname }}"
   roles:
     - geerlingguy.nodejs
     - jdauphant.nginx
+    - ANXS.postgresql
+    - uwsgi
+    - express
+

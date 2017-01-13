@@ -205,6 +205,9 @@ iPXE booting with VirtualBox:
   if [ ! -f $ssh_key ]; then ssh-keygen -t rsa -b 4096 -f $ssh_key -q -N ""; fi
   cp "${ssh_key}.pub" "${tftp_dir}/authorized_keys"
 
+  eval `ssh-agent`
+  ssh-add $ssh_key
+
   # Copy preseed config to tftp dir
   cp utils/preseed.cfg "$tftp_dir"
 
@@ -267,8 +270,6 @@ iPXE booting with VirtualBox:
   "$vb" sharedfolder add jsdev-host --name sharedfolder --hostpath `$cygpath "$pwd/sharedfolder"` --automount
 
   # Wait for deployment to finish
-  eval `ssh-agent`
-  ssh-add $homedir/.ssh/id_rsa
 
   ssh ansible@127.0.0.1 -p 2222
   # all lines above are pasteable into bash

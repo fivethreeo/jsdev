@@ -1,0 +1,7 @@
+---
+# defaults file for uwsgi
+uwsgi_emperor_sites: /etc/uwsgi/sites
+uwsgi_emperor_user: root
+uwsgi_emperor_group: www-data
+uwsgi_pip_executeable: pip
+uwsgi_sites: []
