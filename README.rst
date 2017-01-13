@@ -286,6 +286,10 @@ iPXE booting with VirtualBox:
 
   ansible-playbook site.yml --limit=local -i hosts --ask-vault-pass
   
+  cp utils/vaultedit /bin/
+  chmod 0755 /bin/vaultedit
+
+
   SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
   export EDITOR="$(pwd)/utils/cygrun.sh \"$SUBLIME\" -w"
   echo $EDITOR

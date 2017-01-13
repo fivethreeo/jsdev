@@ -17,29 +17,6 @@ uwsgi_emperor_user: root
 uwsgi_emperor_group: www-data
 uwsgi_pip_executeable: pip3
 
-projects:
-  - name: one
-    present: yes
-    parts:
-      uwsgi:
-        project: one
-        user: appuser
-        group: www-data
-        socket: :8081
-        vacuum: true
-      express:
-        project: one
-        user: appuser
-        group: www-data
-        script: /home/appuser/hello.js
-        NODE_ENV: production
-        env:
-          PORT: 8080
-      nginx:
-        app:
-          template: ../files/app.conf.j2
-          server_name: _
-
 uwsgi_sites:
   - name: one
     project: one
