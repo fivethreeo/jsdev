@@ -12,7 +12,7 @@ DATABASES = {
     '{{ database }}': {
         {% if settings.backend == "django.db.backends.postgresql_psycopg2" %} 
         'ENGINE': '{{ settings.backend }}' # django.db.backends.postgresql_psycopg2',
-        'PASSWORD': '{{ postgresql_users|selectattr('name', 'equalto', settings.username)|first|attr('password') }}',
+        'PASSWORD': '{{ postgresql_users|selectattr('name', 'equalto', settings.username)|first|attr('pass') }}',
         'PORT': {{ settings.port|default(5432) }},
         {% endif %}
         'NAME': '{{ settings.database }}',
