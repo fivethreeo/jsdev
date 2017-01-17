@@ -27,6 +27,8 @@
   when: "{{ item.present|default(False) }}"
   with_items: "{{ django_projects }}"
 
+- debug: msg="{{ (postgresql_users|selectattr('name', 'equalto', 'jsdev')|first)['pass'] }}"
+
 - name: Create local_settings.py
   template:
     src: "django/local_settings-{{ inventory_hostname }}.j2"
