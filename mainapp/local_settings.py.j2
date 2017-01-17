@@ -4,21 +4,24 @@ ADMINS = (
     ('Oyvind Saltvik', 'oyvind.saltvik@gmail.com'),
 )
 
-STATIC_ROOT = '{{ django_static_root }}'
-MEDIA_ROOT = '{{ django_media_root }}'
+STATIC_ROOT = '{{ item.static_root }}'
+MEDIA_ROOT = '{{ item.media_root }}'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '{{ django_db_name }}',
-        'USER': '{{django_db_username }}',
-        'PASSWORD': '{{ vault_django_db_password }}',
-        'HOST': '{{ django_db_host }}',
-        'PORT': {{ django_db_port }},
+	{% for database, settings in item.databases.items() %}
+    '{{ database }}': {
+        {% if settings.backend == "django.db.backends.postgresql_psycopg2" %} 
+        'ENGINE': '{{ settings.backend }}' # django.db.backends.postgresql_psycopg2',
+        'PASSWORD': '{{ postgresql_users|selectattr('name', 'equalto', settings.username)|first|attr('password') }}',
+        'PORT': {{ settings.port|default(5432) }},
+        {% endif %}
+        'NAME': '{{ settings.database }}',
+        'USER': '{{ settings.username }}',
+        'HOST': '{{ settings.hostname }}',
     }
 }
 
-SECRET_KEY = '{{ vault_django_secretkey }}'
+SECRET_KEY = '{{ django_secret_keys|selectattr('name', 'equalto', item.name)|first|attr('key')|default('unsafe') }}'
 
 """
 SERVER_EMAIL = ''

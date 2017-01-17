@@ -24,7 +24,7 @@ tmpf="$1.decrypted"
 tmpfe="`mktemp /tmp/onchange.XXXXX`"
 
 echo -n "Enter vault password and press [ENTER]: "
-read vaultpw
+read -s vaultpw
 
 if [ "$1" == "-s" ]; then
   echo $vaultpw > ~/.vaultpw

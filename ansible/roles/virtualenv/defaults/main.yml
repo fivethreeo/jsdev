@@ -1,0 +1,5 @@
+---
+# defaults file for virtualenv
+virtualenv:
+  python: python
+  pip_executeable: pip

@@ -1,0 +1,53 @@
+---
+# tasks file for virtualenv
+
+- name: install uwsgi
+  pip:
+    name: virtualenvwrapper
+    executable: "{{ virtualenv.pip_executeable }}"
+
+- name: Check for virtualenv
+  stat:
+    path: "/home/{{ item.owner }}/.virtualenvs/{{ item.name }}"
+  register: virtualenvs_status
+  when: item.present|default(false)
+  with_items: "{{ virtualenvs }}"
+
+# - debug: msg="{{ virtualenvs_status }}"
+
+- name: Make sure virtualenv is present
+  shell: "VIRTUALENVWRAPPER_PYTHON=/usr/bin/{{ item.item.python|default(virtualenv.python) }} && source `which virtualenvwrapper.sh` && mkvirtualenv {{ item.item.name }} -p {{ item.item.python|default(virtualenv.python) }}" 
+  args:
+    executable: /bin/bash
+  when: item.item.present|default(false) and not item.stat.exists 
+  with_items: "{{ virtualenvs_status.results }}"
+
+- name: Check for virtualenv again
+  stat:
+    path: "/home/{{ item.owner }}/.virtualenvs/{{ item.name }}"
+  register: virtualenvs_status
+  when: item.present|default(false)
+  with_items: "{{ virtualenvs }}"
+
+- name: Install python modules into virtualenv
+  pip: requirements="{{ item.item.requirements }}"
+    virtualenv="/home/{{ item.item.owner }}/.virtualenvs/{{ item.item.name }}"
+  when: item.item.present|default(false) and item.stat.exists
+  with_items: "{{ virtualenvs_status.results }}"
+
+- name: Set permissioms for virtualenv
+  file:
+    path: "/home/{{ item.item.owner }}/.virtualenvs/{{ item.item.name }}"
+    state: directory
+    owner: "{{ item.item.owner }}"
+    group: "{{ item.item.group }}"
+    recurse: yes
+  when: item.item.present|default(false) and item.stat.exists
+  with_items: "{{ virtualenvs_status.results }}"
+
+- name: Make sure virtualenv is absent
+  file: 
+    dest: "/home/{{ item.item.owner }}/.virtualenvs/{{ item.item.name }}"
+    state: absent
+  when: item.item.absent|default(false)
+  with_items: "{{ virtualenvs_status.results }}"

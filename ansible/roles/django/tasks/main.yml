@@ -1,0 +1,67 @@
+---
+# tasks file for django
+
+- name: Create django static directory
+  file:
+    path: "{{ item.static_root }}"
+    state: directory
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ django_projects }}"
+
+- name: Create django media directory
+  file:
+    path: "{{ item.static_root }}"
+    state: directory
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ django_projects }}"
+
+- name: Fetch local_settings template
+  fetch:
+    src: "{{ item.settings_remote_path }}"
+    dest: "django/local_settings-{{ inventory_hostname }}.j2"
+    flat: yes
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ django_projects }}"
+
+- name: Create local_settings.py
+  template:
+    src: "django/local_settings-{{ inventory_hostname }}.j2"
+    dest: "{{ item.settings_path }}"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ django_projects }}"
+
+- name: Migrate django database
+  shell: "{{ item.virtualenv }}/bin/python {{ item.parentdir }}/manage.py migrate"
+  when: "{{ item.present|default(False) and item.migrate|default(False) }}"
+  with_items: "{{ django_projects }}"
+
+- name: Collect django static files
+  shell: "{{ item.virtualenv }}/bin/python {{ item.item.parentdir }}/manage.py collectstatic --noinput"
+  when: "{{ item.item.present|default(False) and item.item.collectstatic|default(False) and item.present|default(False)  }}"
+  with_items: "{{ static_dirs }}"
+
+- name: Ensure permissions of static directory
+  file:
+    path: "{{ item.static_root }}"
+    state: directory
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+    recurse: yes
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ django_projects }}"
+
+- name: Ensure permissions of media directory
+  file:
+    path: "{{ item.media_root }}"
+    state: directory
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+    recurse: yes
+  when: "{{ item.present|default(False) }}"
+  with_items: "{{ django_projects }}"

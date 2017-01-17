@@ -288,6 +288,9 @@ iPXE booting with VirtualBox:
   
   cp utils/vaultedit /bin/
   chmod 0755 /bin/vaultedit
+  vaultedit file
+  . vaultedit -s
+  . vaultedit -d
 
 
   SUBLIME="$(cygpath 'C:\Program Files\Sublime Text 3\subl.exe')"
