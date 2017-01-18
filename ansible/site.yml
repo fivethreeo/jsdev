@@ -52,7 +52,7 @@
   #   - virtualenv
   # #   - geerlingguy.nodejs
   # #   - ANXS.postgresql
-  #   - django
+    - django
     - uwsgi
   #   - express
     - jdauphant.nginx
