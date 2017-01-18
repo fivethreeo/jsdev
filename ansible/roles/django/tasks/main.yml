@@ -39,14 +39,14 @@
   with_items: "{{ django_projects }}"
 
 - name: Migrate django database
-  shell: "{{ item.virtualenv }}/bin/python {{ item.parentdir }}/manage.py migrate"
+  shell: "{{ item.virtualenv }}/bin/python {{ item.cwd }}/manage.py migrate"
   when: "{{ item.present|default(False) and item.migrate|default(False) }}"
   with_items: "{{ django_projects }}"
 
 - name: Collect django static files
-  shell: "{{ item.virtualenv }}/bin/python {{ item.item.parentdir }}/manage.py collectstatic --noinput"
-  when: "{{ item.item.present|default(False) and item.item.collectstatic|default(False) and item.present|default(False)  }}"
-  with_items: "{{ static_dirs }}"
+  shell: "{{ item.virtualenv }}/bin/python {{ item.cwd }}/manage.py collectstatic --noinput"
+  when: "{{ item.present|default(False) and item.collectstatic|default(False) and item.present|default(False)  }}"
+  with_items: "{{ django_projects }}"
 
 - name: Ensure permissions of static directory
   file:

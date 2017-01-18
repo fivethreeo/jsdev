@@ -27,6 +27,9 @@ uwsgi_sites:
     group: www-data
     socket: :8081
     vacuum: true
+    master: true
+    virtualenv: /home/appuser/.virtualenvs/jsdev
+    module: mainapp.wsgi
     present: yes
 
 checkouts:
@@ -49,17 +52,23 @@ django_projects:
     project: jsdev
     user: appuser
     group: www-data
+    virtualenv: /home/appuser/.virtualenvs/jsdev
     static_root: /www/appuser/static
     media_root: /www/appuser/media
+    cwd: /home/appuser/jsdev
     path: /home/appuser/jsdev/mainapp
     settings_path: /home/appuser/jsdev/mainapp/local_settings.py
     settings_remote_path: /home/appuser/jsdev/mainapp/local_settings.py.j2
+    allowed_hosts:
+      - 127.0.0.1
     databases:
       default:
         backend: django.db.backends.postgresql_psycopg2
         hostname: localhost
         database: jsdev
         username: jsdev
+    collectstatic: no
+    migrate: no
     present: yes
 
 express_apps:

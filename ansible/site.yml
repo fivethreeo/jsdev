@@ -49,11 +49,11 @@
     when: "{{ item.absent|default(False) }}"
     with_items: "{{ checkouts }}"
   roles:
-  #  - virtualenv
-    - django
-  #   - geerlingguy.nodejs
-  #   - jdauphant.nginx
-  #   - ANXS.postgresql
-  #   - uwsgi
+  #   - virtualenv
+  # #   - geerlingguy.nodejs
+  # #   - ANXS.postgresql
+  #   - django
+    - uwsgi
   #   - express
+    - jdauphant.nginx
 
