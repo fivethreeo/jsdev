@@ -7,7 +7,7 @@ ADMINS = (
 STATIC_ROOT = '{{ item.static_root }}'
 MEDIA_ROOT = '{{ item.media_root }}'
 
-ALLOWED_HOSTS = {{ item.allowed_hosts|default([])|map('string')|list }}
+ALLOWED_HOSTS = {{ item.allowed_hosts|to_json }}
 
 DATABASES = {
 	{% for database, settings in item.databases.items() %}
