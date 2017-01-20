@@ -6,10 +6,39 @@ postgresql_cluster_name: "main"
 postgresql_data_directory: "/postgres_cluster/"
 postgresql_apt_repository: 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main 9.5'
 
+postgresql_databases:
+  - name: jsdev
+    owner: jsdev
+
+es_api_port: 9201
+es_heap_size: 250m
+es_instance_name: jsdevnode1
+es_data_dirs: /opt/elasticsearch/data
+es_log_dir: /opt/elasticsearch/logs
+es_config:
+  node.name: jsdevnode1
+  cluster.name: jsdev
+  discovery.zen.ping.unicast.hosts: []
+  http.port: 9201
+  transport.tcp.port: 9301
+  node.data: false
+  node.master: true
+  bootstrap.memory_lock: true
+
+rabbitmq_vhosts:
+- name: vhost1
+
+rabbitmq_users:
+- vhost: vhost1
+  user: jsdev
+  password: rds81ro
+
 nginx_sites:
   app:
     template: ../files/app.conf.j2
     server_name: _
+    django_static_root: /www/appuser/static/
+    django_media_root: /www/appuser/media/
 
 uwsgi_emperor_sites: /etc/uwsgi/sites
 uwsgi_emperor_user: root
@@ -67,17 +96,17 @@ django_projects:
         hostname: localhost
         database: jsdev
         username: jsdev
-    collectstatic: no
-    migrate: no
+    collectstatic: yes
+    migrate: yes
     present: yes
 
-express_apps:
-  - name: one
-    project: one
-    user: appuser
-    group: www-data
-    script: /home/appuser/hello.js
-    NODE_ENV: production
-    env:
-      PORT: 8080
-    present: yes
+# express_apps:
+#   - name: one
+#     project: one
+#     user: appuser
+#     group: www-data
+#     script: /home/appuser/hello.js
+#     NODE_ENV: production
+#     env:
+#       PORT: 8080
+#     present: yes
