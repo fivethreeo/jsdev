@@ -57,12 +57,12 @@
     when: "{{ item.absent|default(False) }}"
     with_items: "{{ checkouts }}"
   roles:
-    - ANXS.postgresql
-    - geerlingguy.memcached
-    - ansible-elasticsearch
-    - SimpliField.rabbitmq
-    - geerlingguy.nodejs
-    - virtualenv
+    # - ANXS.postgresql
+    # - geerlingguy.memcached
+    # - ansible-elasticsearch
+    # - SimpliField.rabbitmq
+    # - geerlingguy.nodejs
+    # - virtualenv
     - django
     - uwsgi
     # - express
