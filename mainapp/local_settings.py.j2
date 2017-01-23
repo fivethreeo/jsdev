@@ -22,7 +22,7 @@ DATABASES = {
         'NAME': '{{ settings.database }}',
         'USER': '{{ settings.username }}',
         'HOST': '{{ settings.hostname }}'
-    }{%+ if not loop.last %}, {%+ endif %}
+    }{%+ if not loop.last +%}, {%+ endif +%}
     {% endfor %}
 }
 
