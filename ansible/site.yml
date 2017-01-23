@@ -14,6 +14,10 @@
     package:
       name: libpq-dev 
       state: latest
+  - name: install the latest version of python3-pip 
+    package:
+      name: python3-pip 
+      state: latest
   - name: make sure checkouts are present
     git:
       accept_hostkey: "{{ item.accept_hostkey|default(omit) }}"
@@ -53,14 +57,14 @@
     when: "{{ item.absent|default(False) }}"
     with_items: "{{ checkouts }}"
   roles:
-  #   - virtualenv
-  #   - geerlingguy.nodejs
-  #   - ANXS.postgresql
-  #   - geerlingguy.memcached
-  #   - django
-  #   - uwsgi
-  #   - express
-  #   - jdauphant.nginx
-  #   - ansible-elasticsearch
+    - ANXS.postgresql
+    - geerlingguy.memcached
+    - ansible-elasticsearch
     - SimpliField.rabbitmq
+    - geerlingguy.nodejs
+    - virtualenv
+    - django
+    - uwsgi
+    # - express
+    - jdauphant.nginx
 

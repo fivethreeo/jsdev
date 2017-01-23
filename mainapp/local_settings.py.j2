@@ -10,18 +10,18 @@ MEDIA_ROOT = '{{ item.media_root }}'
 ALLOWED_HOSTS = {{ item.allowed_hosts|to_json }}
 
 DATABASES = {
-	{% for database, settings in item.databases.items() %}
-    '{{ database }}': {
-        {% if settings.backend == "django.db.backends.postgresql_psycopg2" %} 
+	{%- for database, settings in item.databases.items() -%}
+    {{ database }}': {
+        {%- if settings.backend == "django.db.backends.postgresql_psycopg2" -%}
         'ENGINE': '{{ settings.backend }}', # django.db.backends.postgresql_psycopg2',
         'PASSWORD': '{{ settings.password|default((postgresql_users|selectattr('name', 'equalto', settings.username)|first)['pass']|default('')) }}',
         'PORT': {{ settings.port|default(5432) }},
-        {% endif %}
+        {%- endif -%}
         'NAME': '{{ settings.database }}',
         'USER': '{{ settings.username }}',
         'HOST': '{{ settings.hostname }}'
     }
-    {% endfor %}
+    {%- endfor -%}
 }
 
 SECRET_KEY = '{{ django_secret_keys|selectattr('name', 'equalto', item.name)|first|attr('key')|default('unsafe') }}'
@@ -34,3 +34,4 @@ EMAIL_HOST = ''
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 """
+randi.lian.berg

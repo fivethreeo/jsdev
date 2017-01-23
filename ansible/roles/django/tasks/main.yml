@@ -7,7 +7,7 @@
     state: directory
     owner: "{{ item.user }}"
     group: "{{ item.group }}"
-  when: "{{ item.present|default(False) }}"
+  when: "{{ item.present|default(false) }}"
   with_items: "{{ django_projects }}"
 
 - name: Create django media directory
@@ -16,7 +16,7 @@
     state: directory
     owner: "{{ item.user }}"
     group: "{{ item.group }}"
-  when: "{{ item.present|default(False) }}"
+  when: "{{ item.present|default(false) }}"
   with_items: "{{ django_projects }}"
 
 - name: Fetch local_settings template
@@ -24,28 +24,31 @@
     src: "{{ item.settings_remote_path }}"
     dest: "django/local_settings-{{ inventory_hostname }}.j2"
     flat: yes
-  when: "{{ item.present|default(False) }}"
+  when: "{{ item.present|default(false) }}"
   with_items: "{{ django_projects }}"
-
-- debug: msg="{{ (postgresql_users|selectattr('name', 'equalto', 'jsdev')|first)['pass'] }}"
-
+  
 - name: Create local_settings.py
   template:
     src: "django/local_settings-{{ inventory_hostname }}.j2"
     dest: "{{ item.settings_path }}"
     owner: "{{ item.user }}"
     group: "{{ item.group }}"
-  when: "{{ item.present|default(False) }}"
+  when: "{{ item.present|default(false) }}"
   with_items: "{{ django_projects }}"
 
 - name: Migrate django database
   shell: "{{ item.virtualenv }}/bin/python {{ item.cwd }}/manage.py migrate"
-  when: "{{ item.present|default(False) and item.migrate|default(False) }}"
+  when: "{{ item.present|default(false) and item.migrate|default(false) }}"
+  with_items: "{{ django_projects }}"
+
+- name: Create default admin
+  shell: "{{ item.virtualenv }}/bin/python {{ item.cwd }}/manage.py create_adminuser"
+  when: "{{ item.present|default(false) and item.default_admin|default(false) }}" 
   with_items: "{{ django_projects }}"
 
 - name: Collect django static files
   shell: "{{ item.virtualenv }}/bin/python {{ item.cwd }}/manage.py collectstatic --noinput"
-  when: "{{ item.present|default(False) and item.collectstatic|default(False) and item.present|default(False)  }}"
+  when: "{{ item.present|default(false) and item.collectstatic|default(false) and item.present|default(false)  }}"
   with_items: "{{ django_projects }}"
 
 - name: Ensure permissions of static directory
@@ -55,7 +58,7 @@
     owner: "{{ item.user }}"
     group: "{{ item.group }}"
     recurse: yes
-  when: "{{ item.present|default(False) }}"
+  when: "{{ item.present|default(false) }}"
   with_items: "{{ django_projects }}"
 
 - name: Ensure permissions of media directory
@@ -65,5 +68,5 @@
     owner: "{{ item.user }}"
     group: "{{ item.group }}"
     recurse: yes
-  when: "{{ item.present|default(False) }}"
+  when: "{{ item.present|default(false) }}"
   with_items: "{{ django_projects }}"

@@ -1,7 +1,7 @@
 ---
 # tasks file for virtualenv
 
-- name: install uwsgi
+- name: install virtualenvwrapper
   pip:
     name: virtualenvwrapper
     executable: "{{ virtualenv.pip_executeable }}"
@@ -16,7 +16,7 @@
 # - debug: msg="{{ virtualenvs_status }}"
 
 - name: Make sure virtualenv is present
-  shell: "VIRTUALENVWRAPPER_PYTHON=/usr/bin/{{ item.item.python|default(virtualenv.python) }} && source `which virtualenvwrapper.sh` && mkvirtualenv {{ item.item.name }} -p {{ item.item.python|default(virtualenv.python) }}" 
+  shell: "WORKON_HOME=/home/{{ item.item.owner }}/.virtualenvs VIRTUALENVWRAPPER_PYTHON=/usr/bin/{{ item.item.python|default(virtualenv.python) }} && source `which virtualenvwrapper.sh` && mkvirtualenv {{ item.item.name }} -p {{ item.item.python|default(virtualenv.python) }}" 
   args:
     executable: /bin/bash
   when: item.item.present|default(false) and not item.stat.exists 
