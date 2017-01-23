@@ -9,7 +9,7 @@ ADMINS = (
 STATIC_ROOT = '{{ item.static_root }}'
 MEDIA_ROOT = '{{ item.media_root }}'
 
-ALLOWED_HOSTS = {{ item.allowed_hosts|to_json }}
+ALLOWED_HOSTS = [{%- for allowed_host in item.allowed_hosts -%}'{{ allowed_host }}'{% if not forloop.last -%},{%- endif %}{%- endfor -%}]
 
 DATABASES = {
     {% for database, settings in item.databases.items() %}
