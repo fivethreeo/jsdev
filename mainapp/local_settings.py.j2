@@ -21,7 +21,8 @@ DATABASES = {
         'USER': '{{ settings.username }}',
         'HOST': '{{ settings.hostname }}'
     }
-    {%- endfor %}
+    
+    {%- endfor -%}
 }
 
 SECRET_KEY = '{{ django_secret_keys|selectattr('name', 'equalto', item.name)|first|attr('key')|default('unsafe') }}'
