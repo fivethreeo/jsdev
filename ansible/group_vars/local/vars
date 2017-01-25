@@ -101,7 +101,8 @@ django_projects:
         hostname: localhost
         database: jsdev
         username: jsdev
-    collectstatic: yes
+        password: postgresql_users[?name=='jsdev'][0].pass
+        collectstatic: yes
     migrate: yes
     default_admin: yes
     present: yes
