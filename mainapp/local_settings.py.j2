@@ -15,7 +15,7 @@ DATABASES = {
     {% for database, settings in item.databases.items() %}
     '{{ database }}': {
         'ENGINE': '{{ settings.backend }}',
-        'PASSWORD': '{{ hostvars[inventory_hostname]|json_query(settings.password)|default(settings.password)|default('')) }}',
+        'PASSWORD': '{{ hostvars[inventory_hostname]|json_query(settings.password)|default(settings.password)|default('') }}',
         'NAME': '{{ settings.database }}',
         'USER': '{{ settings.username }}',
         'HOST': '{{ settings.hostname }}',
