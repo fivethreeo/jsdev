@@ -150,7 +150,8 @@ CMS_TEMPLATES = (
     ('page.html', 'Page'),
     ('blog.html', 'Blog Page'),
     ('feature.html', 'Page with Feature'),
-    ('test.html', 'Test app page')
+    ('test.html', 'Test app page'),
+    ('react.html', 'React page')
 )
 
 CMS_PERMISSION = True

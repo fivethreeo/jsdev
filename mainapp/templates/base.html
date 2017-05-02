@@ -7,15 +7,16 @@
 
     <title>{% block title %}{{ request.site }}{% endblock title %}</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    {% comment %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" integrity="sha256-0rguYS0qgS6L4qVzANq4kjxPLtvnp5nn2nB5G1lWRv4=" crossorigin="anonymous"></script>
+
+    {% endcomment %} 
+   <script type="text/javascript" src="{% static 'js/dist/0.9/bundle.modernizr.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/0.9/main.css' %}">
     {% render_block "css" %}
 </head>
 <body>
-    <script type="text/javascript" src="{% static 'js/dist/0.9/bundle.modernizr.min.js' %}"></script>
     {% cms_toolbar %}
-    {% comment %}
-
-    {% endcomment %}    
     {% block contentbase %}{% endblock contentbase %}
     {% render_block "js" %}
     <script src="{% static 'js/dist/0.9/bundle.main.min.js' %}"></script>
