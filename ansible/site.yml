@@ -56,6 +56,10 @@
       state: absent
     when: "{{ item.absent|default(False) }}"
     with_items: "{{ checkouts }}"
+  # - name: Set up virtualenvs
+  #   debug:
+  #     msg: "{{ hostvars[inventory_hostname]|json_query('django_projects[?present==`true`]') }}"
+  #     msg: "{{ hostvars[inventory_hostname]|json_query('django_projects') }}"
   roles:
     # - ANXS.postgresql
     # - geerlingguy.memcached
@@ -63,8 +67,8 @@
     # - SimpliField.rabbitmq
     # - geerlingguy.nodejs
     # - virtualenv
-    - django
-    - uwsgi
+    # - django
+    #- uwsgi
     # - express
-    - jdauphant.nginx
+    #- jdauphant.nginx
 

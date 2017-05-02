@@ -1,6 +1,11 @@
 ---
 # tasks file for django
 
+- name: Set up virtualenvs
+  debug:
+    var: "{{ hostvars[inventory_hostname]|json_query('django_projects[?present=true].{name: name, python: python, owner: user, group: group, requirements: requirements}') }}"
+    verbosity: 4
+
 - name: Create django static directory
   file:
     path: "{{ item.static_root }}"
@@ -70,3 +75,4 @@
     recurse: yes
   when: "{{ item.present|default(false) }}"
   with_items: "{{ django_projects }}"
+

@@ -16,3 +16,5 @@ ipxe.iso
 fakevirsh
 *.retry
 *.decrypted
+ansible/roles/*.*/
+ansible/roles/jdauphant.nginx

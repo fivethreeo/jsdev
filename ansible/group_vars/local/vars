@@ -40,31 +40,14 @@ rabbitmq_users:
 
 nginx_sites:
   app:
-    template: ../files/app.conf.j2
+    template: app.conf.j2
     server_name: _
-    django_static_root: /www/appuser/static/
-    django_media_root: /www/appuser/media/
-
-uwsgi_emperor_sites: /etc/uwsgi/sites
-uwsgi_emperor_user: root
-uwsgi_emperor_group: www-data
-uwsgi_pip_executeable: pip3
+    django_static_root: /www/appuser/static/ # django_projects[?name=='jsdev'] | [0].static_root
+    django_media_root: /www/appuser/media/ # django_projects[?name=='jsdev'] | [0].media_root
 
 virtualenv:
   python: python3.5
   pip_executeable: pip3
-
-uwsgi_sites:
-  - name: jsdev
-    project: jsdev
-    user: appuser
-    group: www-data
-    socket: :8081
-    vacuum: true
-    master: true
-    virtualenv: /home/appuser/.virtualenvs/jsdev
-    module: mainapp.wsgi
-    present: yes
 
 checkouts:
   - repo: https://github.com/fivethreeo/jsdev.git
@@ -81,11 +64,31 @@ virtualenvs:
     requirements: /home/appuser/jsdev/requirements.txt
     present: yes
 
-django_projects:
+uwsgi_emperor_sites: /etc/uwsgi/sites
+uwsgi_emperor_user: root
+uwsgi_emperor_group: www-data
+uwsgi_pip_executeable: pip3
+
+uwsgi_sites:
   - name: jsdev
     project: jsdev
     user: appuser
     group: www-data
+    socket: :8081
+    vacuum: true
+    master: true
+    virtualenv: /home/appuser/.virtualenvs/jsdev
+    module: mainapp.wsgi
+    present: yes
+
+django_projects:
+  - name: jsdev
+    project: jsdev
+    server_name: _
+    user: appuser
+    group: www-data
+    python: python3.5
+    requirements: /home/appuser/jsdev/requirements.txt
     virtualenv: /home/appuser/.virtualenvs/jsdev
     static_root: /www/appuser/static
     media_root: /www/appuser/media
@@ -101,8 +104,8 @@ django_projects:
         hostname: localhost
         database: jsdev
         username: jsdev
-        password: postgresql_users[?name=='jsdev'][0].pass
-        collectstatic: yes
+        password: postgresql_users[?name=='jsdev'] | [0].pass
+    collectstatic: yes
     migrate: yes
     default_admin: yes
     present: yes

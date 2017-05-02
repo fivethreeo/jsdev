@@ -12,6 +12,7 @@ module.exports = function (opts) {
         watch: !!opts.watch,
         entry: {
             'main': PROJECT_PATH.js + '/main.js',
+            'react_main': PROJECT_PATH.js + '/react_main.js',
             'modernizr': 'modernizr'
         },
         output: {
@@ -34,7 +35,7 @@ module.exports = function (opts) {
             */
         ],
         resolve: {
-            extensions: ['', '.js'],
+            extensions: ['', '.js','.node'],
             alias: {}
         },
         module: {
@@ -50,6 +51,14 @@ module.exports = function (opts) {
                     loaders: [
                         'raw'
                     ]
+                },                
+                {
+                  test: /.jsx?$/,
+                  loader: 'babel-loader',
+                  exclude: /node_modules/,
+                  query: {
+                    presets: ['es2015', 'react']
+                  }
                 }
             ]
         }

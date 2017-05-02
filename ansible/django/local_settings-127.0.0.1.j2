@@ -1,0 +1,43 @@
+#jinja2:trim_blocks: True, lstrip_blocks: True
+
+DEBUG=False
+
+ADMINS = (
+    ('Oyvind Saltvik', 'oyvind.saltvik@gmail.com'),
+)
+
+STATIC_ROOT = '{{ item.static_root }}'
+MEDIA_ROOT = '{{ item.media_root }}'
+
+ALLOWED_HOSTS = [{%- for allowed_host in item.allowed_hosts -%}'{{ allowed_host }}'{% if not loop.last -%}, {%- endif -%}{%- endfor -%}]
+
+DATABASES = {
+    {% for database, settings in item.databases.items() %}
+    '{{ database }}': {
+        'ENGINE': '{{ settings.backend }}',
+        'PASSWORD': '{{ hostvars[inventory_hostname]|json_query(settings.password)|default(settings.password)|default('') }}',
+        'NAME': '{{ settings.database }}',
+        'USER': '{{ settings.username }}',
+        'HOST': '{{ settings.hostname }}',
+        {% if settings.backend == "django.db.backends.postgresql_psycopg2" %}
+        'PORT': {{ settings.port|default(5432) }}
+        {% endif %}
+    {% if loop.last %}
+    }
+    {% else %}
+    },
+    {% endif %}
+    {% endfor %}
+}
+
+SECRET_KEY = '{{ django_secret_keys|selectattr('name', 'equalto', item.name)|first|attr('key')|default('unsafe') }}'
+
+"""
+SERVER_EMAIL = ''
+
+EMAIL_PORT = 587
+EMAIL_HOST = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+
+"""

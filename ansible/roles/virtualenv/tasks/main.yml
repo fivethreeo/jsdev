@@ -35,7 +35,7 @@
   when: item.item.present|default(false) and item.stat.exists
   with_items: "{{ virtualenvs_status.results }}"
 
-- name: Set permissioms for virtualenv
+- name: Set permissions for virtualenv
   file:
     path: "/home/{{ item.item.owner }}/.virtualenvs/{{ item.item.name }}"
     state: directory
